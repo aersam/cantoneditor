@@ -1,4 +1,4 @@
-package ch.fhnw.oop2.CantonEditor.libs;
+package ch.fhnw.cantoneditor.libs;
 
 import java.awt.Component;
 import java.awt.Container;
