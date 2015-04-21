@@ -3,25 +3,34 @@ package ch.fhnw.cantoneditor.model;
 import java.util.Date;
 
 public class Commune extends BaseModel {
-    private String shortCut;
+
+    public static final String DISTRICTNR_PROPERTY = "districtNr";
+    public static final String BFSCOMMUNENR_PROPERTY = "bfsCommuneNr";
+    public static final String OFFICIALNAME_PROPERTY = "officialName";
+    public static final String NAME_PROPERTY = "name";
+    public static final String SHORTDISTRICTNAME_PROPERTY = "shortDistrictName";
+
+    public static final String LASTCHANGED_PROPERTY = "lastChanged";
+    public static final String SHORTCUT_PROPERTY = "shortCut";
+    public static final String CANTON_PROPERTY = "canton";
 
     private int districtNr;
     private int bfsCommuneNr;
     private String officialName;
     private String name;
     private String shortDistrictName;
-    private String cantonName;
+    private Canton canton;
     private Date lastChanged;
 
-    public String getShortCut() {
-        return shortCut;
+    public Canton getCanton() {
+        return canton;
     }
 
-    public void setShortCut(String shortCut) {
-        if (shortCut != this.shortCut) {
-            Object oldValue = this.shortCut;
-            this.shortCut = shortCut;
-            this.pcs.firePropertyChange("shortCut", oldValue, shortCut);
+    public void setCanton(Canton canton) {
+        if (canton != this.canton) {
+            Object oldValue = this.canton;
+            this.canton = canton;
+            this.pcs.firePropertyChange(CANTON_PROPERTY, oldValue, canton);
         }
     }
 
@@ -33,7 +42,7 @@ public class Commune extends BaseModel {
         if (districtNr != this.districtNr) {
             Object oldValue = this.districtNr;
             this.districtNr = districtNr;
-            this.pcs.firePropertyChange("districtNr", oldValue, districtNr);
+            this.pcs.firePropertyChange(DISTRICTNR_PROPERTY, oldValue, districtNr);
         }
     }
 
@@ -45,7 +54,7 @@ public class Commune extends BaseModel {
         if (bfsCommuneNr != this.bfsCommuneNr) {
             Object oldValue = this.bfsCommuneNr;
             this.bfsCommuneNr = bfsCommuneNr;
-            this.pcs.firePropertyChange("bfsCommuneNr", oldValue, bfsCommuneNr);
+            this.pcs.firePropertyChange(BFSCOMMUNENR_PROPERTY, oldValue, bfsCommuneNr);
         }
     }
 
@@ -57,7 +66,7 @@ public class Commune extends BaseModel {
         if (officialName != this.officialName) {
             Object oldValue = this.officialName;
             this.officialName = officialName;
-            this.pcs.firePropertyChange("officialName", oldValue, officialName);
+            this.pcs.firePropertyChange(OFFICIALNAME_PROPERTY, oldValue, officialName);
         }
     }
 
@@ -69,7 +78,7 @@ public class Commune extends BaseModel {
         if (name != this.name) {
             Object oldValue = this.name;
             this.name = name;
-            this.pcs.firePropertyChange("name", oldValue, name);
+            this.pcs.firePropertyChange(NAME_PROPERTY, oldValue, name);
         }
     }
 
@@ -81,19 +90,7 @@ public class Commune extends BaseModel {
         if (shortDistrictName != this.shortDistrictName) {
             Object oldValue = this.shortDistrictName;
             this.shortDistrictName = shortDistrictName;
-            this.pcs.firePropertyChange("shortDistrictName", oldValue, shortDistrictName);
-        }
-    }
-
-    public String getCantonName() {
-        return cantonName;
-    }
-
-    public void setCantonName(String cantonName) {
-        if (cantonName != this.cantonName) {
-            Object oldValue = this.cantonName;
-            this.cantonName = cantonName;
-            this.pcs.firePropertyChange("cantonName", oldValue, cantonName);
+            this.pcs.firePropertyChange(SHORTDISTRICTNAME_PROPERTY, oldValue, shortDistrictName);
         }
     }
 
@@ -105,7 +102,7 @@ public class Commune extends BaseModel {
         if (lastChanged != this.lastChanged) {
             Object oldValue = this.lastChanged;
             this.lastChanged = lastChanged;
-            this.pcs.firePropertyChange("lastChanged", oldValue, lastChanged);
+            this.pcs.firePropertyChange(LASTCHANGED_PROPERTY, oldValue, lastChanged);
         }
     }
 

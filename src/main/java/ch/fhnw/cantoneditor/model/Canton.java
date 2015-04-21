@@ -3,6 +3,18 @@ package ch.fhnw.cantoneditor.model;
 import java.util.List;
 
 public class Canton extends BaseModel {
+    public static final String NAME_PROPERTY = "name";
+    public static final String SHORTCUT_PROPERTY = "shortCut";
+    public static final String CANTONR_PROPERTY = "cantonNr";
+    public static final String NRCOUNCILSEATS_PROPERTY = "nrCouncilSeats";
+    public static final String ENTRYYEAR_PROPERTY = "entryYear";
+    public static final String NRFOREIGNERS_PROPERTY = "nrForeigners";
+    public static final String LANGUAGEID_PROPERTY = "languageId";
+    public static final String CAPITAL_PROPERTY = "capital";
+    public static final String AREA_PROPERTY = "area";
+    public static final String INHABITANTDENSITY_PROPERTY = "inHabitantDensity";
+    public static final String NRCOMMUNES_PROPERTY = "nrCommunes";
+
     private String name;
     private String shortCut;
     private int cantonNr;
@@ -27,7 +39,7 @@ public class Canton extends BaseModel {
         if (name != this.name) {
             Object oldValue = this.name;
             this.name = name;
-            this.pcs.firePropertyChange("name", oldValue, name);
+            this.pcs.firePropertyChange(NAME_PROPERTY, oldValue, name);
         }
     }
 
@@ -39,7 +51,7 @@ public class Canton extends BaseModel {
         if (shortCut != this.shortCut) {
             Object oldValue = this.shortCut;
             this.shortCut = shortCut;
-            this.pcs.firePropertyChange("shortCut", oldValue, shortCut);
+            this.pcs.firePropertyChange(SHORTCUT_PROPERTY, oldValue, shortCut);
         }
     }
 
@@ -51,7 +63,7 @@ public class Canton extends BaseModel {
         if (cantonNr != this.cantonNr) {
             Object oldValue = this.cantonNr;
             this.cantonNr = cantonNr;
-            this.pcs.firePropertyChange("cantonNr", oldValue, cantonNr);
+            this.pcs.firePropertyChange(CANTONR_PROPERTY, oldValue, cantonNr);
         }
     }
 
@@ -63,7 +75,7 @@ public class Canton extends BaseModel {
         if (nrCouncilSeats != this.nrCouncilSeats) {
             Object oldValue = this.nrCouncilSeats;
             this.nrCouncilSeats = nrCouncilSeats;
-            this.pcs.firePropertyChange("nrCouncilSeats", oldValue, nrCouncilSeats);
+            this.pcs.firePropertyChange(NRCOUNCILSEATS_PROPERTY, oldValue, nrCouncilSeats);
         }
     }
 
@@ -75,7 +87,7 @@ public class Canton extends BaseModel {
         if (entryYear != this.entryYear) {
             Object oldValue = this.entryYear;
             this.entryYear = entryYear;
-            this.pcs.firePropertyChange("entryYear", oldValue, entryYear);
+            this.pcs.firePropertyChange(ENTRYYEAR_PROPERTY, oldValue, entryYear);
         }
     }
 
@@ -87,7 +99,7 @@ public class Canton extends BaseModel {
         if (nrForeigners != this.nrForeigners) {
             Object oldValue = this.nrForeigners;
             this.nrForeigners = nrForeigners;
-            this.pcs.firePropertyChange("nrForeigners", oldValue, nrForeigners);
+            this.pcs.firePropertyChange(NRFOREIGNERS_PROPERTY, oldValue, nrForeigners);
         }
     }
 
@@ -99,7 +111,7 @@ public class Canton extends BaseModel {
         if (languageId != this.languageId) {
             Object oldValue = this.languageId;
             this.languageId = languageId;
-            this.pcs.firePropertyChange("languageId", oldValue, languageId);
+            this.pcs.firePropertyChange(LANGUAGEID_PROPERTY, oldValue, languageId);
         }
     }
 
@@ -111,7 +123,7 @@ public class Canton extends BaseModel {
         if (capital != this.capital) {
             Object oldValue = this.capital;
             this.capital = capital;
-            this.pcs.firePropertyChange("capital", oldValue, capital);
+            this.pcs.firePropertyChange(CAPITAL_PROPERTY, oldValue, capital);
         }
     }
 
@@ -123,7 +135,7 @@ public class Canton extends BaseModel {
         if (area != this.area) {
             Object oldValue = this.area;
             this.area = area;
-            this.pcs.firePropertyChange("area", oldValue, area);
+            this.pcs.firePropertyChange(AREA_PROPERTY, oldValue, area);
         }
     }
 
@@ -135,7 +147,7 @@ public class Canton extends BaseModel {
         if (inHabitantDensity != this.inHabitantDensity) {
             Object oldValue = this.inHabitantDensity;
             this.inHabitantDensity = inHabitantDensity;
-            this.pcs.firePropertyChange("inHabitantDensity", oldValue, inHabitantDensity);
+            this.pcs.firePropertyChange(INHABITANTDENSITY_PROPERTY, oldValue, inHabitantDensity);
         }
     }
 
@@ -147,20 +159,12 @@ public class Canton extends BaseModel {
         if (nrCommunes != this.nrCommunes) {
             Object oldValue = this.nrCommunes;
             this.nrCommunes = nrCommunes;
-            this.pcs.firePropertyChange("nrCommunes", oldValue, nrCommunes);
+            this.pcs.firePropertyChange(NRCOMMUNES_PROPERTY, oldValue, nrCommunes);
         }
     }
 
     public List<Commune> getCommunes() {
         return communes;
-    }
-
-    public void setCommunes(List<Commune> communes) {
-        if (communes != this.communes) {
-            Object oldValue = this.communes;
-            this.communes = communes;
-            this.pcs.firePropertyChange("communes", oldValue, communes);
-        }
     }
 
 }
