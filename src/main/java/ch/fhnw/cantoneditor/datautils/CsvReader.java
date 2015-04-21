@@ -24,8 +24,16 @@ public class CsvReader {
                     Canton c = new Canton();
                     c.setName(nextLine[0]);
                     c.setShortCut(nextLine[1]);
-                    c.setCantonNr(Integer.parseInt(nextLine[2]));
+                    c.setCantonNr(Integer.parseInt(nextLine[2].replace("'", "")));
                     c.setNrCouncilSeats((int) (Double.parseDouble(nextLine[3]) * 2.0));
+                    c.setEntryYear(Integer.parseInt(nextLine[4].replace("'", "")));
+                    c.setCapital(nextLine[5]);
+                    c.setNrInhabitants(Integer.parseInt(nextLine[6].replace("'", "")));
+                    c.setNrForeigners(Double.parseDouble(nextLine[7].replace("'", "")));
+                    c.setArea(Double.parseDouble(nextLine[8].replace("'", "")));
+                    c.setInHabitantDensity(Double.parseDouble(nextLine[9].replace("'", "")));
+                    c.setNrCommunes(Integer.parseInt(nextLine[10].replace("'", "")));
+                    // nextLine[11] is Languages
 
                     cantons.add(c);
                     // Verifying the read data here

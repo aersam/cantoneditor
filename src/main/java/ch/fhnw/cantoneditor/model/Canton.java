@@ -17,6 +17,7 @@ public class Canton extends BaseModel {
     public static final String AREA_PROPERTY = "area";
     public static final String INHABITANTDENSITY_PROPERTY = "inHabitantDensity";
     public static final String NRCOMMUNES_PROPERTY = "nrCommunes";
+    public static final String NRINHABITANTS_PROPERTY = "nrInhabitants";
 
     private String name;
     private String shortCut;
@@ -24,7 +25,9 @@ public class Canton extends BaseModel {
     private int nrCouncilSeats;
     private int entryYear;
     private double nrForeigners;
-    private ObservableList<Integer> languageId = new ObservableList<>();
+    private int nrInhabitants;
+
+    private ObservableList<Language> languageId = new ObservableList<>();
     private String capital;
     private double area;
 
@@ -106,7 +109,7 @@ public class Canton extends BaseModel {
         }
     }
 
-    public ObservableList<Integer> getLanguageId() {
+    public ObservableList<Language> getLanguages() {
         return languageId;
     }
 
@@ -160,6 +163,18 @@ public class Canton extends BaseModel {
 
     public List<Commune> getCommunes() {
         return communes;
+    }
+
+    public int getNrInhabitants() {
+        return nrInhabitants;
+    }
+
+    public void setNrInhabitants(int nrInhabitants) {
+        if (nrInhabitants != this.nrInhabitants) {
+            Object oldValue = this.nrInhabitants;
+            this.nrInhabitants = nrInhabitants;
+            this.pcs.firePropertyChange(NRINHABITANTS_PROPERTY, oldValue, nrInhabitants);
+        }
     }
 
 }
