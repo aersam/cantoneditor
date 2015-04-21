@@ -1,3 +1,5 @@
+package ch.fhnw.cantoneditor.model;
+
 import java.util.Date;
 
 import ch.fhnw.cantoneditor.datautils.BaseModel;

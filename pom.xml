@@ -7,14 +7,7 @@
   <description>Is able to edit cantons of Switzerland</description>
   <build>
     <sourceDirectory>Ressourcen</sourceDirectory>
-    <resources>
-      <resource>
-        <directory>Ressourcen</directory>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </resource>
-    </resources>
+    
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -26,4 +19,11 @@
       </plugin>
     </plugins>
   </build>
+  <dependencies>
+  	<dependency>
+  		<groupId>net.sf.opencsv</groupId>
+  		<artifactId>opencsv</artifactId>
+  		<version>2.3</version>
+  	</dependency>
+  </dependencies>
 </project>

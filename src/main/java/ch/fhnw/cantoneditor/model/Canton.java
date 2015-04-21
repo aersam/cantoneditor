@@ -106,16 +106,8 @@ public class Canton extends BaseModel {
         }
     }
 
-    public List<Integer> getLanguageId() {
+    public ObservableList<Integer> getLanguageId() {
         return languageId;
-    }
-
-    public void setLanguageId(List<Integer> languageId) {
-        if (languageId != this.languageId) {
-            Object oldValue = this.languageId;
-            this.languageId = languageId;
-            this.pcs.firePropertyChange(LANGUAGEID_PROPERTY, oldValue, languageId);
-        }
     }
 
     public String getCapital() {
