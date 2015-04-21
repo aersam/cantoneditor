@@ -21,7 +21,7 @@ public class Canton extends BaseModel {
     private int nrCouncilSeats;
     private int entryYear;
     private double nrForeigners;
-    private List<Integer> languageId;
+    private ObservableList<Integer> languageId = new ObservableList<>();
     private String capital;
     private double area;
 
@@ -29,7 +29,7 @@ public class Canton extends BaseModel {
     private double inHabitantDensity;
     private int nrCommunes;
 
-    private List<Commune> communes;
+    private ObservableList<Commune> communes = new ObservableList<>();
 
     public String getName() {
         return name;
