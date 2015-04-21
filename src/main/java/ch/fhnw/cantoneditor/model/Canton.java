@@ -2,6 +2,9 @@ package ch.fhnw.cantoneditor.model;
 
 import java.util.List;
 
+import ch.fhnw.cantoneditor.datautils.BaseModel;
+import ch.fhnw.cantoneditor.datautils.ObservableList;
+
 public class Canton extends BaseModel {
     public static final String NAME_PROPERTY = "name";
     public static final String SHORTCUT_PROPERTY = "shortCut";

@@ -2,6 +2,8 @@ package ch.fhnw.cantoneditor.model;
 
 import java.util.Date;
 
+import ch.fhnw.cantoneditor.datautils.BaseModel;
+
 public class Commune extends BaseModel {
 
     public static final String DISTRICTNR_PROPERTY = "districtNr";

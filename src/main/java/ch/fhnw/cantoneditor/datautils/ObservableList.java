@@ -1,4 +1,4 @@
-package ch.fhnw.cantoneditor.model;
+package ch.fhnw.cantoneditor.datautils;
 
 import java.util.ArrayList;
 import java.util.Collection;
