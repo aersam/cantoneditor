@@ -10,7 +10,7 @@ public class Commune extends BaseModel {
     public static final String BFSCOMMUNENR_PROPERTY = "bfsCommuneNr";
     public static final String OFFICIALNAME_PROPERTY = "officialName";
     public static final String NAME_PROPERTY = "name";
-    public static final String SHORTDISTRICTNAME_PROPERTY = "shortDistrictName";
+    public static final String DISTRICTNAME_PROPERTY = "DistrictName";
 
     public static final String LASTCHANGED_PROPERTY = "lastChanged";
     public static final String SHORTCUT_PROPERTY = "shortCut";
@@ -20,7 +20,7 @@ public class Commune extends BaseModel {
     private int bfsCommuneNr;
     private String officialName;
     private String name;
-    private String shortDistrictName;
+    private String districtName;
     private Canton canton;
     private Date lastChanged;
 
@@ -84,15 +84,15 @@ public class Commune extends BaseModel {
         }
     }
 
-    public String getShortDistrictName() {
-        return shortDistrictName;
+    public String getDistrictName() {
+        return districtName;
     }
 
-    public void setShortDistrictName(String shortDistrictName) {
-        if (shortDistrictName != this.shortDistrictName) {
-            Object oldValue = this.shortDistrictName;
-            this.shortDistrictName = shortDistrictName;
-            this.pcs.firePropertyChange(SHORTDISTRICTNAME_PROPERTY, oldValue, shortDistrictName);
+    public void setDistrictName(String districtName) {
+        if (districtName != this.districtName) {
+            Object oldValue = this.districtName;
+            this.districtName = districtName;
+            this.pcs.firePropertyChange(DISTRICTNAME_PROPERTY, oldValue, districtName);
         }
     }
 

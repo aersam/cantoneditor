@@ -1,6 +1,8 @@
 package ch.fhnw.cantoneditor.model;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ch.fhnw.cantoneditor.datautils.BaseModel;
 import ch.fhnw.cantoneditor.datautils.ObservableList;
@@ -37,6 +39,44 @@ public class Canton extends BaseModel {
 
     private ObservableList<Commune> communes = new ObservableList<>();
 
+    private static Map<Integer, Canton> cantons = new HashMap<Integer, Canton>();
+
+    private Canton(int nr) {
+        this.cantonNr = nr;
+        if (nr != 0) { // Special for new entries without
+            cantons.put(cantonNr, this);
+        }
+
+    }
+
+    public static Canton CreateNew() {
+        return new Canton(0);
+    }
+
+    public static Canton GetById(int nr, boolean createIfNotExists) {
+        if (cantons.containsKey(nr))
+            return cantons.get(nr);
+        if (createIfNotExists) {
+            Canton c = new Canton(nr);
+            return c;
+        }
+        return null;
+    }
+
+    public static Canton GetByShortcut(String shortcut, boolean createIfNotExists) {
+        for (Canton c : cantons.values()) {
+            if (c.getShortCut().equals(shortcut)) {
+                return c;
+            }
+        }
+        if (createIfNotExists) {
+            Canton c = new Canton(0);
+            c.setShortCut(shortcut);
+            return c;
+        }
+        return null;
+    }
+
     public String getName() {
         return name;
     }
@@ -66,7 +106,10 @@ public class Canton extends BaseModel {
     }
 
     public void setCantonNr(int cantonNr) {
+
         if (cantonNr != this.cantonNr) {
+            if (this.cantonNr != 0)
+                throw new IllegalAccessError("Cannot change primary key!");
             Object oldValue = this.cantonNr;
             this.cantonNr = cantonNr;
             this.pcs.firePropertyChange(CANTONR_PROPERTY, oldValue, cantonNr);

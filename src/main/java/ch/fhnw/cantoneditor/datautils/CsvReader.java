@@ -3,17 +3,57 @@ package ch.fhnw.cantoneditor.datautils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import au.com.bytecode.opencsv.CSVReader;
 import ch.fhnw.cantoneditor.model.Canton;
+import ch.fhnw.cantoneditor.model.Commune;
 import ch.fhnw.cantoneditor.model.Language;
 
 import com.cedarsoftware.util.io.JsonWriter;
 
 public class CsvReader {
 
-    public static void readCantons() throws IOException {
+    public static void readAll() throws IOException, ParseException {
+        readCantons();
+        readCommunes();
+    }
+
+    public static Iterable<Commune> readCommunes() throws IOException, ParseException {
+        BufferedReader fileReader = new BufferedReader(new InputStreamReader(
+                CsvReader.class.getResourceAsStream("/Communes.txt"), "UTF-8"));
+        try (CSVReader reader = new CSVReader(fileReader, '\t', '"', 1)) {
+            String[] nextLine;
+            ArrayList<Commune> communes = new ArrayList<Commune>();
+            while ((nextLine = reader.readNext()) != null) {
+                if (nextLine != null) {
+                    Canton canton = Canton.GetByShortcut(nextLine[0], true);
+                    Commune com = new Commune();
+                    com.setCanton(canton);
+                    com.setDistrictNr(Integer.parseInt(nextLine[1].replace("'", "")));
+                    com.setBfsCommuneNr(Integer.parseInt(nextLine[2].replace("'", "")));
+                    com.setOfficialName(nextLine[3]);
+                    com.setName(nextLine[4]);
+                    com.setDistrictName(nextLine[5]);
+
+                    DateFormat f = new SimpleDateFormat("dd/MM/yy");
+
+                    com.setLastChanged(f.parse(nextLine[7]));
+                    communes.add(com);
+
+                    String json = JsonWriter.objectToJson(com);
+                    // Verifying the read data here
+                    System.out.println(json);
+                }
+            }
+            return communes;
+        }
+    }
+
+    public static Iterable<Canton> readCantons() throws IOException {
         BufferedReader fileReader = new BufferedReader(new InputStreamReader(
                 CsvReader.class.getResourceAsStream("/cantons.csv"), "UTF-8"));
         try (CSVReader reader = new CSVReader(fileReader, ';', '"', 1)) {
@@ -23,10 +63,10 @@ public class CsvReader {
             ArrayList<Canton> cantons = new ArrayList<Canton>();
             while ((nextLine = reader.readNext()) != null) {
                 if (nextLine != null) {
-                    Canton c = new Canton();
+                    int cantonNr = Integer.parseInt(nextLine[2].replace("'", ""));
+                    Canton c = Canton.GetById(cantonNr, true);
                     c.setName(nextLine[0]);
                     c.setShortCut(nextLine[1]);
-                    c.setCantonNr(Integer.parseInt(nextLine[2].replace("'", "")));
                     c.setNrCouncilSeats((int) (Double.parseDouble(nextLine[3]) * 2.0));
                     c.setEntryYear(Integer.parseInt(nextLine[4].replace("'", "")));
                     c.setCapital(nextLine[5]);
@@ -55,6 +95,8 @@ public class CsvReader {
                     System.out.println(json);
                 }
             }
+            return cantons;
         }
     }
+
 }
