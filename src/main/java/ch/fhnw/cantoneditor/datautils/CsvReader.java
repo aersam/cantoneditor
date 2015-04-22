@@ -4,10 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import au.com.bytecode.opencsv.CSVReader;
 import ch.fhnw.cantoneditor.model.Canton;
+import ch.fhnw.cantoneditor.model.Language;
+
+import com.cedarsoftware.util.io.JsonWriter;
 
 public class CsvReader {
 
@@ -33,11 +35,24 @@ public class CsvReader {
                     c.setArea(Double.parseDouble(nextLine[8].replace("'", "")));
                     c.setInHabitantDensity(Double.parseDouble(nextLine[9].replace("'", "")));
                     c.setNrCommunes(Integer.parseInt(nextLine[10].replace("'", "")));
+                    String[] lngStrings = nextLine[11].split(",");
+                    for (String s : lngStrings) {
+                        if (s.trim().equals(Language.German.getName())) {
+                            c.getLanguages().add(Language.German);
+                        } else if (s.trim().equals(Language.French.getName())) {
+                            c.getLanguages().add(Language.French);
+                        } else if (s.trim().equals(Language.Italian.getName())) {
+                            c.getLanguages().add(Language.Italian);
+                        } else if (s.trim().equals(Language.Rumantsch.getName())) {
+                            c.getLanguages().add(Language.Rumantsch);
+                        }
+                    }
                     // nextLine[11] is Languages
 
                     cantons.add(c);
+                    String json = JsonWriter.objectToJson(c);
                     // Verifying the read data here
-                    System.out.println(Arrays.toString(nextLine));
+                    System.out.println(json);
                 }
             }
         }
