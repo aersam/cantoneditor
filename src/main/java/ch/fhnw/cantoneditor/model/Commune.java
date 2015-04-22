@@ -60,6 +60,9 @@ public class Commune extends BaseModel {
 
     public void setBfsCommuneNr(int bfsCommuneNr) {
         if (bfsCommuneNr != this.bfsCommuneNr) {
+            if (this.bfsCommuneNr != 0) {
+                throw new IllegalAccessError("Cannot change a Primary Key!");
+            }
             Object oldValue = this.bfsCommuneNr;
             this.bfsCommuneNr = bfsCommuneNr;
             this.pcs.firePropertyChange(BFSCOMMUNENR_PROPERTY, oldValue, bfsCommuneNr);
@@ -112,5 +115,32 @@ public class Commune extends BaseModel {
             this.lastChanged = lastChanged;
             this.pcs.firePropertyChange(LASTCHANGED_PROPERTY, oldValue, lastChanged);
         }
+    }
+
+    @Override
+    public int hashCode() {
+        if (this.bfsCommuneNr != 0) { // Not a newly created object
+            return this.bfsCommuneNr;// Primary Key
+        }
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this)
+            return true;
+        if (obj == null)
+            return false;
+        if (this.bfsCommuneNr == 0)
+            return false;// Two newly created Communes are newer the same
+        if (obj instanceof Commune) {
+            return ((Commune) obj).getBfsCommuneNr() == this.bfsCommuneNr;
+        }
+        return false;
+    };
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 }

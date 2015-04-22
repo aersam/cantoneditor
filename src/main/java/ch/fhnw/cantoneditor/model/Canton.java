@@ -1,7 +1,6 @@
 package ch.fhnw.cantoneditor.model;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import ch.fhnw.cantoneditor.datautils.BaseModel;
@@ -204,7 +203,7 @@ public class Canton extends BaseModel {
         }
     }
 
-    public List<Commune> getCommunes() {
+    public ObservableSet<Commune> getCommunes() {
         return communes;
     }
 
@@ -218,6 +217,33 @@ public class Canton extends BaseModel {
             this.nrInhabitants = nrInhabitants;
             this.pcs.firePropertyChange(NRINHABITANTS_PROPERTY, oldValue, nrInhabitants);
         }
+    }
+
+    @Override
+    public int hashCode() {
+        if (this.cantonNr != 0) { // Not a newly created object
+            return this.cantonNr;// Primary Key
+        }
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this)
+            return true;
+        if (obj == null)
+            return false;
+        if (this.cantonNr == 0)
+            return false;// Two newly created Communes are newer the same
+        if (obj instanceof Canton) {
+            return ((Canton) obj).getCantonNr() == this.cantonNr;
+        }
+        return false;
+    };
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 
 }
