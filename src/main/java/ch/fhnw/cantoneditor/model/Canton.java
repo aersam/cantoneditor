@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import ch.fhnw.cantoneditor.datautils.BaseModel;
-import ch.fhnw.cantoneditor.datautils.ObservableList;
+import ch.fhnw.cantoneditor.datautils.ObservableSet;
 
 public class Canton extends BaseModel {
     public static final String NAME_PROPERTY = "name";
@@ -29,7 +29,7 @@ public class Canton extends BaseModel {
     private double nrForeigners;
     private int nrInhabitants;
 
-    private ObservableList<Language> languageId = new ObservableList<>();
+    private ObservableSet<Language> languageId = new ObservableSet<>();
     private String capital;
     private double area;
 
@@ -37,7 +37,7 @@ public class Canton extends BaseModel {
     private double inHabitantDensity;
     private int nrCommunes;
 
-    private ObservableList<Commune> communes = new ObservableList<>();
+    private ObservableSet<Commune> communes = new ObservableSet<>();
 
     private static Map<Integer, Canton> cantons = new HashMap<Integer, Canton>();
 
@@ -152,7 +152,7 @@ public class Canton extends BaseModel {
         }
     }
 
-    public ObservableList<Language> getLanguages() {
+    public ObservableSet<Language> getLanguages() {
         return languageId;
     }
 
