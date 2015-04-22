@@ -1,6 +1,8 @@
 package ch.fhnw.cantoneditor.model;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import ch.fhnw.cantoneditor.datautils.BaseModel;
 
@@ -23,6 +25,25 @@ public class Commune extends BaseModel {
     private String districtName;
     private Canton canton;
     private Date lastChanged;
+
+    private static Map<Integer, Commune> communes = new HashMap<Integer, Commune>();
+
+    private Commune(int bfsCommuneNr) {
+        if (bfsCommuneNr != 0) {
+            communes.put(bfsCommuneNr, this);
+        }
+        this.bfsCommuneNr = bfsCommuneNr;
+    }
+
+    public static Commune GetById(int bfsCommuneNr, boolean createIfNotExists) {
+        if (communes.containsKey(bfsCommuneNr))
+            return communes.get(bfsCommuneNr);
+        if (createIfNotExists) {
+            Commune c = new Commune(bfsCommuneNr);
+            return c;
+        }
+        return null;
+    }
 
     public Canton getCanton() {
         return canton;

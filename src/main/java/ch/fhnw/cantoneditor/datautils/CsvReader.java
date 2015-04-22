@@ -13,13 +13,12 @@ import ch.fhnw.cantoneditor.model.Canton;
 import ch.fhnw.cantoneditor.model.Commune;
 import ch.fhnw.cantoneditor.model.Language;
 
-import com.cedarsoftware.util.io.JsonWriter;
-
 public class CsvReader {
 
     public static void readAll() throws IOException, ParseException {
         readCantons();
         readCommunes();
+
     }
 
     public static Iterable<Commune> readCommunes() throws IOException, ParseException {
@@ -31,10 +30,11 @@ public class CsvReader {
             while ((nextLine = reader.readNext()) != null) {
                 if (nextLine != null) {
                     Canton canton = Canton.GetByShortcut(nextLine[0], true);
-                    Commune com = new Commune();
+                    int communeNr = Integer.parseInt(nextLine[2].replace("'", ""));
+                    Commune com = Commune.GetById(communeNr, true);
                     com.setCanton(canton);
                     com.setDistrictNr(Integer.parseInt(nextLine[1].replace("'", "")));
-                    com.setBfsCommuneNr(Integer.parseInt(nextLine[2].replace("'", "")));
+
                     com.setOfficialName(nextLine[3]);
                     com.setName(nextLine[4]);
                     com.setDistrictName(nextLine[5]);
@@ -43,10 +43,7 @@ public class CsvReader {
 
                     com.setLastChanged(f.parse(nextLine[7]));
                     communes.add(com);
-
-                    String json = JsonWriter.objectToJson(com);
-                    // Verifying the read data here
-                    System.out.println(json);
+                    System.out.println(com);
                 }
             }
             return communes;
@@ -90,9 +87,7 @@ public class CsvReader {
                     // nextLine[11] is Languages
 
                     cantons.add(c);
-                    String json = JsonWriter.objectToJson(c);
-                    // Verifying the read data here
-                    System.out.println(json);
+                    System.out.println(c);
                 }
             }
             return cantons;
