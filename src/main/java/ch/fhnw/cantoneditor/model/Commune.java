@@ -30,8 +30,14 @@ public class Commune extends BaseModel {
 
     public void setCanton(Canton canton) {
         if (canton != this.canton) {
-            Object oldValue = this.canton;
+            Canton oldValue = this.canton;
+            if (oldValue != null) {
+                oldValue.getCommunes().remove(this);
+            }
             this.canton = canton;
+            if (canton != null) {
+                canton.getCommunes().add(this);
+            }
             this.pcs.firePropertyChange(CANTON_PROPERTY, oldValue, canton);
         }
     }
