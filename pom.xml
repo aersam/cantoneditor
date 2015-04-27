@@ -7,8 +7,6 @@
 	<name>Kanton Editor</name>
 	<description>Is able to edit cantons of Switzerland</description>
 	<build>
-		<sourceDirectory>Ressourcen</sourceDirectory>
-
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -25,6 +23,8 @@
             <groupId>com.db4o</groupId>
             <artifactId>db4o-nodep</artifactId>
             <version>8.1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/db4o-8.1.0-all-java5.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>commons-beanutils</groupId>
