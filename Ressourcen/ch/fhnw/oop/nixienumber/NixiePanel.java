@@ -1,11 +1,9 @@
 package ch.fhnw.oop.nixienumber;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 
 import javax.swing.JPanel;
-
-import net.miginfocom.swing.MigLayout;
+import lib.miglayout.*;
 
 /**
  * @author Dieter Holz

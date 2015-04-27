@@ -21,6 +21,16 @@
 		</plugins>
 	</build>
 	<dependencies>
+	   <dependency>
+            <groupId>com.db4o</groupId>
+            <artifactId>db4o-nodep</artifactId>
+            <version>8.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.9.2</version>
+        </dependency>
 		<dependency>
 			<groupId>net.sf.opencsv</groupId>
 			<artifactId>opencsv</artifactId>
