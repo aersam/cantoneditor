@@ -18,12 +18,10 @@ public class ComputedValueTest {
     @Test
     public void testDependencies() {
         Canton c = Canton.GetById(1, true);
-        ComputedValue<String> comp = new ComputedValue<String>(() -> {
-            String output = c.getName() + " " + c.getCapital();
+        ComputedValue<String> comp = new ComputedValue<String>(() -> c.getName() + " " + c.getCapital());
+        comp.addPropertyChangeListener((evt) -> {
             ComputedValueTest.increaseCounter();
-            return output;
         });
-
         c.setName("Aargau");
         c.setCapital("Aarau");
         // Should return correct value
