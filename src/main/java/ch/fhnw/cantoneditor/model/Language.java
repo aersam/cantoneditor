@@ -19,7 +19,7 @@ public class Language {
     /** A Unique id */
     private final int id;
 
-    /** Creates a new language. Is currently private as new Langauges are not intended */
+    /** Creates a new language. Is currently private as new Languages are not intended to change */
     private Language(int id, String name, String shortcut) {
         this.id = id;
         this.name = name;

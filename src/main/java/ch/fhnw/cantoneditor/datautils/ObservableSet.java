@@ -36,21 +36,25 @@ public class ObservableSet<T> extends BaseModel implements Set<T> {
 
     @Override
     public boolean contains(Object arg0) {
+        ReadObserver.notifyRead(this, null);
         return this.underlyingList.contains(arg0);
     }
 
     @Override
     public boolean containsAll(Collection<?> arg0) {
+        ReadObserver.notifyRead(this, null);
         return this.underlyingList.containsAll(arg0);
     }
 
     @Override
     public boolean isEmpty() {
+        ReadObserver.notifyRead(this, null);
         return this.underlyingList.isEmpty();
     }
 
     @Override
     public Iterator<T> iterator() {
+        ReadObserver.notifyRead(this, null);
         return this.underlyingList.iterator();
     }
 
@@ -77,16 +81,19 @@ public class ObservableSet<T> extends BaseModel implements Set<T> {
 
     @Override
     public int size() {
+        ReadObserver.notifyRead(this, null);
         return underlyingList.size();
     }
 
     @Override
     public Object[] toArray() {
+        ReadObserver.notifyRead(this, null);
         return underlyingList.toArray();
     }
 
     @Override
     public <T> T[] toArray(T[] arg0) {
+        ReadObserver.notifyRead(this, null);
         // TODO Auto-generated method stub
         return underlyingList.toArray(arg0);
     }

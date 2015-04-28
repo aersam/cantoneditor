@@ -77,6 +77,7 @@ public class Canton extends BaseModel {
     }
 
     public String getName() {
+        this.notifyPropertyRead(NAME_PROPERTY);
         return name;
     }
 
@@ -89,6 +90,7 @@ public class Canton extends BaseModel {
     }
 
     public String getShortCut() {
+        this.notifyPropertyRead(SHORTCUT_PROPERTY);
         return shortCut;
     }
 
@@ -101,6 +103,7 @@ public class Canton extends BaseModel {
     }
 
     public int getCantonNr() {
+        this.notifyPropertyRead(CANTONR_PROPERTY);
         return cantonNr;
     }
 
@@ -116,6 +119,7 @@ public class Canton extends BaseModel {
     }
 
     public int getNrCouncilSeats() {
+        this.notifyPropertyRead(NRCOUNCILSEATS_PROPERTY);
         return nrCouncilSeats;
     }
 
@@ -128,6 +132,7 @@ public class Canton extends BaseModel {
     }
 
     public int getEntryYear() {
+        this.notifyPropertyRead(ENTRYYEAR_PROPERTY);
         return entryYear;
     }
 
@@ -140,6 +145,7 @@ public class Canton extends BaseModel {
     }
 
     public double getNrForeigners() {
+        this.notifyPropertyRead(NRFOREIGNERS_PROPERTY);
         return nrForeigners;
     }
 
@@ -156,6 +162,7 @@ public class Canton extends BaseModel {
     }
 
     public String getCapital() {
+        this.notifyPropertyRead(CAPITAL_PROPERTY);
         return capital;
     }
 
@@ -168,6 +175,7 @@ public class Canton extends BaseModel {
     }
 
     public double getArea() {
+        this.notifyPropertyRead(AREA_PROPERTY);
         return area;
     }
 
@@ -180,6 +188,7 @@ public class Canton extends BaseModel {
     }
 
     public double getInHabitantDensity() {
+        this.notifyPropertyRead(INHABITANTDENSITY_PROPERTY);
         return inHabitantDensity;
     }
 
@@ -192,6 +201,7 @@ public class Canton extends BaseModel {
     }
 
     public int getNrCommunes() {
+        this.notifyPropertyRead(NRCOMMUNES_PROPERTY);
         return nrCommunes;
     }
 
@@ -208,6 +218,7 @@ public class Canton extends BaseModel {
     }
 
     public int getNrInhabitants() {
+        this.notifyPropertyRead(NRINHABITANTS_PROPERTY);
         return nrInhabitants;
     }
 
@@ -243,7 +254,7 @@ public class Canton extends BaseModel {
 
     @Override
     public String toString() {
-        return this.name;
+        return this.getName();
     }
 
 }

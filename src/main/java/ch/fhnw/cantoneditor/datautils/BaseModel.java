@@ -15,4 +15,8 @@ public abstract class BaseModel implements PropertyChangeable {
         this.pcs.removePropertyChangeListener(listener);
     }
 
+    protected void notifyPropertyRead(String property) {
+        ReadObserver.notifyRead(this, property);
+    }
+
 }

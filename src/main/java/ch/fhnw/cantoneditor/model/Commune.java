@@ -46,6 +46,7 @@ public class Commune extends BaseModel {
     }
 
     public Canton getCanton() {
+        this.notifyPropertyRead(CANTON_PROPERTY);
         return canton;
     }
 
@@ -64,6 +65,7 @@ public class Commune extends BaseModel {
     }
 
     public int getDistrictNr() {
+        this.notifyPropertyRead(DISTRICTNR_PROPERTY);
         return districtNr;
     }
 
@@ -76,6 +78,7 @@ public class Commune extends BaseModel {
     }
 
     public int getBfsCommuneNr() {
+        this.notifyPropertyRead(BFSCOMMUNENR_PROPERTY);
         return bfsCommuneNr;
     }
 
@@ -91,6 +94,7 @@ public class Commune extends BaseModel {
     }
 
     public String getOfficialName() {
+        this.notifyPropertyRead(OFFICIALNAME_PROPERTY);
         return officialName;
     }
 
@@ -103,6 +107,7 @@ public class Commune extends BaseModel {
     }
 
     public String getName() {
+        this.notifyPropertyRead(NAME_PROPERTY);
         return name;
     }
 
@@ -115,6 +120,7 @@ public class Commune extends BaseModel {
     }
 
     public String getDistrictName() {
+        this.notifyPropertyRead(DISTRICTNAME_PROPERTY);
         return districtName;
     }
 
@@ -127,6 +133,7 @@ public class Commune extends BaseModel {
     }
 
     public Date getLastChanged() {
+        this.notifyPropertyRead(LASTCHANGED_PROPERTY);
         return lastChanged;
     }
 
@@ -162,6 +169,6 @@ public class Commune extends BaseModel {
 
     @Override
     public String toString() {
-        return this.name;
+        return this.getName();
     }
 }
