@@ -18,7 +18,9 @@ public class ComputedValueTest {
     @Test
     public void testDependencies() {
         Canton c = Canton.GetById(1, true);
+
         ComputedValue<String> comp = new ComputedValue<String>(() -> c.getName() + " " + c.getCapital());
+
         comp.addPropertyChangeListener((evt) -> {
             ComputedValueTest.increaseCounter();
         });

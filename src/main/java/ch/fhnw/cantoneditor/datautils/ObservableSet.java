@@ -14,6 +14,16 @@ public class ObservableSet<T> extends BaseModel implements Set<T> {
 
     HashSet<T> underlyingList = new HashSet<T>();
 
+    public ObservableSet() {
+
+    }
+
+    public ObservableSet(Iterable<T> cantons) {
+        for (T c : cantons) {
+            underlyingList.add(c);
+        }
+    }
+
     @Override
     public boolean add(T arg0) {
         boolean add = underlyingList.add(arg0);
