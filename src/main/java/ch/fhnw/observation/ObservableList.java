@@ -2,13 +2,14 @@ package ch.fhnw.observation;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
+import java.util.ListIterator;
 
-/** Wrapper around HashSet with Observability Support */
-public class ObservableSet<T> implements Set<T>, PropertyChangeable {
+/** Wrapper around ArrayList with Observability Support */
+public class ObservableList<T> implements List<T>, PropertyChangeable {
 
     protected final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
@@ -17,16 +18,29 @@ public class ObservableSet<T> implements Set<T>, PropertyChangeable {
     public static final String REMOVE_ACTION = "remove";
     public static final String RESET_ACTION = "reset";
 
-    HashSet<T> underlyingList = new HashSet<T>();
+    ArrayList<T> underlyingList = new ArrayList<T>();
 
-    public ObservableSet() {
+    public ObservableList() {
 
     }
 
-    public ObservableSet(Iterable<T> items) {
+    public ObservableList(Iterable<T> items) {
         for (T c : items) {
             underlyingList.add(c);
         }
+    }
+
+    @Override
+    public void add(int index, T element) {
+        underlyingList.add(index, element);
+        this.pcs.firePropertyChange(ADDED_ACTION, this, element);
+    }
+
+    @Override
+    public boolean addAll(int index, Collection<? extends T> c) {
+        boolean add = underlyingList.addAll(index, c);
+        this.pcs.firePropertyChange(ADDED_ACTION, this, c);
+        return add;
     }
 
     @Override
@@ -81,6 +95,20 @@ public class ObservableSet<T> implements Set<T>, PropertyChangeable {
     }
 
     @Override
+    public T remove(int index) {
+        T removed = this.underlyingList.remove(index);
+        this.pcs.firePropertyChange(REMOVE_ACTION, this, removed);
+        return removed;
+    }
+
+    @Override
+    public T set(int index, T element) {
+        T set = this.underlyingList.set(index, element);
+        this.pcs.firePropertyChange(SET_ACTION, this, element);
+        return set;
+    }
+
+    @Override
     public boolean removeAll(Collection<?> arg0) {
         boolean removed = this.underlyingList.removeAll(arg0);
         this.pcs.firePropertyChange(REMOVE_ACTION, this, arg0);
@@ -121,6 +149,42 @@ public class ObservableSet<T> implements Set<T>, PropertyChangeable {
     /** Remove Change Listener */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         this.pcs.removePropertyChangeListener(listener);
+    }
+
+    @Override
+    public T get(int index) {
+        ReadObserver.notifyRead(this, null);
+        return this.underlyingList.get(index);
+    }
+
+    @Override
+    public int indexOf(Object o) {
+        ReadObserver.notifyRead(this, null);
+        return this.underlyingList.indexOf(o);
+    }
+
+    @Override
+    public int lastIndexOf(Object o) {
+        ReadObserver.notifyRead(this, null);
+        return this.underlyingList.lastIndexOf(o);
+    }
+
+    @Override
+    public ListIterator<T> listIterator() {
+        ReadObserver.notifyRead(this, null);
+        return this.underlyingList.listIterator();
+    }
+
+    @Override
+    public ListIterator<T> listIterator(int index) {
+        ReadObserver.notifyRead(this, null);
+        return this.underlyingList.listIterator(index);
+    }
+
+    @Override
+    public List<T> subList(int fromIndex, int toIndex) {
+        ReadObserver.notifyRead(this, null);
+        return this.underlyingList.subList(fromIndex, toIndex);
     }
 
 }

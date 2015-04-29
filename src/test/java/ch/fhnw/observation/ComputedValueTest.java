@@ -61,13 +61,15 @@ public class ComputedValueTest {
 
     @Test
     public void testSet() {
-        ObservableSet<String> values = new ObservableSet<>();
+        ObservableList<String> values = new ObservableList<>();
         values.add("a");
         values.add("b");
         ComputedValue<String> commaList = new ComputedValue<String>(() -> String.join(",", values));
+        assertEquals(commaList.get(), "a,b");
         commaList.addPropertyChangeListener((evt) -> ComputedValueTest.increaseCounter());
         int oldCount = ComputedValueTest.readCounter;
         values.add("c");
+        assertEquals(commaList.get(), "a,b,c");
         assertTrue(ComputedValueTest.readCounter > oldCount);
     }
 }
