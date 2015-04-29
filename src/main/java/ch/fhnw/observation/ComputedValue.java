@@ -49,7 +49,7 @@ public class ComputedValue<T> implements ValueSubscribable<T> {
         this.writer = write;
     }
 
-    /** Returns true if the property is beeing tracked */
+    /** Returns true if the property is being tracked */
     private boolean isPropertyTracked(Object obj, String propertyName) {
         List<String> properties = dependencies.getOrDefault(obj, null);
         if (properties != null) {

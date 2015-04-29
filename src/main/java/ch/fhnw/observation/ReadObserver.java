@@ -11,7 +11,7 @@ import java.util.Map;
  * */
 public class ReadObserver {
 
-    /** The dependencies that are currently beeing observed */
+    /** The dependencies that are currently being observed */
     private static Map<PropertyChangeable, List<String>> trackedReads = new HashMap<PropertyChangeable, List<String>>();
 
     /** A boolean indicating whether it is necessary to track Reads currently */
@@ -35,7 +35,7 @@ public class ReadObserver {
      * Start observing reads of properties. If false is returned, no reads are tracked! Do not call
      * endObserve in such a case
      */
-    public static boolean startObserving() {
+    /* package */static boolean startObserving() {
         if (isObserving)
             return false;
         isObserving = true;
@@ -44,7 +44,7 @@ public class ReadObserver {
     }
 
     /** End of observing */
-    public static Map<PropertyChangeable, List<String>> endObserve() {
+    /* package */static Map<PropertyChangeable, List<String>> endObserve() {
         Map<PropertyChangeable, List<String>> trackedReads = ReadObserver.trackedReads;
         ReadObserver.trackedReads = null;
         isObserving = false;
