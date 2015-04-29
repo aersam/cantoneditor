@@ -1,4 +1,4 @@
-package ch.fhnw.cantoneditor.datautils;
+package ch.fhnw.observation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -43,4 +43,20 @@ public class ComputedValueTest {
         comp.get();
         assertEquals(oldReadCount, ComputedValueTest.readCounter);
     }
+
+    @Test
+    public void testNested() {
+        Canton c = Canton.CreateNew();
+        ComputedValue<String> comp1 = new ComputedValue<String>(c::getName);
+        ComputedValue<String> comp2 = new ComputedValue<String>(comp1::get);
+        c.setName("asdf");
+        assertEquals(comp1.get(), c.getName());
+        assertEquals(comp2.get(), c.getName());
+
+        comp2.addPropertyChangeListener((evt) -> ComputedValueTest.increaseCounter());
+        int oldCount = ComputedValueTest.readCounter;
+        c.setName("newstring");
+        assertTrue(ComputedValueTest.readCounter > oldCount);
+    }
+
 }

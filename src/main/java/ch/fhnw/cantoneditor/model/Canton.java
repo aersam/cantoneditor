@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ch.fhnw.cantoneditor.datautils.BaseModel;
-import ch.fhnw.cantoneditor.datautils.ObservableSet;
+import ch.fhnw.observation.ObservableSet;
 
 public class Canton extends BaseModel {
     public static final String NAME_PROPERTY = "name";

@@ -1,11 +1,15 @@
-package ch.fhnw.cantoneditor.datautils;
+package ch.fhnw.observation;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class ObservableSet<T> extends BaseModel implements Set<T> {
+public class ObservableSet<T> implements Set<T>, PropertyChangeable {
+
+    protected final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     public static final String SET_ACTION = "set";
     public static final String ADDED_ACTION = "add";
@@ -106,6 +110,16 @@ public class ObservableSet<T> extends BaseModel implements Set<T> {
         ReadObserver.notifyRead(this, null);
         // TODO Auto-generated method stub
         return underlyingList.toArray(arg0);
+    }
+
+    /** Listen to changes made to this Set */
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.addPropertyChangeListener(listener);
+    }
+
+    /** Remove Change Listener */
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.removePropertyChangeListener(listener);
     }
 
 }

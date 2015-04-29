@@ -1,4 +1,4 @@
-package ch.fhnw.cantoneditor.datautils;
+package ch.fhnw.observation;
 
 import java.util.ArrayList;
 import java.util.HashMap;

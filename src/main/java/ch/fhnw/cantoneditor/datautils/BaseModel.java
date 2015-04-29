@@ -3,6 +3,9 @@ package ch.fhnw.cantoneditor.datautils;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+import ch.fhnw.observation.PropertyChangeable;
+import ch.fhnw.observation.ReadObserver;
+
 /** A base class for PropertyChangeable Support. */
 public abstract class BaseModel implements PropertyChangeable {
 

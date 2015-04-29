@@ -1,4 +1,4 @@
-package ch.fhnw.cantoneditor.datautils;
+package ch.fhnw.observation;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /** A class for handling computed values with support for automatic Dependency Resolving */
-public class ComputedValue<T> implements PropertyChangeable, Supplier<T>, Consumer<T> {
+public class ComputedValue<T> implements ValueSubscribable<T> {
     protected final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     /** The access function */
@@ -64,8 +64,10 @@ public class ComputedValue<T> implements PropertyChangeable, Supplier<T>, Consum
             return;
 
         T oldValue = this.lastValue;
-        T newValue = this.getValueAndObserve();
-        this.lastValue = newValue;
+        if (!this.getValueAndObserve()) {
+            dependencies = null;
+        }
+        T newValue = this.lastValue;
         boolean isSame = newValue == null ? oldValue == null : newValue.equals(oldValue);
         if (!isSame) {
             this.pcs.firePropertyChange(null, oldValue, newValue);
@@ -104,28 +106,38 @@ public class ComputedValue<T> implements PropertyChangeable, Supplier<T>, Consum
     }
 
     /** Gets the value and observes changes and dependencies */
-    private T getValueAndObserve() {
+    private boolean getValueAndObserve() {
         if (ReadObserver.startObserving()) {
             lastValue = reader.get();
             this.setDependenciesAndTrack(ReadObserver.endObserve());
-
+            return true;
         }
-        return lastValue;
+        lastValue = reader.get();
+        return false;
     }
 
     /** Gets the value */
     public T get() {
-        if (dependencies == null)
-            return this.getValueAndObserve();
+        if (dependencies == null) {
+            this.getValueAndObserve();
+        }
+        ReadObserver.notifyRead(this, null);
         return lastValue;
     }
 
     /** Writes the value */
-    @Override
-    public void accept(T t) {
+    public void set(T t) {
         if (writer == null)
             throw new IllegalAccessError("writer must be set in order to use this!");
         writer.accept(t);
+    }
+
+    @Override
+    public String toString() {
+        T value = this.get();
+        if (value == null)
+            return null;
+        return value.toString();
     }
 
 }
