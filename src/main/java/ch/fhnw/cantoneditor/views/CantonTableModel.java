@@ -2,6 +2,7 @@ package ch.fhnw.cantoneditor.views;
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import javax.swing.table.DefaultTableModel;
@@ -15,6 +16,7 @@ public class CantonTableModel extends DefaultTableModel {
 
     final List<Canton> cantons;
     private final ValueSubscribable[][] values;
+    private final Function[][] valueConverter;
 
     public CantonTableModel(List<Canton> cantons) {
 
@@ -25,14 +27,19 @@ public class CantonTableModel extends DefaultTableModel {
                 TranslationManager.getInstance().Translate("CantonInhabitants", "Inhabitants"),
                 TranslationManager.getInstance().Translate("CantonArea", "Area") }, cantons.size());
         values = new ValueSubscribable[cantons.size()][6];
+        valueConverter = new Function[cantons.size()][6];
         this.cantons = cantons;
     }
 
-    private <T> ComputedValue<T> getValue(int row, int column, Supplier<T> getFunction, Consumer<T> writer) {
+    private <T> ValueSubscribable<?> getValue(int row, int column, Supplier<T> getFunction, Consumer<T> writer,
+            Function<String, T> toString) {
+        if (values[row][column] != null)
+            return values[row][column];
         ComputedValue<T> value = new ComputedValue<T>(getFunction, writer);
         value.addPropertyChangeListener((evt) -> {
             this.fireTableCellUpdated(row, column);
         });
+        valueConverter[row][column] = toString;
         values[row][column] = value;
         return value;
     }
@@ -45,8 +52,11 @@ public class CantonTableModel extends DefaultTableModel {
     @Override
     public void setValueAt(Object aValue, int row, int column) {
         // TODO Auto-generated method stub
-        values[row][column].set(aValue);
-
+        Function converter = valueConverter[row][column];
+        if (converter == null)
+            values[row][column].set(aValue);
+        else
+            values[row][column].set(converter.apply(aValue));
     }
 
     @Override
@@ -67,17 +77,19 @@ public class CantonTableModel extends DefaultTableModel {
                             cnt.setName(name);
                         if (shortcut != null)
                             cnt.setShortCut(shortcut);
-                    });
+                    }, null);
         else if (column == 1)
-            return getValue(row, column, cantons.get(row)::getName, cantons.get(row)::setName);
+            return getValue(row, column, cantons.get(row)::getName, cantons.get(row)::setName, null);
         else if (column == 2)
-            return getValue(row, column, cantons.get(row)::getShortCut, cantons.get(row)::setShortCut);
+            return getValue(row, column, cantons.get(row)::getShortCut, cantons.get(row)::setShortCut, null);
         else if (column == 3)
-            return getValue(row, column, cantons.get(row)::getEntryYear, cantons.get(row)::setEntryYear);
+            return getValue(row, column, cantons.get(row)::getEntryYear, cantons.get(row)::setEntryYear,
+                    Integer::parseInt);
         else if (column == 4)
-            return getValue(row, column, cantons.get(row)::getNrInhabitants, cantons.get(row)::setNrInhabitants);
+            return getValue(row, column, cantons.get(row)::getNrInhabitants, cantons.get(row)::setNrInhabitants,
+                    Integer::parseInt);
         else if (column == 5)
-            return getValue(row, column, cantons.get(row)::getArea, cantons.get(row)::setArea);
+            return getValue(row, column, cantons.get(row)::getArea, cantons.get(row)::setArea, Double::parseDouble);
         return null;
     }
 }
