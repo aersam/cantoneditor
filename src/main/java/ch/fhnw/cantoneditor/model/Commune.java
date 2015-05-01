@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ch.fhnw.cantoneditor.datautils.BaseModel;
+import ch.fhnw.cantoneditor.datautils.DB4OConnector;
 
 public class Commune extends BaseModel {
 
@@ -19,7 +20,7 @@ public class Commune extends BaseModel {
     public static final String CANTON_PROPERTY = "canton";
 
     private int districtNr;
-    private int bfsCommuneNr;
+
     private String officialName;
     private String name;
     private String districtName;
@@ -32,7 +33,7 @@ public class Commune extends BaseModel {
         if (bfsCommuneNr != 0) {
             communes.put(bfsCommuneNr, this);
         }
-        this.bfsCommuneNr = bfsCommuneNr;
+        this.id = bfsCommuneNr;
     }
 
     public static Commune GetById(int bfsCommuneNr, boolean createIfNotExists) {
@@ -43,6 +44,19 @@ public class Commune extends BaseModel {
             return c;
         }
         return null;
+    }
+
+    private boolean isInited = false;
+
+    public void init() {
+        if (isInited)
+            return;
+        isInited = true;
+        this.addPropertyChangeListener((evt) -> {
+            if (this.id != 0) {
+                DB4OConnector.markChanged(this);
+            }
+        });
     }
 
     public Canton getCanton() {
@@ -74,22 +88,6 @@ public class Commune extends BaseModel {
             Object oldValue = this.districtNr;
             this.districtNr = districtNr;
             this.pcs.firePropertyChange(DISTRICTNR_PROPERTY, oldValue, districtNr);
-        }
-    }
-
-    public int getBfsCommuneNr() {
-        this.notifyPropertyRead(BFSCOMMUNENR_PROPERTY);
-        return bfsCommuneNr;
-    }
-
-    public void setBfsCommuneNr(int bfsCommuneNr) {
-        if (bfsCommuneNr != this.bfsCommuneNr) {
-            if (this.bfsCommuneNr != 0) {
-                throw new IllegalAccessError("Cannot change a Primary Key!");
-            }
-            Object oldValue = this.bfsCommuneNr;
-            this.bfsCommuneNr = bfsCommuneNr;
-            this.pcs.firePropertyChange(BFSCOMMUNENR_PROPERTY, oldValue, bfsCommuneNr);
         }
     }
 
@@ -147,8 +145,8 @@ public class Commune extends BaseModel {
 
     @Override
     public int hashCode() {
-        if (this.bfsCommuneNr != 0) { // Not a newly created object
-            return this.bfsCommuneNr;// Primary Key
+        if (this.id != 0) { // Not a newly created object
+            return this.id;// Primary Key
         }
         return super.hashCode();
     }
@@ -159,10 +157,10 @@ public class Commune extends BaseModel {
             return true;
         if (obj == null)
             return false;
-        if (this.bfsCommuneNr == 0)
+        if (this.id == 0)
             return false;// Two newly created Communes are newer the same
         if (obj instanceof Commune) {
-            return ((Commune) obj).getBfsCommuneNr() == this.bfsCommuneNr;
+            return ((Commune) obj).getId() == this.id;
         }
         return false;
     };
