@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 import javax.swing.table.DefaultTableModel;
 
 import ch.fhnw.cantoneditor.model.Canton;
+import ch.fhnw.command.CommandController;
 import ch.fhnw.observation.ComputedValue;
 import ch.fhnw.observation.ValueSubscribable;
 
@@ -53,10 +54,11 @@ public class CantonTableModel extends DefaultTableModel {
     public void setValueAt(Object aValue, int row, int column) {
         // TODO Auto-generated method stub
         Function converter = valueConverter[row][column];
-        if (converter == null)
-            values[row][column].set(aValue);
-        else
-            values[row][column].set(converter.apply(aValue));
+        if (converter == null) {
+            CommandController.getDefault().executePropertySet(aValue, values[row][column]);
+        } else {
+            CommandController.getDefault().executePropertySet(converter.apply(aValue), values[row][column]);
+        }
     }
 
     @Override
