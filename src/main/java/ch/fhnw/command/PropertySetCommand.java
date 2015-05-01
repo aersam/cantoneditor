@@ -4,7 +4,7 @@ import java.security.AccessControlException;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import ch.fhnw.observation.ComputedValue;
+import ch.fhnw.observation.ReadObserver;
 import ch.fhnw.observation.ValueSubscribable;
 
 /** A simple command that sets a Property of an Object */
@@ -30,19 +30,24 @@ public class PropertySetCommand<T> implements Executable {
         this.setValueFunction = setFunction;
     }
 
-    /** A simple helper to execute a set on a ObservableValue or on a ObservableComputed */
-    public static <T> PropertySetCommand<T> executePropertySet(T newValue, ValueSubscribable<T> toSet) {
-        return new PropertySetCommand<T>(newValue, toSet, toSet::set);
+    /**
+     * Creates a new PropertySetCommand with the newValue from a ObservableValue or on a
+     * ObservableComputed
+     */
+    public PropertySetCommand(T newValue, ValueSubscribable<T> toSet) {
+        this.newValue = newValue;
+        this.getValueFunction = toSet;
+        this.setValueFunction = toSet::set;
     }
 
     /** Sets the property and reads the old value to be able to undo it */
     public boolean execute() {
         this.hasBeenExecuted = true;
-        if (this.getValueFunction instanceof ComputedValue<?>) {
-            this.oldValue = ((ComputedValue<T>) this.getValueFunction).peek();
-        } else {
+
+        // We do just want the old value and are not interested in too many events here
+        ReadObserver.ignoreDependencies((isO) -> {
             this.oldValue = this.getValueFunction.get();
-        }
+        });
         if (this.oldValue != null ? this.oldValue.equals(this.newValue) : this.newValue == null) {
             // Values are identical -> Do nothing
             return false;

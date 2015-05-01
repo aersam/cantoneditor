@@ -9,6 +9,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import ch.fhnw.cantoneditor.datautils.CsvReader;
@@ -32,9 +33,12 @@ public class Overview {
         for (Canton c : CsvReader.readCantons()) {
             cantons.add(c);
         }
+
+        // WHY doesnt it show headers?
         JTable table = new JTable(new CantonTableModel(cantons));
+        JScrollPane scroller = new JScrollPane(table);
         manager.reset();
-        manager.setX(0).setY(1).setComp(table);
+        manager.setX(0).setY(1).setComp(scroller);
         JButton undoButton = new JButton(tm.Translate("Undo", "Undo"));
         JButton redoButton = new JButton(tm.Translate("Redo", "Redo"));
 

@@ -52,7 +52,7 @@ public class CommandController implements PropertyChangeable {
      * short cut for execute(new PropertySetCommand...)
      */
     public <T> void executePropertySet(T newValue, ValueSubscribable<T> toSet) {
-        execute(new PropertySetCommand<T>(newValue, toSet, toSet::set));
+        execute(new PropertySetCommand<T>(newValue, toSet));
     }
 
     /** Executes a command and saves it for undo */

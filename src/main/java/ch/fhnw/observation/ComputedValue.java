@@ -116,14 +116,6 @@ public class ComputedValue<T> implements ValueSubscribable<T>, Disposable {
         return false;
     }
 
-    /** Gets the value but does not create a dependency on it. You usually want to prefer get() */
-    public T peek() {
-        if (dependencies == null) {
-            this.getValueAndObserve();
-        }
-        return lastValue;
-    }
-
     /** Gets the value */
     public T get() {
         if (dependencies == null) {
