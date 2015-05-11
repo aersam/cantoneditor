@@ -15,7 +15,18 @@ public class ReadObserver {
     private static Map<PropertyChangeable, List<String>> trackedReads = new HashMap<PropertyChangeable, List<String>>();
 
     /** A boolean indicating whether it is necessary to track Reads currently */
-    private static boolean isObserving = false;
+    private static volatile boolean isObserving = false;
+
+    /**
+     * Executes the function without creating any dependencies on accessed objects. Retrieves a
+     * boolean whether or not this was called in a computed context.
+     */
+    public static void ignoreDependencies(java.util.function.Consumer<Boolean> execute) {
+        boolean oldIsObserving = isObserving;
+        isObserving = false;
+        execute.accept(oldIsObserving);
+        isObserving = oldIsObserving;
+    }
 
     /** Notify about read access to a property. The property can be null to read all properties */
     public static void notifyRead(PropertyChangeable object, String property) {

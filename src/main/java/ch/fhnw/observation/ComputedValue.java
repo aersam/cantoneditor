@@ -9,8 +9,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /** A class for handling computed values with support for automatic Dependency Resolving */
-public class ComputedValue<T> implements ValueSubscribable<T> {
-    protected final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+public class ComputedValue<T> implements ValueSubscribable<T>, Disposable {
+    protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     /** The access function */
     private final Supplier<T> reader;
@@ -138,6 +138,13 @@ public class ComputedValue<T> implements ValueSubscribable<T> {
         if (value == null)
             return null;
         return value.toString();
+    }
+
+    /** Unsubscribes dependencies. Do not access this object anymore */
+    @Override
+    public void dispose() {
+        this.setDependenciesAndTrack(null);
+        this.pcs = null;
     }
 
 }

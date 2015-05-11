@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ch.fhnw.cantoneditor.datautils.BaseModel;
+import ch.fhnw.cantoneditor.datautils.DB4OConnector;
 import ch.fhnw.observation.ObservableSet;
 
 public class Canton extends BaseModel {
     public static final String NAME_PROPERTY = "name";
     public static final String SHORTCUT_PROPERTY = "shortCut";
-    public static final String CANTONR_PROPERTY = "cantonNr";
     public static final String NRCOUNCILSEATS_PROPERTY = "nrCouncilSeats";
     public static final String ENTRYYEAR_PROPERTY = "entryYear";
     public static final String NRFOREIGNERS_PROPERTY = "nrForeigners";
@@ -40,12 +40,26 @@ public class Canton extends BaseModel {
 
     private static Map<Integer, Canton> cantons = new HashMap<Integer, Canton>();
 
+    private boolean isInited = false;
+
     private Canton(int nr) {
+
         this.cantonNr = nr;
         if (nr != 0) { // Special for new entries without
             cantons.put(cantonNr, this);
-        }
 
+        }
+    }
+
+    public void init() {
+        if (isInited)
+            return;
+        isInited = true;
+        this.addPropertyChangeListener((evt) -> {
+            if (this.cantonNr != 0) {
+                DB4OConnector.markChanged(this);
+            }
+        });
     }
 
     public static Canton CreateNew() {
@@ -99,22 +113,6 @@ public class Canton extends BaseModel {
             Object oldValue = this.shortCut;
             this.shortCut = shortCut;
             this.pcs.firePropertyChange(SHORTCUT_PROPERTY, oldValue, shortCut);
-        }
-    }
-
-    public int getCantonNr() {
-        this.notifyPropertyRead(CANTONR_PROPERTY);
-        return cantonNr;
-    }
-
-    public void setCantonNr(int cantonNr) {
-
-        if (cantonNr != this.cantonNr) {
-            if (this.cantonNr != 0)
-                throw new IllegalAccessError("Cannot change primary key!");
-            Object oldValue = this.cantonNr;
-            this.cantonNr = cantonNr;
-            this.pcs.firePropertyChange(CANTONR_PROPERTY, oldValue, cantonNr);
         }
     }
 
@@ -247,7 +245,7 @@ public class Canton extends BaseModel {
         if (this.cantonNr == 0)
             return false;// Two newly created Communes are newer the same
         if (obj instanceof Canton) {
-            return ((Canton) obj).getCantonNr() == this.cantonNr;
+            return ((Canton) obj).getId() == this.id;
         }
         return false;
     };
