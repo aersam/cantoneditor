@@ -1,6 +1,6 @@
 package ch.fhnw.cantoneditor.views;
 
-import java.awt.GridBagConstraints;
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -21,13 +22,15 @@ import ch.fhnw.cantoneditor.libs.GridBagManager;
 import ch.fhnw.cantoneditor.model.Canton;
 import ch.fhnw.command.CommandController;
 import ch.fhnw.observation.ComputedValue;
+import ch.fhnw.oop.led.Led;
+import ch.fhnw.oop.splitflap.SplitFlap;
 
 public class Overview {
     private TranslationManager tm = TranslationManager.getInstance();
 
     public void show() throws IOException {
-<<<<<<< HEAD
-//        JFrame.setDefaultLookAndFeelDecorated(true);
+        // JFrame.setDefaultLookAndFeelDecorated(true);
+
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
@@ -35,11 +38,9 @@ public class Overview {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-=======
 
->>>>>>> origin/master
         JFrame frame = new JFrame(tm.Translate("OverviewTitle"));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         frame.addWindowListener(new WindowAdapter() {
 
@@ -66,13 +67,9 @@ public class Overview {
         // WHY doesnt it show headers?
         List<Canton> cantons = DB4OConnector.getAll(Canton.class);
         JTable table = new JTable(new CantonTableModel(cantons));
-<<<<<<< HEAD
-        frame.setBounds(new Rectangle(500, 200));
-        frame.add(table);
-=======
+        table.setMinimumSize(new Dimension(400, 400));
         JScrollPane scroller = new JScrollPane(table);
-        manager.reset();
-        manager.setX(0).setY(1).setComp(scroller);
+
         JButton undoButton = new JButton(tm.Translate("Undo", "Undo"));
         JButton redoButton = new JButton(tm.Translate("Redo", "Redo"));
 
@@ -86,14 +83,139 @@ public class Overview {
         undoButton.addActionListener((e) -> CommandController.getDefault().undo());
         redoButton.addActionListener((e) -> CommandController.getDefault().redo());
 
-        manager.reset().setX(0).setY(0).setComp(undoButton);
-        manager.reset().setX(1).setY(0).setComp(redoButton);
+        manager.setWeightX(0).setX(0).setY(0).setComp(undoButton);
+        manager.setWeightX(0).setX(1).setY(0).setComp(redoButton);
 
-        pane.add(table, new GridBagConstraints());
+        manager.setWidth(1).setX(0).setY(1).setComp(scroller);
+        manager.setWeightX(1).setWidth(3).setWidth(3).setX(0).setY(2).setComp(initInhabitantsAndAreaDisplay());
+
         frame.add(pane);
-        // frame.setBounds(new Rectangle(500, 200));
         frame.pack();
->>>>>>> origin/master
+
         frame.setVisible(true);
+    }
+
+    private JPanel initControlPanel() {
+        JPanel controlPanel = new JPanel();
+        GridBagManager localGbm = new GridBagManager(controlPanel);
+
+        return controlPanel;
+    }
+
+    /**
+     * Creates the lower part of the Frame, which contains the flap display to show the number of
+     * citizen and the area
+     */
+    private JPanel initInhabitantsAndAreaDisplay() {
+        String[] nums = new String[] { "", "'", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+        JPanel inhabPanel = new JPanel();
+        GridBagManager localGbm = new GridBagManager(inhabPanel);
+        // inhabPanel.setVisible(true);
+
+        // Upper half of flaps
+        SplitFlap InhabitantsFlap0 = new SplitFlap();
+        InhabitantsFlap0.setSelection(nums);
+        InhabitantsFlap0.setSize(20, 20);
+        SplitFlap InhabitantsFlap1 = new SplitFlap();
+        InhabitantsFlap1.setSelection(nums);
+        InhabitantsFlap0.setSize(20, 20);
+        SplitFlap InhabitantsFlap2 = new SplitFlap();
+        InhabitantsFlap2.setSelection(nums);
+        InhabitantsFlap0.setSize(20, 20);
+        SplitFlap InhabitantsFlap3 = new SplitFlap();
+        InhabitantsFlap3.setSelection(nums);
+        InhabitantsFlap0.setSize(20, 20);
+        SplitFlap InhabitantsFlap4 = new SplitFlap();
+        InhabitantsFlap4.setSelection(nums);
+        InhabitantsFlap0.setSize(20, 20);
+        SplitFlap InhabitantsFlap5 = new SplitFlap();
+        InhabitantsFlap5.setSelection(nums);
+        InhabitantsFlap0.setSize(20, 20);
+        SplitFlap InhabitantsFlap6 = new SplitFlap();
+        InhabitantsFlap6.setSelection(nums);
+        InhabitantsFlap0.setSize(20, 20);
+        SplitFlap InhabitantsFlap7 = new SplitFlap();
+        InhabitantsFlap7.setSelection(nums);
+        InhabitantsFlap0.setSize(20, 20);
+        SplitFlap InhabitantsFlap8 = new SplitFlap();
+        InhabitantsFlap8.setSelection(nums);
+        InhabitantsFlap0.setSize(20, 20);
+        SplitFlap InhabitantsFlap9 = new SplitFlap();
+        InhabitantsFlap9.setSelection(nums);
+        InhabitantsFlap0.setSize(20, 20);
+        // Lower half of flap
+        SplitFlap areaFlap0 = new SplitFlap();
+        areaFlap0.setSelection(nums);
+        areaFlap0.setSize(20, 20);
+        SplitFlap areaFlap1 = new SplitFlap();
+        areaFlap0.setSelection(nums);
+        areaFlap1.setSize(20, 20);
+        SplitFlap areaFlap2 = new SplitFlap();
+        areaFlap0.setSelection(nums);
+        areaFlap2.setSize(20, 20);
+        SplitFlap areaFlap3 = new SplitFlap();
+        areaFlap0.setSelection(nums);
+        areaFlap3.setSize(20, 20);
+        SplitFlap areaFlap4 = new SplitFlap();
+        areaFlap0.setSelection(nums);
+        areaFlap4.setSize(20, 20);
+        SplitFlap areaFlap5 = new SplitFlap();
+        areaFlap0.setSelection(nums);
+        areaFlap5.setSize(20, 20);
+        SplitFlap areaFlap6 = new SplitFlap();
+        areaFlap0.setSelection(nums);
+        areaFlap6.setSize(20, 20);
+        SplitFlap areaFlap7 = new SplitFlap();
+        areaFlap0.setSelection(nums);
+        areaFlap7.setSize(20, 20);
+        SplitFlap areaFlap8 = new SplitFlap();
+        areaFlap0.setSelection(nums);
+        areaFlap8.setSize(20, 20);
+        SplitFlap areaFlap9 = new SplitFlap();
+        areaFlap0.setSelection(nums);
+        areaFlap9.setSize(20, 20);
+
+        int x = 0;
+        int y = 0;
+
+        localGbm.setWeightX(1.0).setX(x++).setY(y).setComp(new JLabel(""));
+        for (int i = 0; i < 26; i++) {
+            Led led = new Led();
+            led.init(5, 5);
+            inhabPanel.add(led);
+            // localGbm.setWeightX(0).setWeightY(0).setX(x++).setY(y).setComp(led);
+        }
+
+        // led.setSize(1, 1);
+        // led.setMinimumSize(new Dimension(3, 3));
+
+        y++;
+        x = 0;
+        localGbm.setWeightX(1.0).setX(x++).setY(y).setComp(new JLabel(""));
+        localGbm.setX(x++).setY(y).setComp(InhabitantsFlap0);
+        localGbm.setX(x++).setY(y).setComp(InhabitantsFlap1);
+        localGbm.setX(x++).setY(y).setComp(InhabitantsFlap2);
+        localGbm.setX(x++).setY(y).setComp(InhabitantsFlap3);
+        localGbm.setX(x++).setY(y).setComp(InhabitantsFlap4);
+        localGbm.setX(x++).setY(y).setComp(InhabitantsFlap5);
+        localGbm.setX(x++).setY(y).setComp(InhabitantsFlap6);
+        localGbm.setX(x++).setY(y).setComp(InhabitantsFlap7);
+        localGbm.setX(x++).setY(y).setComp(InhabitantsFlap8);
+        localGbm.setX(x++).setY(y).setComp(InhabitantsFlap9);
+        y++;
+        x = 0;
+        localGbm.setWeightX(1.0).setX(x++).setY(y).setComp(new JLabel(""));
+        localGbm.setX(x++).setY(y).setComp(areaFlap0);
+        localGbm.setX(x++).setY(y).setComp(areaFlap1);
+        localGbm.setX(x++).setY(y).setComp(areaFlap2);
+        localGbm.setX(x++).setY(y).setComp(areaFlap3);
+        localGbm.setX(x++).setY(y).setComp(areaFlap4);
+        localGbm.setX(x++).setY(y).setComp(areaFlap5);
+        localGbm.setX(x++).setY(y).setComp(areaFlap6);
+        localGbm.setX(x++).setY(y).setComp(areaFlap7);
+        localGbm.setX(x++).setY(y).setComp(areaFlap8);
+        localGbm.setX(x++).setY(y).setComp(areaFlap9);
+
+        return inhabPanel;
     }
 }

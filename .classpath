@@ -18,5 +18,15 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="Ressourcen/lib/miglayout/miglayout-core-4.2-sources.jar"/>
+	<classpathentry kind="lib" path="Ressourcen/lib/miglayout/miglayout-core-4.2.jar"/>
+	<classpathentry kind="lib" path="Ressourcen/lib/miglayout/miglayout-swing-4.2-javadoc.jar"/>
+	<classpathentry kind="lib" path="Ressourcen/lib/miglayout/miglayout-swing-4.2-sources.jar"/>
+	<classpathentry kind="lib" path="Ressourcen/lib/miglayout/miglayout-swing-4.2.jar"/>
+	<classpathentry kind="lib" path="Ressourcen/lib/JTattoo.jar"/>
+	<classpathentry kind="lib" path="Ressourcen/lib/synthetica.jar"/>
+	<classpathentry kind="lib" path="Ressourcen/lib/syntheticaAluOxide.jar"/>
+	<classpathentry kind="lib" path="Ressourcen/lib/syntheticaBlackEye.jar"/>
+	<classpathentry kind="lib" path="Ressourcen/lib/timingframework-classic-1.1.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

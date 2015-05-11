@@ -1,7 +1,5 @@
 package ch.fhnw.cantoneditor.main;
 
-<<<<<<< HEAD
-=======
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
@@ -11,7 +9,6 @@ import ch.fhnw.cantoneditor.datautils.DB4OConnector;
 import ch.fhnw.cantoneditor.datautils.NoDataFoundException;
 import ch.fhnw.cantoneditor.model.Canton;
 import ch.fhnw.cantoneditor.model.Commune;
->>>>>>> origin/master
 import ch.fhnw.cantoneditor.views.Overview;
 
 public class Program {
