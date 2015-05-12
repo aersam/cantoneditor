@@ -9,7 +9,7 @@ import ch.fhnw.cantoneditor.datautils.DB4OConnector;
 import ch.fhnw.cantoneditor.datautils.NoDataFoundException;
 import ch.fhnw.cantoneditor.model.Canton;
 import ch.fhnw.cantoneditor.model.Commune;
-import ch.fhnw.cantoneditor.views.Overview;
+import ch.fhnw.cantoneditor.views.Overview2;
 
 public class Program {
 
@@ -17,7 +17,7 @@ public class Program {
         try {
             loadData();
 
-            Overview v = new Overview();
+            Overview2 v = new Overview2();
             v.show();
         } catch (Exception err) {
             err.printStackTrace();
