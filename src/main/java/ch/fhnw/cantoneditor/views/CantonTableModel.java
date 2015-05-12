@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 import ch.fhnw.cantoneditor.model.Canton;
@@ -32,6 +33,11 @@ public class CantonTableModel extends DefaultTableModel implements Disposable {
         values = new ValueSubscribable[cantons.size()][6];
         valueConverter = new Function[cantons.size()][6];
         this.cantons = cantons;
+
+    }
+
+    public ListSelectionModel getSelectionModel() {
+        return new CantonTableSelectionModel(this);
     }
 
     private <T> ValueSubscribable<?> getValue(int row, int column, Supplier<T> getFunction, Consumer<T> writer,

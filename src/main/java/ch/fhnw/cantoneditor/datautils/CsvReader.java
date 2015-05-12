@@ -71,7 +71,7 @@ public class CsvReader {
                     c.setNrForeigners(Double.parseDouble(nextLine[7].replace("'", "")));
                     c.setArea(Double.parseDouble(nextLine[8].replace("'", "")));
                     c.setInHabitantDensity(Double.parseDouble(nextLine[9].replace("'", "")));
-                    c.setNrCommunes(Integer.parseInt(nextLine[10].replace("'", "")));
+
                     String[] lngStrings = nextLine[11].split(",");
                     for (String s : lngStrings) {
                         if (s.trim().equals(Language.German.getName())) {

@@ -64,7 +64,14 @@ public class DB4OConnector {
     public static <T extends BaseModel> List<T> getAll(Class<T> clazz) {
         List<T> items = db.query(clazz);
         if (clazz == Canton.class) {
+            int maxId = 0;
             for (T c : items) {
+                if (c.getId() > maxId) {
+                    maxId = c.getId();
+                } else if (c.getId() == 0) {
+                    c.setId(maxId + 1);
+                    maxId++;
+                }
                 ((Canton) c).init();
             }
         }

@@ -22,7 +22,7 @@ public class Canton extends BaseModel {
 
     private String name;
     private String shortCut;
-    private int cantonNr;
+
     private int nrCouncilSeats;
     private int entryYear;
     private double nrForeigners;
@@ -44,9 +44,9 @@ public class Canton extends BaseModel {
 
     private Canton(int nr) {
 
-        this.cantonNr = nr;
+        this.id = nr;
         if (nr != 0) { // Special for new entries without
-            cantons.put(cantonNr, this);
+            cantons.put(id, this);
 
         }
     }
@@ -56,7 +56,7 @@ public class Canton extends BaseModel {
             return;
         isInited = true;
         this.addPropertyChangeListener((evt) -> {
-            if (this.cantonNr != 0) {
+            if (this.id != 0) {
                 DB4OConnector.markChanged(this);
             }
         });
@@ -199,16 +199,7 @@ public class Canton extends BaseModel {
     }
 
     public int getNrCommunes() {
-        this.notifyPropertyRead(NRCOMMUNES_PROPERTY);
-        return nrCommunes;
-    }
-
-    public void setNrCommunes(int nrCommunes) {
-        if (nrCommunes != this.nrCommunes) {
-            Object oldValue = this.nrCommunes;
-            this.nrCommunes = nrCommunes;
-            this.pcs.firePropertyChange(NRCOMMUNES_PROPERTY, oldValue, nrCommunes);
-        }
+        return this.communes.size();
     }
 
     public ObservableSet<Commune> getCommunes() {
@@ -230,8 +221,8 @@ public class Canton extends BaseModel {
 
     @Override
     public int hashCode() {
-        if (this.cantonNr != 0) { // Not a newly created object
-            return this.cantonNr;// Primary Key
+        if (this.id != 0) { // Not a newly created object
+            return this.id;// Primary Key
         }
         return super.hashCode();
     }
@@ -242,7 +233,7 @@ public class Canton extends BaseModel {
             return true;
         if (obj == null)
             return false;
-        if (this.cantonNr == 0)
+        if (this.id == 0)
             return false;// Two newly created Communes are newer the same
         if (obj instanceof Canton) {
             return ((Canton) obj).getId() == this.id;

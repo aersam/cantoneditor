@@ -18,6 +18,8 @@ public class CommandController implements PropertyChangeable {
 
     private static CommandController defaultController;
 
+    private boolean isUndoing = false;
+
     /**
      * Use this method to get the default CommandController which should be used to implement
      * undo/redo on application level
@@ -57,6 +59,8 @@ public class CommandController implements PropertyChangeable {
 
     /** Executes a command and saves it for undo */
     public void execute(Executable cmd) {
+        if (isUndoing)
+            return;
         if (cmd.execute()) {
             boolean hadRedoCommands = !this.redoCommands.empty();
 
@@ -73,11 +77,14 @@ public class CommandController implements PropertyChangeable {
         if (this.doneCommands.empty())
             return false;
         Executable cmd = this.doneCommands.pop();
+        isUndoing = true;
         cmd.undo();
         this.redoCommands.push(cmd);
 
         this.pcs.firePropertyChange(REDOCOMMANDS_PROPERTY, null, this.redoCommands);
         this.pcs.firePropertyChange(DONECOMMANDS_PROPERTY, null, this.doneCommands);
+
+        isUndoing = false;
         return true;
     }
 

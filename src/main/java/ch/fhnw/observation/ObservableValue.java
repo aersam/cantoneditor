@@ -48,7 +48,7 @@ public class ObservableValue<T> implements ValueSubscribable<T> {
     @Override
     public void set(T value) {
         if (value != this.value) {
-            T oldValue = value;
+            T oldValue = this.value;
             this.value = value;
             this.pcs.firePropertyChange(null, oldValue, value);
         }

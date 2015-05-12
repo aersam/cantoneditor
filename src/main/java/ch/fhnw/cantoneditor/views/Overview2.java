@@ -57,7 +57,9 @@ public class Overview2 {
         });
 
         List<Canton> cantons = DB4OConnector.getAll(Canton.class);
-        JTable table = new JTable(new CantonTableModel(cantons));
+        CantonTableModel tableModel = new CantonTableModel(cantons);
+        JTable table = new JTable(tableModel);
+        table.setSelectionModel(tableModel.getSelectionModel());
         table.setMinimumSize(new Dimension(400, 400));
         JScrollPane scroller = new JScrollPane(table);
 
@@ -82,6 +84,7 @@ public class Overview2 {
         rootPane.add(buttonPanel, BorderLayout.PAGE_START);
         rootPane.add(scroller, BorderLayout.CENTER);
         rootPane.add(getLedPanel(), BorderLayout.PAGE_END);
+        rootPane.add(new CantonEditPanel().getComponent(), BorderLayout.LINE_END);
         frame.add(rootPane);
         frame.pack();
         frame.setVisible(true);
