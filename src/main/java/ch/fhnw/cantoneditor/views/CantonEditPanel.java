@@ -20,14 +20,26 @@ public class CantonEditPanel {
     public JPanel getComponent() {
         JPanel simpleItems = new JPanel(new GridLayout(0, 4, 5, 5));
         simpleItems.add(new JLabel(tm.Translate("Canton")));
-        simpleItems.add(getTextField("Canton", () -> {
+        simpleItems.add(getTextField(() -> {
             return CantonHandler.getCurrentCanton() == null ? "" : CantonHandler.getCurrentCanton().getName();
         }, (s) -> CantonHandler.getCurrentCanton().setName(s)));
+        simpleItems.add(new JLabel(tm.Translate("CantonNr")));
+
+        ComputedValue<String> cantonNrDisplay = new ComputedValue<String>(
+                () -> CantonHandler.getCurrentCanton() == null ? "" : CantonHandler.getCurrentCanton().getId() + "");
+        JLabel nrLabel = new JLabel(cantonNrDisplay.get());
+        cantonNrDisplay.bindTo(nrLabel::setText);
+        simpleItems.add(nrLabel);
+
+        simpleItems.add(new JLabel(tm.Translate("CantonShortcut")));
+        simpleItems.add(getTextField(() -> {
+            return CantonHandler.getCurrentCanton() == null ? "" : CantonHandler.getCurrentCanton().getShortCut();
+        }, (s) -> CantonHandler.getCurrentCanton().setShortCut(s)));
 
         return simpleItems;
     }
 
-    private JTextField getTextField(String translationKey, Supplier<String> getValue, Consumer<String> setValue) {
+    private JTextField getTextField(Supplier<String> getValue, Consumer<String> setValue) {
         JTextField tf = new JTextField(getValue.get());
         ComputedValue<String> value = new ComputedValue<>(getValue, setValue);
         ValueSubscribable<String> tfObservable = SwingObservables.getFromTextField(tf);
