@@ -187,4 +187,13 @@ public class ObservableList<T> implements List<T>, PropertyChangeable {
         return this.underlyingList.subList(fromIndex, toIndex);
     }
 
+    @Override
+    public boolean equals(Object arg0) {
+        return this.underlyingList.equals(arg0);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.underlyingList.hashCode();
+    }
 }

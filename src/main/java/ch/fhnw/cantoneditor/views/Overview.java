@@ -1,5 +1,6 @@
 package ch.fhnw.cantoneditor.views;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.WindowAdapter;
@@ -100,6 +101,30 @@ public class Overview {
         GridBagManager localGbm = new GridBagManager(controlPanel);
 
         return controlPanel;
+    }
+
+    private JPanel getLedPanel() {
+        List<Canton> cantons = DB4OConnector.getAll(Canton.class);
+        JPanel panel = new JPanel();
+        // panel.setSize(panel.getWidth(), 5);
+        for (Canton cnt : cantons) {
+            Canton old = cnt.copyToNew();
+
+            ComputedValue<Boolean> hasChanged = new ComputedValue<>(() -> {
+                return !cnt.getName().equals(old.getName()) || !cnt.getCapital().equals(old.getCapital())
+                        || !cnt.getShortCut().equals(old.getShortCut())
+                        || !(cnt.getNrInhabitants() == old.getNrInhabitants()) || !(cnt.getArea() == old.getArea())
+                        || !(cnt.getCommunes().equals(old.getCommunes()));
+            });
+            Led flapper = new Led();
+            flapper.init(30, 30);
+            flapper.setSize(30, 30);
+            hasChanged.bindTo((vl) -> {
+                flapper.setColor(vl.booleanValue() ? Color.GREEN : Color.RED);
+            });
+            panel.add(flapper);
+        }
+        return panel;
     }
 
     /**

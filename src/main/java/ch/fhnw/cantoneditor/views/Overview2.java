@@ -97,7 +97,8 @@ public class Overview2 {
             ComputedValue<Boolean> hasChanged = new ComputedValue<>(() -> {
                 return !cnt.getName().equals(old.getName()) || !cnt.getCapital().equals(old.getCapital())
                         || !cnt.getShortCut().equals(old.getShortCut())
-                        || !(cnt.getNrInhabitants() == old.getNrInhabitants());
+                        || !(cnt.getNrInhabitants() == old.getNrInhabitants()) || !(cnt.getArea() == old.getArea())
+                        || !(cnt.getCommunes().equals(old.getCommunes()));
             });
             Led flapper = new Led();
             flapper.init(30, 30);

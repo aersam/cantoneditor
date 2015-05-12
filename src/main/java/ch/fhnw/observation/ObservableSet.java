@@ -123,4 +123,13 @@ public class ObservableSet<T> implements Set<T>, PropertyChangeable {
         this.pcs.removePropertyChangeListener(listener);
     }
 
+    @Override
+    public boolean equals(Object arg0) {
+        return this.underlyingList.equals(arg0);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.underlyingList.hashCode();
+    }
 }

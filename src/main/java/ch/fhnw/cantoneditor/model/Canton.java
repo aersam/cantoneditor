@@ -271,6 +271,9 @@ public class Canton extends BaseModel {
         for (Language lng : this.languageId) {
             c.getLanguages().add(lng);
         }
+        for (Commune comm : this.communes) {
+            c.getCommunes().add(comm);
+        }
         return c;
     }
 }

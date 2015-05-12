@@ -65,4 +65,12 @@ public class PropertySetCommand<T> implements Executable {
         }
     }
 
+    @Override
+    public String toString() {
+        if (this.hasBeenExecuted) {
+            return "Change \"" + this.oldValue.toString() + "\" to \"" + this.newValue.toString() + "\"";
+        }
+        return "Chanage property";
+    }
+
 }
