@@ -17,7 +17,7 @@ public class ComputedValueTest {
 
     @Test
     public void testDependencies() {
-        Canton c = Canton.GetById(1, true);
+        Canton c = Canton.getById(1, true);
 
         ComputedValue<String> comp = new ComputedValue<String>(() -> c.getName() + " " + c.getCapital());
 
@@ -46,7 +46,7 @@ public class ComputedValueTest {
 
     @Test
     public void testNested() {
-        Canton c = Canton.CreateNew();
+        Canton c = Canton.createNew();
         ComputedValue<String> comp1 = new ComputedValue<String>(c::getName);
         ComputedValue<String> comp2 = new ComputedValue<String>(comp1::get);
         c.setName("asdf");

@@ -36,7 +36,7 @@ public class Commune extends BaseModel {
         this.id = bfsCommuneNr;
     }
 
-    public static Commune GetById(int bfsCommuneNr, boolean createIfNotExists) {
+    public static Commune getById(int bfsCommuneNr, boolean createIfNotExists) {
         if (communes.containsKey(bfsCommuneNr))
             return communes.get(bfsCommuneNr);
         if (createIfNotExists) {

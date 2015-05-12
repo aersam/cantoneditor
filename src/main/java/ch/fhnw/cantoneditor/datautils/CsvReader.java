@@ -29,9 +29,9 @@ public class CsvReader {
             ArrayList<Commune> communes = new ArrayList<Commune>();
             while ((nextLine = reader.readNext()) != null) {
                 if (nextLine != null) {
-                    Canton canton = Canton.GetByShortcut(nextLine[0], true);
+                    Canton canton = Canton.getByShortcut(nextLine[0], true);
                     int communeNr = Integer.parseInt(nextLine[2].replace("'", ""));
-                    Commune com = Commune.GetById(communeNr, true);
+                    Commune com = Commune.getById(communeNr, true);
                     com.setCanton(canton);
                     com.setDistrictNr(Integer.parseInt(nextLine[1].replace("'", "")));
 
@@ -61,7 +61,7 @@ public class CsvReader {
             while ((nextLine = reader.readNext()) != null) {
                 if (nextLine != null) {
                     int cantonNr = Integer.parseInt(nextLine[2].replace("'", ""));
-                    Canton c = Canton.GetById(cantonNr, true);
+                    Canton c = Canton.getById(cantonNr, true);
                     c.setName(nextLine[0]);
                     c.setShortCut(nextLine[1]);
                     c.setNrCouncilSeats((int) (Double.parseDouble(nextLine[3]) * 2.0));

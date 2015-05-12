@@ -92,17 +92,16 @@ public class Overview2 {
         JPanel panel = new JPanel();
         // panel.setSize(panel.getWidth(), 5);
         for (Canton cnt : cantons) {
-            String oldName = cnt.getName();
-            String oldShortcut = cnt.getShortCut();
-            String oldCapital = cnt.getCapital();
+            Canton old = cnt.copyToNew();
+
             ComputedValue<Boolean> hasChanged = new ComputedValue<>(() -> {
-                return !cnt.getName().equals(oldName) || !cnt.getCapital().equals(oldCapital)
-                        || !cnt.getShortCut().equals(oldShortcut);
+                return !cnt.getName().equals(old.getName()) || !cnt.getCapital().equals(old.getCapital())
+                        || !cnt.getShortCut().equals(old.getShortCut())
+                        || !(cnt.getNrInhabitants() == old.getNrInhabitants());
             });
             Led flapper = new Led();
-            flapper.init(10, 10);
-
-            flapper.setSize(10, 10);
+            flapper.init(30, 30);
+            flapper.setSize(30, 30);
             hasChanged.bindTo((vl) -> {
                 flapper.setColor(vl.booleanValue() ? Color.GREEN : Color.RED);
             });

@@ -62,11 +62,11 @@ public class Canton extends BaseModel {
         });
     }
 
-    public static Canton CreateNew() {
+    public static Canton createNew() {
         return new Canton(0);
     }
 
-    public static Canton GetById(int nr, boolean createIfNotExists) {
+    public static Canton getById(int nr, boolean createIfNotExists) {
         if (cantons.containsKey(nr))
             return cantons.get(nr);
         if (createIfNotExists) {
@@ -76,7 +76,7 @@ public class Canton extends BaseModel {
         return null;
     }
 
-    public static Canton GetByShortcut(String shortcut, boolean createIfNotExists) {
+    public static Canton getByShortcut(String shortcut, boolean createIfNotExists) {
         for (Canton c : cantons.values()) {
             if (c.getShortCut().equals(shortcut)) {
                 return c;
@@ -255,4 +255,22 @@ public class Canton extends BaseModel {
         return this.getName();
     }
 
+    /** Creates a new canton with the same properties as this canton */
+    public Canton copyToNew() {
+        Canton c = new Canton(0);
+        c.name = this.name;
+        c.shortCut = this.shortCut;
+        c.nrCouncilSeats = this.nrCouncilSeats;
+        c.entryYear = this.entryYear;
+        c.nrForeigners = this.nrForeigners;
+        c.nrInhabitants = this.nrInhabitants;
+        c.capital = this.capital;
+        c.area = this.area;
+        c.inHabitantDensity = this.inHabitantDensity;
+        c.nrCommunes = this.nrCommunes;
+        for (Language lng : this.languageId) {
+            c.getLanguages().add(lng);
+        }
+        return c;
+    }
 }
