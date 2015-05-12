@@ -69,6 +69,7 @@ public class Overview {
         List<Canton> cantons = DB4OConnector.getAll(Canton.class);
         JTable table = new JTable(new CantonTableModel(cantons));
         table.setMinimumSize(new Dimension(400, 400));
+
         JScrollPane scroller = new JScrollPane(table);
 
         JButton undoButton = new JButton(tm.Translate("Undo", "Undo"));
@@ -137,37 +138,6 @@ public class Overview {
         GridBagManager localGbm = new GridBagManager(inhabPanel);
         // inhabPanel.setVisible(true);
 
-        // Upper half of flaps
-        SplitFlap InhabitantsFlap0 = new SplitFlap();
-        InhabitantsFlap0.setSelection(nums);
-        InhabitantsFlap0.setSize(20, 20);
-        SplitFlap InhabitantsFlap1 = new SplitFlap();
-        InhabitantsFlap1.setSelection(nums);
-        InhabitantsFlap0.setSize(20, 20);
-        SplitFlap InhabitantsFlap2 = new SplitFlap();
-        InhabitantsFlap2.setSelection(nums);
-        InhabitantsFlap0.setSize(20, 20);
-        SplitFlap InhabitantsFlap3 = new SplitFlap();
-        InhabitantsFlap3.setSelection(nums);
-        InhabitantsFlap0.setSize(20, 20);
-        SplitFlap InhabitantsFlap4 = new SplitFlap();
-        InhabitantsFlap4.setSelection(nums);
-        InhabitantsFlap0.setSize(20, 20);
-        SplitFlap InhabitantsFlap5 = new SplitFlap();
-        InhabitantsFlap5.setSelection(nums);
-        InhabitantsFlap0.setSize(20, 20);
-        SplitFlap InhabitantsFlap6 = new SplitFlap();
-        InhabitantsFlap6.setSelection(nums);
-        InhabitantsFlap0.setSize(20, 20);
-        SplitFlap InhabitantsFlap7 = new SplitFlap();
-        InhabitantsFlap7.setSelection(nums);
-        InhabitantsFlap0.setSize(20, 20);
-        SplitFlap InhabitantsFlap8 = new SplitFlap();
-        InhabitantsFlap8.setSelection(nums);
-        InhabitantsFlap0.setSize(20, 20);
-        SplitFlap InhabitantsFlap9 = new SplitFlap();
-        InhabitantsFlap9.setSelection(nums);
-        InhabitantsFlap0.setSize(20, 20);
         // Lower half of flap
         SplitFlap areaFlap0 = new SplitFlap();
         areaFlap0.setSelection(nums);
@@ -208,25 +178,19 @@ public class Overview {
             Led led = new Led();
             led.init(5, 5);
             inhabPanel.add(led);
-            // localGbm.setWeightX(0).setWeightY(0).setX(x++).setY(y).setComp(led);
         }
-
-        // led.setSize(1, 1);
-        // led.setMinimumSize(new Dimension(3, 3));
 
         y++;
         x = 0;
         localGbm.setWeightX(1.0).setX(x++).setY(y).setComp(new JLabel(""));
-        localGbm.setX(x++).setY(y).setComp(InhabitantsFlap0);
-        localGbm.setX(x++).setY(y).setComp(InhabitantsFlap1);
-        localGbm.setX(x++).setY(y).setComp(InhabitantsFlap2);
-        localGbm.setX(x++).setY(y).setComp(InhabitantsFlap3);
-        localGbm.setX(x++).setY(y).setComp(InhabitantsFlap4);
-        localGbm.setX(x++).setY(y).setComp(InhabitantsFlap5);
-        localGbm.setX(x++).setY(y).setComp(InhabitantsFlap6);
-        localGbm.setX(x++).setY(y).setComp(InhabitantsFlap7);
-        localGbm.setX(x++).setY(y).setComp(InhabitantsFlap8);
-        localGbm.setX(x++).setY(y).setComp(InhabitantsFlap9);
+        for (int i = 0; i < nums.length; i++) {
+            // Upper half of flaps
+            SplitFlap InhabitantsFlap0 = new SplitFlap();
+            InhabitantsFlap0.setSelection(nums);
+            InhabitantsFlap0.setSize(20, 20);
+            localGbm.setX(x++).setY(y).setComp(InhabitantsFlap0);
+        }
+
         y++;
         x = 0;
         localGbm.setWeightX(1.0).setX(x++).setY(y).setComp(new JLabel(""));
@@ -243,4 +207,5 @@ public class Overview {
 
         return inhabPanel;
     }
+
 }
