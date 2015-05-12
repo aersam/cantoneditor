@@ -163,7 +163,15 @@ public class Overview {
             SplitFlap InhabitantsFlap0 = new SplitFlap();
             InhabitantsFlap0.setSelection(nums);
             InhabitantsFlap0.setSize(20, 20);
+            // if(i==3 && value > 999 || i == 5 && value > 999999) {
+            // localGbm.setX(x++).setY(y).setComp(InhabitantsFlap0);
+            // inhabitantsFlap0.setText("'");
+            // InhabitantsFlap0 = new SplitFlap();
+            // InhabitantsFlap0.setSelection(nums);
+            // InhabitantsFlap0.setSize(20, 20);
+            // }
             localGbm.setX(x++).setY(y).setComp(InhabitantsFlap0);
+            // value.toString().supbstring(value.toString().length-i-1)
         }
 
         y++;
@@ -174,7 +182,15 @@ public class Overview {
             SplitFlap areaFlap0 = new SplitFlap();
             areaFlap0.setSelection(nums);
             areaFlap0.setSize(20, 20);
+            // if(i==3 && value > 999 || i == 5 && value > 999999) {
+            // localGbm.setX(x++).setY(y).setComp(InhabitantsFlap0);
+            // inhabitantsFlap0.setText("'");
+            // InhabitantsFlap0 = new SplitFlap();
+            // InhabitantsFlap0.setSelection(nums);
+            // areaFlap0.setSize(20, 20);
+            // }
             localGbm.setX(x++).setY(y).setComp(areaFlap0);
+            // value.toString().supbstring(value.toString().length-i-1)
         }
 
         return inhabPanel;
