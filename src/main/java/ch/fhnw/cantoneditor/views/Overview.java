@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -63,13 +64,18 @@ public class Overview {
                 System.exit(0);
             }
         });
-
+        Dimension minDimension = new Dimension(500, 500);
         JPanel motherOfPanes = new JPanel(new GridBagLayout());
         JPanel upperPane = new JPanel(new GridBagLayout());
-        JPanel lowerPane = new JPanel(new GridBagLayout());
+        upperPane.setMinimumSize(minDimension);
 
+        JPanel lowerPane = new JPanel(new GridBagLayout());
+        lowerPane.setMinimumSize(minDimension);
+
+        CantonEditPanel editPanel = new CantonEditPanel();
+        editPanel.getComponent().setMinimumSize(minDimension);
         JSplitPane horizontalSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, false, upperPane,
-                initControlPanel());
+                editPanel.getComponent());
 
         JSplitPane verticalSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, false, horizontalSplitPane, lowerPane);
 
@@ -79,9 +85,12 @@ public class Overview {
 
         // WHY doesnt it show headers?
         List<Canton> cantons = DB4OConnector.getAll(Canton.class);
-
-        JTable table = new JTable(new CantonTableModel(cantons));
-        table.setMinimumSize(new Dimension(400, 400));
+        CantonHandler.setCurrentCanton(cantons.get(0));
+        CantonTableModel tableModel = new CantonTableModel(cantons);
+        JTable table = new JTable(tableModel);
+        table.setSelectionModel(tableModel.getSelectionModel());
+        table.setMinimumSize(minDimension);
+        table.setSize(500, 500);
 
         JScrollPane scroller = new JScrollPane(table);
 
@@ -154,25 +163,53 @@ public class Overview {
         String[] nums = new String[] { "", "'", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
         JPanel inhabPanel = new JPanel();
         GridBagManager localGbm = new GridBagManager(inhabPanel);
+        ComputedValue<Integer> inhabitantsHandler = new ComputedValue<>(() -> {
+            return CantonHandler.getCurrentCanton() == null ? null : CantonHandler.getCurrentCanton()
+                    .getNrInhabitants();
+        });
+        ComputedValue<Double> areaHandler = new ComputedValue<>(() -> {
+            return CantonHandler.getCurrentCanton() == null ? null : CantonHandler.getCurrentCanton().getArea();
+        });
+
+        String areaString = areaHandler.get() == null ? "" : areaHandler.toString();
+        String inhabitantsString = inhabitantsHandler.get() == null ? "" : inhabitantsHandler.toString();
 
         int x = 0;
         int y = 0;
+        List<SplitFlap> inhabFlaps = new ArrayList<SplitFlap>(10);
         localGbm.setWeightX(1.0).setX(x++).setY(y).setComp(new JLabel(""));
-        for (int i = 0; i < 10; i++) {
+
+        for (int i = 0; i < inhabFlaps.size(); i++) {
             // Upper half of flaps
-            SplitFlap InhabitantsFlap0 = new SplitFlap();
-            InhabitantsFlap0.setSelection(nums);
-            InhabitantsFlap0.setSize(20, 20);
-            // if(i==3 && value > 999 || i == 5 && value > 999999) {
-            // localGbm.setX(x++).setY(y).setComp(InhabitantsFlap0);
-            // inhabitantsFlap0.setText("'");
-            // InhabitantsFlap0 = new SplitFlap();
-            // InhabitantsFlap0.setSelection(nums);
-            // InhabitantsFlap0.setSize(20, 20);
-            // }
-            localGbm.setX(x++).setY(y).setComp(InhabitantsFlap0);
-            // value.toString().supbstring(value.toString().length-i-1)
+            SplitFlap inhabitantsFlap0 = new SplitFlap();
+            inhabFlaps.add(inhabitantsFlap0);
+            inhabitantsFlap0.setSelection(nums);
+            inhabitantsFlap0.setSize(20, 20);
+
+            if (i == 3 || i == 5) {
+                localGbm.setX(x++).setY(y).setComp(inhabitantsFlap0);
+                inhabitantsFlap0.setText("'");
+                // inhabitantsFlap0 = new SplitFlap();
+                inhabitantsFlap0.setSelection(nums);
+                inhabitantsFlap0.setSize(20, 20);
+            }
+            localGbm.setX(x++).setY(y).setComp(inhabitantsFlap0);
+            if (!inhabitantsString.equals("")) {
+                inhabitantsHandler.bindTo(nv -> {
+
+                });
+
+            }
         }
+        int bla = inhabFlaps.size();
+        inhabitantsHandler.bindTo(nv -> {
+            if (!nv.toString().equals("")) {
+                for (int i = 1; i < bla - 1; i++) {
+                    inhabFlaps.get(i).setText(nv.toString().charAt(nv.toString().length() - i) + "");
+                }
+            }
+
+        });
 
         y++;
         x = 0;
@@ -182,18 +219,19 @@ public class Overview {
             SplitFlap areaFlap0 = new SplitFlap();
             areaFlap0.setSelection(nums);
             areaFlap0.setSize(20, 20);
-            // if(i==3 && value > 999 || i == 5 && value > 999999) {
-            // localGbm.setX(x++).setY(y).setComp(InhabitantsFlap0);
-            // inhabitantsFlap0.setText("'");
-            // InhabitantsFlap0 = new SplitFlap();
-            // InhabitantsFlap0.setSelection(nums);
-            // areaFlap0.setSize(20, 20);
-            // }
+            if (i == 3 && areaHandler.get() > 999 || i == 5 && areaHandler.get() > 999999) {
+                localGbm.setX(x++).setY(y).setComp(areaFlap0);
+                areaFlap0.setText("'");
+                areaFlap0 = new SplitFlap();
+                areaFlap0.setSelection(nums);
+                areaFlap0.setSize(20, 20);
+            }
             localGbm.setX(x++).setY(y).setComp(areaFlap0);
-            // value.toString().supbstring(value.toString().length-i-1)
+            if (!areaString.equals("")) {
+                areaFlap0.setText(areaString.charAt(areaString.length() - 1 - i) + "");
+            }
         }
 
         return inhabPanel;
     }
-
 }
