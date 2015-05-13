@@ -5,12 +5,38 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.Timer;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 public class SwingObservables {
+    public static ValueSubscribable<Integer> getFromNumber(JSpinner spinner) {
+        ObservableValue<Integer> vl = new ObservableValue<>((Integer) spinner.getValue());
+        spinner.addChangeListener(new ChangeListener() {
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                Integer value = (Integer) spinner.getValue();
+                if (!value.equals(vl.get()))
+                    vl.set(value);
+            }
+        });
+        vl.addPropertyChangeListener(new PropertyChangeListener() {
+
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                Integer value = (Integer) spinner.getValue();
+                if (!value.equals(vl.get()))
+                    spinner.setValue(vl.get());
+            }
+        });
+        return vl;
+    }
+
     public static ValueSubscribable<String> getFromTextField(JTextField field) {
         ObservableValue<String> vl = new ObservableValue<String>(field.getText());
 
