@@ -3,6 +3,8 @@ package ch.fhnw.command;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Stack;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 import ch.fhnw.observation.PropertyChangeable;
 import ch.fhnw.observation.ReadObserver;
@@ -55,6 +57,15 @@ public class CommandController implements PropertyChangeable {
      */
     public <T> void executePropertySet(T newValue, ValueSubscribable<T> toSet) {
         execute(new PropertySetCommand<T>(newValue, toSet));
+    }
+
+    /**
+     * A simple helper to execute a set on a ObservableValue or on a ObservableComputed. Its just a
+     * short cut for execute(new PropertySetCommand...)
+     */
+    public <TObj, TValue> void executePropertySet(TObj obj, TValue newValue, Function<TObj, TValue> getter,
+            BiConsumer<TObj, TValue> setter) {
+        execute(new ObjectSetCommand<TObj, TValue>(obj, newValue, getter, setter));
     }
 
     /** Executes a command and saves it for undo */

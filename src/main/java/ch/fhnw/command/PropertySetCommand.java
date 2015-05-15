@@ -4,24 +4,25 @@ import java.security.AccessControlException;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import ch.fhnw.cantoneditor.views.TranslationManager;
 import ch.fhnw.observation.ReadObserver;
 import ch.fhnw.observation.ValueSubscribable;
 
 /** A simple command that sets a Property of an Object */
 public class PropertySetCommand<T> implements Executable {
     /** The old value that was used before setting anything */
-    private T oldValue;
+    protected T oldValue;
 
-    private boolean hasBeenExecuted = false;
+    protected boolean hasBeenExecuted = false;
 
     /** The new value that will be applied */
-    private final T newValue;
+    protected final T newValue;
 
     /** A Function that returns the value of the property */
-    private final Supplier<T> getValueFunction;
+    protected final Supplier<T> getValueFunction;
 
     /** A Function that set the value of the property */
-    private final Consumer<T> setValueFunction;
+    protected final Consumer<T> setValueFunction;
 
     /** Creates a new PropertySetCommand with the newValue from the getFunction and the setFunction */
     public PropertySetCommand(T newValue, Supplier<T> getFunction, Consumer<T> setFunction) {
@@ -68,9 +69,13 @@ public class PropertySetCommand<T> implements Executable {
     @Override
     public String toString() {
         if (this.hasBeenExecuted) {
-            return "Change \"" + this.oldValue.toString() + "\" to \"" + this.newValue.toString() + "\"";
+            String template = TranslationManager.getInstance().Translate("PropertyChangeObservable",
+                    "Change \"{old}\" to \"{new}\"");
+
+            return template.replace("{old}", this.oldValue == null ? "null" : this.oldValue.toString()).replace(
+                    "{new}", this.newValue == null ? "null" : this.newValue.toString());
         }
-        return "Chanage property";
+        return TranslationManager.getInstance().Translate("PropertyChange", "Chanage property");
     }
 
 }
