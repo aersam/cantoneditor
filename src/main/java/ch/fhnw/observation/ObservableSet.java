@@ -29,6 +29,15 @@ public class ObservableSet<T> implements Set<T>, PropertyChangeable {
         }
     }
 
+    /** Clears all existing items and adds the new ones */
+    public void reset(Collection<? extends T> newItems) {
+        underlyingList.clear();
+        if (newItems != null) {
+            underlyingList.addAll(newItems);
+        }
+        this.pcs.firePropertyChange(RESET_ACTION, this, newItems);
+    }
+
     @Override
     public boolean add(T arg0) {
         boolean add = underlyingList.add(arg0);

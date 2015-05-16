@@ -30,6 +30,15 @@ public class ObservableList<T> implements List<T>, PropertyChangeable {
         }
     }
 
+    /** Clears all existing items and adds the new ones */
+    public void reset(Collection<? extends T> newItems) {
+        underlyingList.clear();
+        if (newItems != null) {
+            underlyingList.addAll(newItems);
+        }
+        this.pcs.firePropertyChange(RESET_ACTION, this, newItems);
+    }
+
     @Override
     public void add(int index, T element) {
         underlyingList.add(index, element);

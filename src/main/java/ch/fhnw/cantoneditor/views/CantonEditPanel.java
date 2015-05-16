@@ -8,6 +8,7 @@ import java.util.function.Function;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -17,7 +18,9 @@ import javax.swing.SpinnerNumberModel;
 
 import ch.fhnw.cantoneditor.model.Canton;
 import ch.fhnw.command.CommandController;
+import ch.fhnw.command.ListAddCommand;
 import ch.fhnw.observation.ComputedValue;
+import ch.fhnw.observation.ObservableList;
 import ch.fhnw.observation.SwingObservables;
 import ch.fhnw.observation.ValueSubscribable;
 
@@ -76,6 +79,31 @@ public class CantonEditPanel {
                 .getCurrentCanton()));
         bindObservables(comboBox, getValue, setValue);
         return comboBox;
+    }
+
+    private <T> MultiSelector<T> getMultiselector(JFrame frame, Iterable<T> allItems,
+            Function<Canton, ObservableList<T>> getObservable, String name) {
+        MultiSelector<T> selector = new MultiSelector<>(frame, allItems);
+        if (CantonHandler.getCurrentCanton() != null) {
+            selector.getSelectedItems().reset(getObservable.apply(CantonHandler.getCurrentCanton()));
+        }
+        ComputedValue<ObservableList<T>> value = new ComputedValue<>(
+                () -> CantonHandler.getCurrentCanton() == null ? null : getObservable.apply(CantonHandler
+                        .getCurrentCanton()));
+        value.bindTo(selector.getSelectedItems()::reset);
+        selector.getSelectedItems().addPropertyChangeListener(
+                l -> {
+                    if (ObservableList.ADDED_ACTION.equals(l.getPropertyName())) {
+                        CommandController.getDefault().execute(
+                                new ListAddCommand<T>(name, selector.getSelectedItems(), (T) l.getNewValue()));
+                    }
+                    ObservableList<T> currentValue = value.get();
+                    if (!(s == null ? currentValue == null : selector.equals(currentValue))
+                            && CantonHandler.getCurrentCanton() != null) {
+                        CommandController.getDefault().executePropertySet(CantonHandler.getCurrentCanton(), s,
+                                getValue, setValue);
+                    }
+                });
     }
 
     private <T> void bindObservables(JComponent comp, Function<Canton, T> getValue, BiConsumer<Canton, T> setValue) {
