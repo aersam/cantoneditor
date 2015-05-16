@@ -144,14 +144,14 @@ public class Canton extends BaseModel {
 
     public double getNrForeigners() {
         this.notifyPropertyRead(NRFOREIGNERS_PROPERTY);
-        return nrForeigners;
+        return nrForeigners / 100.00;
     }
 
     public void setNrForeigners(double nrForeigners) {
-        if (nrForeigners != this.nrForeigners) {
-            Object oldValue = this.nrForeigners;
-            this.nrForeigners = nrForeigners;
-            this.pcs.firePropertyChange(NRFOREIGNERS_PROPERTY, oldValue, nrForeigners);
+        if (nrForeigners * 100.00 != this.nrForeigners) {
+            Object oldValue = this.nrForeigners / 100.00;
+            this.nrForeigners = nrForeigners * 100.00;
+            this.pcs.firePropertyChange(NRFOREIGNERS_PROPERTY, oldValue, this.nrForeigners);
         }
     }
 

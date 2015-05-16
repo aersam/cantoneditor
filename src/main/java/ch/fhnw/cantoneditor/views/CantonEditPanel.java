@@ -25,7 +25,7 @@ public class CantonEditPanel {
     public JPanel getComponent() {
         JPanel simpleItems = new JPanel(new GridLayout(0, 4, 5, 5));
         simpleItems.add(new JLabel(tm.Translate("Canton")));
-        simpleItems.add(getTextField(Canton::getName, (c, s) -> c.setName(s)));
+        simpleItems.add(getTextField(Canton::getName, Canton::setName));
         simpleItems.add(new JLabel(tm.Translate("CantonNr")));
 
         ComputedValue<String> cantonNrDisplay = new ComputedValue<String>(
@@ -35,25 +35,26 @@ public class CantonEditPanel {
         simpleItems.add(nrLabel);
 
         simpleItems.add(new JLabel(tm.Translate("CantonShortcut")));
-        simpleItems.add(getTextField(Canton::getShortCut, (c, s) -> c.setShortCut(s)));
+        simpleItems.add(getTextField(Canton::getShortCut, Canton::setShortCut));
 
         simpleItems.add(new JLabel(tm.Translate("NrCouncilSeats")));
-        simpleItems.add(getNumberField(Canton::getNrCouncilSeats, (c, s) -> c.setNrCouncilSeats(s), 1, 2));
+        simpleItems.add(getNumberField(Canton::getNrCouncilSeats, Canton::setNrCouncilSeats, 1, 2));
 
         simpleItems.add(new JLabel(tm.Translate("Capital")));
-        simpleItems.add(getTextField(Canton::getCapital, (c, s) -> c.setCapital(s)));
+        simpleItems.add(getTextField(Canton::getCapital, Canton::setCapital));
 
         simpleItems.add(new JLabel(tm.Translate("CantonSwitzerlandEntry")));
-        simpleItems.add(getNumberField(Canton::getEntryYear, (c, s) -> c.setEntryYear(s), 1000, 2100));
+        simpleItems.add(getNumberField(Canton::getEntryYear, Canton::setEntryYear, 1000, 2100));
 
         simpleItems.add(new JLabel(tm.Translate("CantonInhabitants")));
-        simpleItems.add(getNumberField(Canton::getNrInhabitants, (c, s) -> c.setNrInhabitants(s), 1000, 21000000));
+        simpleItems.add(getNumberField(Canton::getNrInhabitants, Canton::setNrInhabitants, 1000, 2100000));
 
         simpleItems.add(new JLabel(tm.Translate("CantonNrForeigners")));
-        simpleItems.add(getFloatField(Canton::getNrForeigners, (c, s) -> c.setNrForeigners(s)));
+        simpleItems.add(getFloatField(Canton::getNrForeigners, Canton::setNrForeigners,
+                NumberFormat.getPercentInstance()));
 
         simpleItems.add(new JLabel(tm.Translate("CantonArea")));
-        simpleItems.add(getFloatField(Canton::getArea, (c, s) -> c.setArea(s)));
+        simpleItems.add(getFloatField(Canton::getArea, Canton::setArea, NumberFormat.getNumberInstance()));
 
         return simpleItems;
 
@@ -61,17 +62,18 @@ public class CantonEditPanel {
 
     private JSpinner getNumberField(Function<Canton, Integer> getValue, BiConsumer<Canton, Integer> setValue,
             int minValue, int maxValue) {
-        JSpinner jSpinner1 = new JSpinner(new SpinnerNumberModel(getValue.apply(CantonHandler.getCurrentCanton())
-                .intValue(), minValue, maxValue, 1));
-        ComputedValue<Integer> value = new ComputedValue<Integer>(
-                () -> getValue.apply(CantonHandler.getCurrentCanton()), (s) -> setValue.accept(
-                        CantonHandler.getCurrentCanton(), s));
+        int initvalue = CantonHandler.getCurrentCanton() == null ? minValue : getValue.apply(
+                CantonHandler.getCurrentCanton()).intValue();
+        JSpinner jSpinner1 = new JSpinner(new SpinnerNumberModel(initvalue, minValue, maxValue, 1));
+        ComputedValue<Integer> value = new ComputedValue<Integer>(() -> CantonHandler.getCurrentCanton() == null ? 0
+                : getValue.apply(CantonHandler.getCurrentCanton()), (s) -> setValue.accept(
+                CantonHandler.getCurrentCanton(), s));
 
         ValueSubscribable<Integer> tfObservable = SwingObservables.getFromNumber(jSpinner1);
 
         value.bindTo(tfObservable::set);
         tfObservable.bindTo((s) -> {
-            if (!s.equals(value.get())) {
+            if (!s.equals(value.get()) && CantonHandler.getCurrentCanton() != null) {
                 CommandController.getDefault().executePropertySet(CantonHandler.getCurrentCanton(), s, getValue,
                         setValue);
             }
@@ -80,15 +82,17 @@ public class CantonEditPanel {
         return jSpinner1;
     }
 
-    private JFormattedTextField getFloatField(Function<Canton, Double> getValue, BiConsumer<Canton, Double> setValue) {
-        JFormattedTextField floatField = new JFormattedTextField(NumberFormat.getPercentInstance());
+    private JFormattedTextField getFloatField(Function<Canton, Double> getValue, BiConsumer<Canton, Double> setValue,
+            NumberFormat format) {
+        JFormattedTextField floatField = new JFormattedTextField(format);
 
-        ComputedValue<Double> value = new ComputedValue<Double>(() -> getValue.apply(CantonHandler.getCurrentCanton()),
-                (s) -> setValue.accept(CantonHandler.getCurrentCanton(), s));
+        ComputedValue<Double> value = new ComputedValue<Double>(() -> CantonHandler.getCurrentCanton() == null ? 0.0
+                : getValue.apply(CantonHandler.getCurrentCanton()), (s) -> setValue.accept(
+                CantonHandler.getCurrentCanton(), s));
         ValueSubscribable<Double> tfObservable = SwingObservables.getFromFormattedTextField(floatField);
         value.bindTo(tfObservable::set);
         tfObservable.bindTo((s) -> {
-            if (!s.equals(value.get())) {
+            if (!s.equals(value.get()) && CantonHandler.getCurrentCanton() != null) {
                 CommandController.getDefault().executePropertySet(CantonHandler.getCurrentCanton(), s, getValue,
                         setValue);
             }
@@ -99,14 +103,16 @@ public class CantonEditPanel {
     }
 
     private JTextField getTextField(Function<Canton, String> getValue, BiConsumer<Canton, String> setValue) {
-        JTextField tf = new JTextField(getValue.apply(CantonHandler.getCurrentCanton()));
-        ComputedValue<String> value = new ComputedValue<String>(() -> getValue.apply(CantonHandler.getCurrentCanton()),
-                (s) -> setValue.accept(CantonHandler.getCurrentCanton(), s));
+        JTextField tf = new JTextField(CantonHandler.getCurrentCanton() == null ? "" : getValue.apply(CantonHandler
+                .getCurrentCanton()));
+        ComputedValue<String> value = new ComputedValue<String>(() -> CantonHandler.getCurrentCanton() == null ? ""
+                : getValue.apply(CantonHandler.getCurrentCanton()), (s) -> setValue.accept(
+                CantonHandler.getCurrentCanton(), s));
         ValueSubscribable<String> tfObservable = SwingObservables.getFromTextField(tf);
 
         value.bindTo(tfObservable::set);
         tfObservable.bindTo((s) -> {
-            if (!s.equals(value.get())) {
+            if (!s.equals(value.get()) && CantonHandler.getCurrentCanton() != null) {
                 CommandController.getDefault().executePropertySet(CantonHandler.getCurrentCanton(), s, getValue,
                         setValue);
             }
