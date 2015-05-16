@@ -18,6 +18,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import ch.fhnw.cantoneditor.datautils.DB4OConnector;
 import ch.fhnw.cantoneditor.datautils.NoDataFoundException;
 import ch.fhnw.cantoneditor.model.Canton;
+import ch.fhnw.cantoneditor.model.CantonTableModel;
 import ch.fhnw.command.CommandController;
 import ch.fhnw.observation.ComputedValue;
 import ch.fhnw.oop.led.Led;

@@ -1,4 +1,4 @@
-package ch.fhnw.cantoneditor.views;
+package ch.fhnw.cantoneditor.model;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
-import ch.fhnw.cantoneditor.model.Canton;
+import ch.fhnw.cantoneditor.views.TranslationManager;
 import ch.fhnw.command.CommandController;
 import ch.fhnw.observation.ComputedValue;
 import ch.fhnw.observation.Disposable;

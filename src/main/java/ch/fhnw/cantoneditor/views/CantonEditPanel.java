@@ -5,11 +5,14 @@ import java.text.NumberFormat;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.ListCellRenderer;
 import javax.swing.SpinnerNumberModel;
 
 import ch.fhnw.cantoneditor.model.Canton;
@@ -60,25 +63,59 @@ public class CantonEditPanel {
 
     }
 
-    private JSpinner getNumberField(Function<Canton, Integer> getValue, BiConsumer<Canton, Integer> setValue,
-            int minValue, int maxValue) {
-        int initvalue = CantonHandler.getCurrentCanton() == null ? minValue : getValue.apply(
-                CantonHandler.getCurrentCanton()).intValue();
-        JSpinner jSpinner1 = new JSpinner(new SpinnerNumberModel(initvalue, minValue, maxValue, 1));
-        ComputedValue<Integer> value = new ComputedValue<Integer>(() -> CantonHandler.getCurrentCanton() == null ? 0
+    private <T> JComboBox<T> getComboBox(T[] list, Function<Canton, T> getValue, BiConsumer<Canton, T> setValue,
+            Function<T, String> getText) {
+        JComboBox<T> comboBox = new JComboBox<T>(list);
+        comboBox.setRenderer(new ListCellRenderer<T>() {
+            public java.awt.Component getListCellRendererComponent(javax.swing.JList<? extends T> list, T value,
+                    int index, boolean isSelected, boolean cellHasFocus) {
+                return new JTextField(getText.apply(value));
+            };
+        });
+        comboBox.setSelectedItem(CantonHandler.getCurrentCanton() == null ? null : getValue.apply(CantonHandler
+                .getCurrentCanton()));
+        bindObservables(comboBox, getValue, setValue);
+        return comboBox;
+    }
+
+    private <T> void bindObservables(JComponent comp, Function<Canton, T> getValue, BiConsumer<Canton, T> setValue) {
+        ComputedValue<T> value = new ComputedValue<T>(() -> CantonHandler.getCurrentCanton() == null ? null
                 : getValue.apply(CantonHandler.getCurrentCanton()), (s) -> setValue.accept(
                 CantonHandler.getCurrentCanton(), s));
 
-        ValueSubscribable<Integer> tfObservable = SwingObservables.getFromNumber(jSpinner1);
+        ValueSubscribable<T> tfObservable;
+        if (comp.getClass() == JComboBox.class) {
+            tfObservable = SwingObservables.getFromComboBox((JComboBox<T>) comp);
+        } else if (comp.getClass() == JSpinner.class) {
+            tfObservable = (ValueSubscribable<T>) SwingObservables.getFromNumber((JSpinner) comp);
+        } else if (comp.getClass() == JFormattedTextField.class) {
+            tfObservable = (ValueSubscribable<T>) SwingObservables
+                    .getFromFormattedTextField((JFormattedTextField) comp);
+        } else if (comp.getClass() == JTextField.class) {
+            tfObservable = (ValueSubscribable<T>) SwingObservables.getFromTextField((JTextField) comp);
+        } else {
+            throw new IllegalArgumentException("Component not supported!");
+        }
 
         value.bindTo(tfObservable::set);
         tfObservable.bindTo((s) -> {
-            if (!s.equals(value.get()) && CantonHandler.getCurrentCanton() != null) {
+            T currentValue = value.get();
+            if (!(s == null ? currentValue == null : s.equals(currentValue))
+                    && CantonHandler.getCurrentCanton() != null) {
                 CommandController.getDefault().executePropertySet(CantonHandler.getCurrentCanton(), s, getValue,
                         setValue);
             }
         });
 
+    }
+
+    private JSpinner getNumberField(Function<Canton, Integer> getValue, BiConsumer<Canton, Integer> setValue,
+            int minValue, int maxValue) {
+        int initvalue = CantonHandler.getCurrentCanton() == null ? minValue : getValue.apply(
+                CantonHandler.getCurrentCanton()).intValue();
+        JSpinner jSpinner1 = new JSpinner(new SpinnerNumberModel(initvalue, minValue, maxValue, 1));
+
+        bindObservables(jSpinner1, getValue, setValue);
         return jSpinner1;
     }
 
@@ -86,18 +123,7 @@ public class CantonEditPanel {
             NumberFormat format) {
         JFormattedTextField floatField = new JFormattedTextField(format);
 
-        ComputedValue<Double> value = new ComputedValue<Double>(() -> CantonHandler.getCurrentCanton() == null ? 0.0
-                : getValue.apply(CantonHandler.getCurrentCanton()), (s) -> setValue.accept(
-                CantonHandler.getCurrentCanton(), s));
-        ValueSubscribable<Double> tfObservable = SwingObservables.getFromFormattedTextField(floatField);
-        value.bindTo(tfObservable::set);
-        tfObservable.bindTo((s) -> {
-            if (!s.equals(value.get()) && CantonHandler.getCurrentCanton() != null) {
-                CommandController.getDefault().executePropertySet(CantonHandler.getCurrentCanton(), s, getValue,
-                        setValue);
-            }
-        });
-
+        bindObservables(floatField, getValue, setValue);
         return floatField;
 
     }
@@ -105,19 +131,7 @@ public class CantonEditPanel {
     private JTextField getTextField(Function<Canton, String> getValue, BiConsumer<Canton, String> setValue) {
         JTextField tf = new JTextField(CantonHandler.getCurrentCanton() == null ? "" : getValue.apply(CantonHandler
                 .getCurrentCanton()));
-        ComputedValue<String> value = new ComputedValue<String>(() -> CantonHandler.getCurrentCanton() == null ? ""
-                : getValue.apply(CantonHandler.getCurrentCanton()), (s) -> setValue.accept(
-                CantonHandler.getCurrentCanton(), s));
-        ValueSubscribable<String> tfObservable = SwingObservables.getFromTextField(tf);
-
-        value.bindTo(tfObservable::set);
-        tfObservable.bindTo((s) -> {
-            if (!s.equals(value.get()) && CantonHandler.getCurrentCanton() != null) {
-                CommandController.getDefault().executePropertySet(CantonHandler.getCurrentCanton(), s, getValue,
-                        setValue);
-            }
-        });
-
+        bindObservables(tf, getValue, setValue);
         return tf;
     }
 }

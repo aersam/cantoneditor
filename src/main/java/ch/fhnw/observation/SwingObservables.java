@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -15,6 +16,31 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 public class SwingObservables {
+    public static <T> ValueSubscribable<T> getFromComboBox(JComboBox<T> comboBox) {
+        ObservableValue<T> vl = new ObservableValue<T>((T) comboBox.getSelectedItem());
+        comboBox.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JComboBox<T> cb = (JComboBox<T>) e.getSource();
+                T selectedItem = (T) cb.getSelectedItem();
+                if (selectedItem != vl.get())
+                    vl.set(selectedItem);
+            }
+        });
+        vl.addPropertyChangeListener(new PropertyChangeListener() {
+
+            @Override
+            public void propertyChange(PropertyChangeEvent arg0) {
+                T selectedItem = (T) comboBox.getSelectedItem();
+                if (selectedItem != vl.get())
+                    comboBox.setSelectedItem(vl.get());
+
+            }
+        });
+        return vl;
+    }
+
     public static ValueSubscribable<Integer> getFromNumber(JSpinner spinner) {
         ObservableValue<Integer> vl = new ObservableValue<>((Integer) spinner.getValue());
         spinner.addChangeListener(new ChangeListener() {
@@ -31,8 +57,11 @@ public class SwingObservables {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 Integer value = (Integer) spinner.getValue();
-                if (!value.equals(vl.get()))
-                    spinner.setValue(vl.get());
+                Integer vls = vl.get();
+                if (vls == null)
+                    return;// Unable to set that one
+                if (!value.equals(vls))
+                    spinner.setValue(vls);
             }
         });
         return vl;
@@ -90,8 +119,11 @@ public class SwingObservables {
 
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                if (!vl.get().equals(field.getText()))
-                    field.setText(vl.get());
+                String vlValue = vl.get();
+                if (vlValue == null)
+                    vlValue = "";
+                if (!vlValue.equals(field.getText()))
+                    field.setText(vlValue);
             }
         });
         return vl;

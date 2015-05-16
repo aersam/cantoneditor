@@ -1,8 +1,10 @@
-package ch.fhnw.cantoneditor.views;
+package ch.fhnw.cantoneditor.model;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import ch.fhnw.cantoneditor.views.CantonHandler;
 
 public class CantonTableSelectionModel extends DefaultListSelectionModel {
 
