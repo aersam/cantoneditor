@@ -47,6 +47,21 @@ public class Commune extends BaseModel implements Initable {
         return null;
     }
 
+    public static Commune getByName(String name, boolean createIfNotExists) {
+        for (Commune c : communes.values()) {
+            if (c.getName().equals(name)) {
+                return c;
+            }
+        }
+        if (createIfNotExists) {
+            Commune c = new Commune(0);
+
+            c.setName(name);
+            return c;
+        }
+        return null;
+    }
+
     private boolean isInited = false;
 
     public void init() {

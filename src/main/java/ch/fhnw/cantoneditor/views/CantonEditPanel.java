@@ -1,11 +1,16 @@
 package ch.fhnw.cantoneditor.views;
 
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.text.NumberFormat;
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
@@ -13,11 +18,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.SpinnerNumberModel;
 
 import ch.fhnw.cantoneditor.model.Canton;
+import ch.fhnw.cantoneditor.model.Commune;
 import ch.fhnw.cantoneditor.model.Language;
 import ch.fhnw.command.CommandController;
 import ch.fhnw.command.ListAddCommand;
@@ -32,6 +39,32 @@ public class CantonEditPanel {
     private TranslationManager tm = TranslationManager.getInstance();
 
     public JPanel getComponent(JFrame frame) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+        panel.add(getEditingGrid(frame));
+
+        panel.add(new JLabel(tm.Translate("CantonCommunities", "Communities")));
+
+        panel.add(getTextArea(c -> String.join(", ",
+                c.getCommunes().stream().map(s -> s.toString()).collect(Collectors.toList())), (c, str) -> {
+            String[] communes = str.split(",");
+            List<Commune> allCommunes = new java.util.ArrayList<Commune>();
+            for (String commune : communes) {
+                Optional<Commune> existing = c.getCommunes().stream().filter(s -> s.getName().equals(commune))
+                        .findFirst();
+                if (!existing.isPresent()) {
+                    allCommunes.add(Commune.getByName(commune.trim(), true));
+                } else {
+                    allCommunes.add(existing.get());
+                }
+            }
+        }));
+        return panel;
+
+    }
+
+    private JPanel getEditingGrid(JFrame frame) {
+
         JPanel simpleItems = new JPanel(new GridLayout(0, 4, 5, 5));
         simpleItems.add(new JLabel(tm.Translate("Canton")));
         simpleItems.add(getTextField(Canton::getName, Canton::setName));
@@ -143,6 +176,8 @@ public class CantonEditPanel {
                     .getFromFormattedTextField((JFormattedTextField) comp);
         } else if (comp.getClass() == JTextField.class) {
             tfObservable = (ValueSubscribable<T>) SwingObservables.getFromTextField((JTextField) comp);
+        } else if (comp.getClass() == JTextArea.class) {
+            tfObservable = (ValueSubscribable<T>) SwingObservables.getFromTextArea((JTextArea) comp);
         } else {
             throw new IllegalArgumentException("Component not supported!");
         }
@@ -182,6 +217,17 @@ public class CantonEditPanel {
         JTextField tf = new JTextField(CantonHandler.getCurrentCanton() == null ? "" : getValue.apply(CantonHandler
                 .getCurrentCanton()));
         bindObservables(tf, getValue, setValue);
+
+        return tf;
+    }
+
+    private JTextArea getTextArea(Function<Canton, String> getValue, BiConsumer<Canton, String> setValue) {
+        JTextArea tf = new JTextArea(CantonHandler.getCurrentCanton() == null ? "" : getValue.apply(CantonHandler
+                .getCurrentCanton()));
+        tf.setMaximumSize(new Dimension(500, 1000));
+        tf.setWrapStyleWord(true);
+        bindObservables(tf, getValue, setValue);
+
         return tf;
     }
 }

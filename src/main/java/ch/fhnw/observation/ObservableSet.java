@@ -133,7 +133,7 @@ public class ObservableSet<T> implements Set<T>, PropertyChangeable {
     }
 
     @Override
-    public java.util.stream.Stream stream() {
+    public java.util.stream.Stream<T> stream() {
         ReadObserver.notifyRead(this, null);
         return this.underlyingList.stream();
     }

@@ -8,6 +8,7 @@ import java.beans.PropertyChangeListener;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
@@ -112,6 +113,24 @@ public class SwingObservables {
     }
 
     public static ValueSubscribable<String> getFromTextField(JTextField field) {
+        ObservableValue<String> vl = new ObservableValue<String>(field.getText());
+
+        field.getDocument().addDocumentListener(getDelayListener((e) -> vl.set(field.getText()), 500));
+        vl.addPropertyChangeListener(new PropertyChangeListener() {
+
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                String vlValue = vl.get();
+                if (vlValue == null)
+                    vlValue = "";
+                if (!vlValue.equals(field.getText()))
+                    field.setText(vlValue);
+            }
+        });
+        return vl;
+    }
+
+    public static ValueSubscribable<String> getFromTextArea(JTextArea field) {
         ObservableValue<String> vl = new ObservableValue<String>(field.getText());
 
         field.getDocument().addDocumentListener(getDelayListener((e) -> vl.set(field.getText()), 500));

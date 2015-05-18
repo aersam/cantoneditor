@@ -21,8 +21,9 @@ public class DB4OConnector {
 
     static {
         EmbeddedConfiguration config = Db4oEmbedded.newConfiguration();
-        config.common().activationDepth(0);
+        config.common().activationDepth(2);
         db = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), Config.getValue("dbname"));
+
     }
 
     public static void terminate() {
