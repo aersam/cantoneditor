@@ -6,12 +6,12 @@ import ch.fhnw.cantoneditor.views.TranslationManager;
 
 public class ListAddCommand<T> implements Executable {
 
-    private final T toAdd;
+    private final Collection<T> toAdd;
     private final Collection<T> collection;
     private final String collectionName;
     private boolean hasBeenExecuted = false;
 
-    public ListAddCommand(String collectionName, Collection<T> list, T toAdd) {
+    public ListAddCommand(String collectionName, Collection<T> list, Collection<T> toAdd) {
         this.collection = list;
         this.toAdd = toAdd;
         this.collectionName = collectionName;
@@ -21,14 +21,14 @@ public class ListAddCommand<T> implements Executable {
     public boolean execute() {
         if (this.hasBeenExecuted || collection.contains(toAdd))
             return false;
-        collection.add(toAdd);
+        collection.addAll(toAdd);
         this.hasBeenExecuted = true;
         return true;
     }
 
     @Override
     public void undo() {
-        this.collection.remove(toAdd);
+        this.collection.removeAll(toAdd);
     }
 
     @Override

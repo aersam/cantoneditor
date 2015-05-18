@@ -85,7 +85,7 @@ public class Overview2 {
         rootPane.add(buttonPanel, BorderLayout.PAGE_START);
         rootPane.add(scroller, BorderLayout.CENTER);
         rootPane.add(getLedPanel(), BorderLayout.PAGE_END);
-        rootPane.add(new CantonEditPanel().getComponent(), BorderLayout.LINE_END);
+        rootPane.add(new CantonEditPanel().getComponent(frame), BorderLayout.LINE_END);
         frame.add(rootPane);
         frame.pack();
         frame.setVisible(true);

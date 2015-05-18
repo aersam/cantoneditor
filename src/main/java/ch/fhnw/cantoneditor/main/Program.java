@@ -15,7 +15,7 @@ public class Program {
 
     public static void main(String[] args) {
         try {
-            loadData();
+            loadData(false);
 
             Overview2 v = new Overview2();
             v.show();
@@ -24,7 +24,18 @@ public class Program {
         }
     }
 
-    private static void loadData() throws IOException, ParseException, NoDataFoundException {
+    private static void loadData(boolean reread) throws IOException, ParseException, NoDataFoundException {
+        if (reread) {
+            for (Canton c : DB4OConnector.getAll(Canton.class)) {
+                c.init();
+                DB4OConnector.removeObject(c);
+            }
+            for (Commune c : DB4OConnector.getAll(Commune.class)) {
+                c.init();
+                DB4OConnector.removeObject(c);
+            }
+            DB4OConnector.saveChanges();
+        }
         List<Canton> cantons = DB4OConnector.getAll(Canton.class);
         if (cantons.size() == 0) {
             Iterable<Canton> cantonList = CsvReader.readCantons();

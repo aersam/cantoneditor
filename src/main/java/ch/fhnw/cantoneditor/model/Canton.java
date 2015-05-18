@@ -5,9 +5,11 @@ import java.util.Map;
 
 import ch.fhnw.cantoneditor.datautils.BaseModel;
 import ch.fhnw.cantoneditor.datautils.DB4OConnector;
+import ch.fhnw.cantoneditor.datautils.Initable;
+import ch.fhnw.observation.ObservableList;
 import ch.fhnw.observation.ObservableSet;
 
-public class Canton extends BaseModel {
+public class Canton extends BaseModel implements Initable {
     public static final String NAME_PROPERTY = "name";
     public static final String SHORTCUT_PROPERTY = "shortCut";
     public static final String NRCOUNCILSEATS_PROPERTY = "nrCouncilSeats";
@@ -28,7 +30,7 @@ public class Canton extends BaseModel {
     private double nrForeigners;
     private int nrInhabitants;
 
-    private ObservableSet<Language> languageId = new ObservableSet<>();
+    private ObservableList<Language> languageId = new ObservableList<>();
     private String capital;
     private double area;
 
@@ -158,7 +160,7 @@ public class Canton extends BaseModel {
         }
     }
 
-    public ObservableSet<Language> getLanguages() {
+    public ObservableList<Language> getLanguages() {
         return languageId;
     }
 
@@ -262,6 +264,7 @@ public class Canton extends BaseModel {
         c.area = this.area;
         c.inHabitantDensity = this.inHabitantDensity;
         c.nrCommunes = this.nrCommunes;
+
         for (Language lng : this.languageId) {
             c.getLanguages().add(lng);
         }

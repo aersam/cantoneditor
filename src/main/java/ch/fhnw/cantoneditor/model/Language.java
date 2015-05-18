@@ -1,5 +1,8 @@
 package ch.fhnw.cantoneditor.model;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 /**
  * A Class for handling Swiss Languages. Currently, these Languages are hard coded
  * 
@@ -41,6 +44,10 @@ public class Language {
 
     public int getId() {
         return this.id;
+    }
+
+    public static Collection<Language> getAllLanguages() {
+        return Arrays.asList(German, French, Italian, Rumantsch);
     }
 
     @Override

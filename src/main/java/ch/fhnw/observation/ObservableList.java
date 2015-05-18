@@ -197,6 +197,12 @@ public class ObservableList<T> implements List<T>, PropertyChangeable {
     }
 
     @Override
+    public java.util.stream.Stream<T> stream() {
+        ReadObserver.notifyRead(this, null);
+        return this.underlyingList.stream();
+    }
+
+    @Override
     public boolean equals(Object arg0) {
         return this.underlyingList.equals(arg0);
     }

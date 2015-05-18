@@ -6,9 +6,9 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
@@ -21,20 +21,20 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import ch.fhnw.cantoneditor.datautils.ListUtils;
+import ch.fhnw.observation.ComputedValue;
 import ch.fhnw.observation.ObservableList;
 import ch.fhnw.observation.PropertyChangeable;
-import ch.fhnw.observation.ReadObserver;
 
 public class MultiSelector<E> {
     JDialog dialog;
     JComponent displayPanel;
     private final JFrame frame;
-    private final Iterable<E> sourceItems;
+    private final Collection<E> sourceItems;
     SelectionManager<E> manager;
     JTextToggler toggler;
 
@@ -42,17 +42,14 @@ public class MultiSelector<E> {
 
     private boolean isCalculatedContent = false;
 
-    public MultiSelector(JFrame frame, Iterable<E> items) {
+    public MultiSelector(JFrame frame, Collection<E> items) {
         this.frame = frame;
         this.sourceItems = items;
 
     }
 
     private void onToggleButtonClick() {
-
-        Point p = displayPanel.getLocation();
-        JFrame f = (JFrame) displayPanel.getTopLevelAncestor();
-        SwingUtilities.convertPointToScreen(p, f.getContentPane());
+        Point p = displayPanel.getLocationOnScreen();
         dialog.setLocation(p.x, p.y + displayPanel.getHeight());
         dialog.setVisible(toggler.isSelected());
 
@@ -60,10 +57,10 @@ public class MultiSelector<E> {
 
     private void calcContent() {
         if (!this.isCalculatedContent) {
-            MultiRenderer renderer = new MultiRenderer(manager);
 
             JList<E> list = new JList<E>();
             manager = new SelectionManager<E>(this.sourceItems, list);
+            MultiRenderer renderer = new MultiRenderer(manager);
             list.setBorder(BorderFactory.createLineBorder(Color.black));
             // you can ommit the manager and renderer and make multiple JList
             // selections by holding the control key down while selecting
@@ -73,8 +70,9 @@ public class MultiSelector<E> {
 
             toggler = new JTextToggler(manager.getSelectedString());
             toggler.setPreferredSize(new Dimension(150, 20));
-            manager.addPropertyChangeListener(e -> toggler.setText(manager.getSelectedString()));
-            // button.addActionListener(this);
+
+            new ComputedValue<>(manager::getSelectedString).bindTo(toggler::setText);
+
             toggler.addPropertyChangeListener(JTextToggler.IsSelectedProperty, e -> this.onToggleButtonClick());
             displayPanel = toggler;
             Dimension d = list.getPreferredSize();
@@ -99,7 +97,7 @@ public class MultiSelector<E> {
         return manager.getSelectedItems();
     }
 
-    private JComponent getContent() {
+    public JComponent getContent() {
         this.calcContent();
         return content;
     }
@@ -148,17 +146,16 @@ public class MultiSelector<E> {
         }
     }
 
-    static class SelectionManager<E> implements ListSelectionListener, PropertyChangeable {
+    static class SelectionManager<E> implements ListSelectionListener {
         ObservableList<E> selectedItems = new ObservableList<E>();
 
-        private Iterable<E> sourceItems;
+        private Collection<E> sourceItems;
 
-        public static final String SelectedStringProperty = "SelectedString";
         private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
         private JList<E> target;
 
-        public SelectionManager(Iterable<E> sourceItems, JList target) {
+        public SelectionManager(Collection<E> sourceItems, JList target) {
             this.sourceItems = sourceItems;
             this.target = target;
             this.sourceChanged();
@@ -169,7 +166,20 @@ public class MultiSelector<E> {
             }
         }
 
+        private <T> Collection<T> getCollection(javax.swing.ListModel<T> model) {
+            if (model == null)
+                return null;
+            Collection<T> items = new java.util.ArrayList<T>();
+            for (int i = 0; i < model.getSize(); i++) {
+                items.add(model.getElementAt(i));
+            }
+            return items;
+        }
+
         public void sourceChanged() {
+            if (ListUtils.contentEquals(this.sourceItems, getCollection(this.target.getModel()))) {
+                return;
+            }
             DefaultListModel<E> model = new DefaultListModel<E>();
             for (E item : this.sourceItems) {
                 model.addElement(item);
@@ -187,7 +197,6 @@ public class MultiSelector<E> {
 
             if (selectedItems.size() == 0)
                 return TranslationManager.getInstance().Translate("NoSelection", "Keine Auswahl");
-            ReadObserver.notifyRead(this, SelectedStringProperty);
             return selectedItems.stream().map(s -> s.toString()).collect(Collectors.joining(", "));
 
         }
@@ -204,7 +213,6 @@ public class MultiSelector<E> {
                     selectedItems.add(value);
                 }
 
-                this.pcs.firePropertyChange(SelectedStringProperty, selectedString, this.getSelectedString());
             }
         }
 
@@ -214,16 +222,6 @@ public class MultiSelector<E> {
 
         public ObservableList<E> getSelectedItems() {
             return this.selectedItems;
-        }
-
-        @Override
-        public void addPropertyChangeListener(PropertyChangeListener listener) {
-            this.pcs.addPropertyChangeListener(listener);
-        }
-
-        @Override
-        public void removePropertyChangeListener(PropertyChangeListener listener) {
-            this.pcs.removePropertyChangeListener(listener);
         }
     }
 
@@ -238,6 +236,7 @@ public class MultiSelector<E> {
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
                 boolean cellHasFocus) {
             setComponentOrientation(list.getComponentOrientation());
+
             if (selectionManager.isSelected((E) value)) {
                 setBackground(list.getSelectionBackground());
                 setForeground(list.getSelectionForeground());

@@ -69,7 +69,8 @@ public class ComputedValueTest {
         commaList.addPropertyChangeListener((evt) -> ComputedValueTest.increaseCounter());
         int oldCount = ComputedValueTest.readCounter;
         values.add("c");
-        assertEquals(commaList.get(), "a,b,c");
         assertTrue(ComputedValueTest.readCounter > oldCount);
+        assertEquals(commaList.get(), "a,b,c");
     }
+
 }

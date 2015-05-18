@@ -6,8 +6,9 @@ import java.util.Map;
 
 import ch.fhnw.cantoneditor.datautils.BaseModel;
 import ch.fhnw.cantoneditor.datautils.DB4OConnector;
+import ch.fhnw.cantoneditor.datautils.Initable;
 
-public class Commune extends BaseModel {
+public class Commune extends BaseModel implements Initable {
 
     public static final String DISTRICTNR_PROPERTY = "districtNr";
     public static final String BFSCOMMUNENR_PROPERTY = "bfsCommuneNr";

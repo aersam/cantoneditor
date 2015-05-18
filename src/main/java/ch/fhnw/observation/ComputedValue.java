@@ -51,11 +51,18 @@ public class ComputedValue<T> implements ValueSubscribable<T>, Disposable {
 
     /** Returns true if the property is being tracked */
     private boolean isPropertyTracked(Object obj, String propertyName) {
-        List<String> properties = dependencies.getOrDefault(obj, null);
-        if (properties != null) {
-            return properties.contains(propertyName) || properties.contains(null);
+        if (!(obj instanceof PropertyChangeable))
+            return false;
+        List<String> properties = dependencies.getOrDefault((PropertyChangeable) obj, null);
+        if (properties == null)
+            return true;
+        for (String prop : properties) {
+            if (prop == null)
+                return true;
+            if (prop.equals(propertyName))
+                return true;
         }
-        return false;
+        return true;
     }
 
     /** Gets called if any property of any dependency is changed */

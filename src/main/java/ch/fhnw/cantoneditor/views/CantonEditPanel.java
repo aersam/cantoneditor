@@ -2,6 +2,7 @@ package ch.fhnw.cantoneditor.views;
 
 import java.awt.GridLayout;
 import java.text.NumberFormat;
+import java.util.Collection;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -17,8 +18,10 @@ import javax.swing.ListCellRenderer;
 import javax.swing.SpinnerNumberModel;
 
 import ch.fhnw.cantoneditor.model.Canton;
+import ch.fhnw.cantoneditor.model.Language;
 import ch.fhnw.command.CommandController;
 import ch.fhnw.command.ListAddCommand;
+import ch.fhnw.command.ListRemoveCommand;
 import ch.fhnw.observation.ComputedValue;
 import ch.fhnw.observation.ObservableList;
 import ch.fhnw.observation.SwingObservables;
@@ -28,7 +31,7 @@ public class CantonEditPanel {
 
     private TranslationManager tm = TranslationManager.getInstance();
 
-    public JPanel getComponent() {
+    public JPanel getComponent(JFrame frame) {
         JPanel simpleItems = new JPanel(new GridLayout(0, 4, 5, 5));
         simpleItems.add(new JLabel(tm.Translate("Canton")));
         simpleItems.add(getTextField(Canton::getName, Canton::setName));
@@ -62,6 +65,10 @@ public class CantonEditPanel {
         simpleItems.add(new JLabel(tm.Translate("CantonArea")));
         simpleItems.add(getFloatField(Canton::getArea, Canton::setArea, NumberFormat.getNumberInstance()));
 
+        simpleItems.add(new JLabel(tm.Translate("CantonLanguage", "Language")));
+        simpleItems.add(getMultiselector(frame, Language.getAllLanguages(), Canton::getLanguages,
+                tm.Translate("CantonLanguage", "Language")).getContent());
+
         return simpleItems;
 
     }
@@ -81,7 +88,17 @@ public class CantonEditPanel {
         return comboBox;
     }
 
-    private <T> MultiSelector<T> getMultiselector(JFrame frame, Iterable<T> allItems,
+    private <T> Collection<T> getCollection(Object o) {
+        if (o instanceof Collection<?>) {
+            return (Collection<T>) o;
+        }
+        T obj = (T) o;
+        Collection<T> col = new java.util.ArrayList<T>();
+        col.add(obj);
+        return col;
+    }
+
+    private <T> MultiSelector<T> getMultiselector(JFrame frame, Collection<T> allItems,
             Function<Canton, ObservableList<T>> getObservable, String name) {
         MultiSelector<T> selector = new MultiSelector<>(frame, allItems);
         if (CantonHandler.getCurrentCanton() != null) {
@@ -93,17 +110,22 @@ public class CantonEditPanel {
         value.bindTo(selector.getSelectedItems()::reset);
         selector.getSelectedItems().addPropertyChangeListener(
                 l -> {
-                    if (ObservableList.ADDED_ACTION.equals(l.getPropertyName())) {
-                        CommandController.getDefault().execute(
-                                new ListAddCommand<T>(name, selector.getSelectedItems(), (T) l.getNewValue()));
-                    }
-                    ObservableList<T> currentValue = value.get();
-                    if (!(s == null ? currentValue == null : selector.equals(currentValue))
-                            && CantonHandler.getCurrentCanton() != null) {
-                        CommandController.getDefault().executePropertySet(CantonHandler.getCurrentCanton(), s,
-                                getValue, setValue);
+                    if (selector.getSelectedItems().size() != value.get().size()) {
+                        if (ObservableList.ADDED_ACTION.equals(l.getPropertyName())) {
+                            CommandController.getDefault().execute(
+                                    new ListAddCommand<T>(name, value.get(), getCollection(l.getNewValue())));
+                        } else if (ObservableList.REMOVE_ACTION.equals(l.getPropertyName())) {
+                            Collection<T> cols = getCollection(l.getOldValue());
+                            for (T item : cols) {
+                                CommandController.getDefault().execute(
+                                        new ListRemoveCommand<T>(name, value.get(), item));
+                            }
+                        } else {
+                            throw new IllegalArgumentException("List not supported!");
+                        }
                     }
                 });
+        return selector;
     }
 
     private <T> void bindObservables(JComponent comp, Function<Canton, T> getValue, BiConsumer<Canton, T> setValue) {

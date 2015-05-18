@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -74,9 +75,9 @@ public class Overview {
         lowerPane.setMinimumSize(minDimension);
 
         CantonEditPanel editPanel = new CantonEditPanel();
-        editPanel.getComponent().setMinimumSize(minDimension);
-        JSplitPane horizontalSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, false, upperPane,
-                editPanel.getComponent());
+        JComponent editComp = editPanel.getComponent(frame);
+        editComp.setMinimumSize(minDimension);
+        JSplitPane horizontalSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, false, upperPane, editComp);
 
         JSplitPane verticalSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, false, horizontalSplitPane, lowerPane);
 
