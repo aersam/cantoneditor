@@ -57,6 +57,11 @@ public class Canton extends BaseModel implements Initable {
         if (isInited)
             return;
         isInited = true;
+        this.languageId.addPropertyChangeListener((evt) -> {
+            if (this.id != 0) {
+                DB4OConnector.markChanged(this);
+            }
+        });
         this.addPropertyChangeListener((evt) -> {
             if (this.id != 0) {
                 DB4OConnector.markChanged(this);

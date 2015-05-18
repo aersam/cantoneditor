@@ -5,6 +5,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -53,16 +54,21 @@ public class ComputedValue<T> implements ValueSubscribable<T>, Disposable {
     private boolean isPropertyTracked(Object obj, String propertyName) {
         if (!(obj instanceof PropertyChangeable))
             return false;
-        List<String> properties = dependencies.getOrDefault((PropertyChangeable) obj, null);
-        if (properties == null)
-            return true;
-        for (String prop : properties) {
-            if (prop == null)
-                return true;
-            if (prop.equals(propertyName))
-                return true;
+        for (Entry<PropertyChangeable, List<String>> item : dependencies.entrySet()) {
+            if (item.getKey() == obj) {
+                List<String> properties = item.getValue();
+                if (properties == null)
+                    return true;
+                for (String prop : properties) {
+                    if (prop == null)
+                        return true;
+                    if (prop.equals(propertyName))
+                        return true;
+                }
+            }
         }
-        return true;
+
+        return false;
     }
 
     /** Gets called if any property of any dependency is changed */

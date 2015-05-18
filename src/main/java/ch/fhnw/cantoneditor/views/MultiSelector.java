@@ -71,7 +71,9 @@ public class MultiSelector<E> {
             toggler = new JTextToggler(manager.getSelectedString());
             toggler.setPreferredSize(new Dimension(150, 20));
 
-            new ComputedValue<>(manager::getSelectedString).bindTo(toggler::setText);
+            new ComputedValue<>(manager::getSelectedString).bindTo((e) -> {
+                toggler.setText(e);
+            });
 
             toggler.addPropertyChangeListener(JTextToggler.IsSelectedProperty, e -> this.onToggleButtonClick());
             displayPanel = toggler;
@@ -88,6 +90,12 @@ public class MultiSelector<E> {
             JPanel panel = new JPanel();
             panel.add(toggler);
             content = panel;
+            frame.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                    if (dialog != null)
+                        dialog.setVisible(false);
+                };
+            });
             this.isCalculatedContent = true;
         }
     }
