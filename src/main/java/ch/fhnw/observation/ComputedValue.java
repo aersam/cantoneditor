@@ -25,6 +25,8 @@ public class ComputedValue<T> implements ValueSubscribable<T>, Disposable {
      */
     private T lastValue;
 
+    private boolean disposed = false;
+
     /** The dependencies */
     private Map<PropertyChangeable, List<String>> dependencies;
 
@@ -54,6 +56,8 @@ public class ComputedValue<T> implements ValueSubscribable<T>, Disposable {
     private boolean isPropertyTracked(Object obj, String propertyName) {
         if (!(obj instanceof PropertyChangeable))
             return false;
+        if (dependencies == null) // Should not happen
+            return true;
         for (Entry<PropertyChangeable, List<String>> item : dependencies.entrySet()) {
             if (item.getKey() == obj) {
                 List<String> properties = item.getValue();
@@ -131,6 +135,8 @@ public class ComputedValue<T> implements ValueSubscribable<T>, Disposable {
 
     /** Gets the value */
     public T get() {
+        if (this.disposed)
+            return this.lastValue;// Should we throw?
         if (dependencies == null) {
             this.getValueAndObserve();
         }
@@ -156,7 +162,9 @@ public class ComputedValue<T> implements ValueSubscribable<T>, Disposable {
     /** Unsubscribes dependencies. Do not access this object anymore */
     @Override
     public void dispose() {
+        disposed = true;// Ready for GC!
         this.setDependenciesAndTrack(null);
+        this.lastValue = null;
         this.pcs = null;
     }
 

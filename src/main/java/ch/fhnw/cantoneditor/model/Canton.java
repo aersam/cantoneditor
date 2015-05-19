@@ -6,10 +6,11 @@ import java.util.Map;
 import ch.fhnw.cantoneditor.datautils.BaseModel;
 import ch.fhnw.cantoneditor.datautils.DB4OConnector;
 import ch.fhnw.cantoneditor.datautils.Initable;
+import ch.fhnw.cantoneditor.datautils.Searchable;
 import ch.fhnw.observation.ObservableList;
 import ch.fhnw.observation.ObservableSet;
 
-public class Canton extends BaseModel implements Initable {
+public class Canton extends BaseModel implements Initable, Searchable {
     public static final String NAME_PROPERTY = "name";
     public static final String SHORTCUT_PROPERTY = "shortCut";
     public static final String NRCOUNCILSEATS_PROPERTY = "nrCouncilSeats";
@@ -277,5 +278,11 @@ public class Canton extends BaseModel implements Initable {
             c.getCommunes().add(comm);
         }
         return c;
+    }
+
+    @Override
+    public String[] getSearchStrings() {
+        return new String[] { this.getName().toLowerCase(), this.getShortCut().toLowerCase(),
+                this.getCapital().toLowerCase() };
     }
 }

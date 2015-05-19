@@ -112,10 +112,10 @@ public class SwingObservables {
         };
     }
 
-    public static ValueSubscribable<String> getFromTextField(JTextField field) {
+    public static ValueSubscribable<String> getFromTextField(JTextField field, int delay) {
         ObservableValue<String> vl = new ObservableValue<String>(field.getText());
 
-        field.getDocument().addDocumentListener(getDelayListener((e) -> vl.set(field.getText()), 500));
+        field.getDocument().addDocumentListener(getDelayListener((e) -> vl.set(field.getText()), delay));
         vl.addPropertyChangeListener(new PropertyChangeListener() {
 
             @Override
@@ -160,6 +160,8 @@ public class SwingObservables {
         if (input instanceof Integer) {
             return ((Integer) input).doubleValue();
         }
+        if (input instanceof String && ((String) input).isEmpty())
+            return null;
         return Double.parseDouble(input.toString());// Not a great fallback, but why not? :)
     }
 
@@ -171,7 +173,8 @@ public class SwingObservables {
 
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                if (!vl.get().equals(field.getText()))
+                Double vlStr = vl.get();
+                if (!(vlStr == null ? getDouble(field.getValue()) == null : vlStr.equals(getDouble(field.getValue()))))
                     field.setValue(vl.get());
             }
         });

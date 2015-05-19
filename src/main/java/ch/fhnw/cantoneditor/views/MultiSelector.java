@@ -45,14 +45,12 @@ public class MultiSelector<E> {
     public MultiSelector(JFrame frame, Collection<E> items) {
         this.frame = frame;
         this.sourceItems = items;
-
     }
 
     private void onToggleButtonClick() {
         Point p = displayPanel.getLocationOnScreen();
         dialog.setLocation(p.x, p.y + displayPanel.getHeight());
         dialog.setVisible(toggler.isSelected());
-
     }
 
     private void calcContent() {
@@ -60,7 +58,13 @@ public class MultiSelector<E> {
 
             JList<E> list = new JList<E>();
             manager = new SelectionManager<E>(this.sourceItems, list);
-            MultiRenderer renderer = new MultiRenderer(manager);
+            manager.getSelectedItems().addPropertyChangeListener(l -> {
+                if (l.getPropertyName() == ObservableList.RESET_ACTION) {
+                    if (dialog != null)// Hacky, but working :)
+                        dialog.setVisible(false);
+                }
+            });
+            MultiRenderer<E> renderer = new MultiRenderer<E>(manager);
             list.setBorder(BorderFactory.createLineBorder(Color.black));
             // you can ommit the manager and renderer and make multiple JList
             // selections by holding the control key down while selecting
@@ -96,6 +100,7 @@ public class MultiSelector<E> {
                         dialog.setVisible(false);
                 };
             });
+
             this.isCalculatedContent = true;
         }
     }

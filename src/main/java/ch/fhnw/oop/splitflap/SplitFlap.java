@@ -253,11 +253,13 @@ public class SplitFlap extends JComponent implements ActionListener {
             return;
         }
         String oldText = text;
-        if (!TEXT.isEmpty() || selectedSet.contains(TEXT.substring(0, 1))) {
-            text = TEXT.substring(0, 1);
-        } else {
-            text = selectedSet.get(0);
-        }
+        text = TEXT.substring(0, 1);
+        // fixed the broken code man
+        // if (!TEXT.isEmpty() || selectedSet.contains(TEXT.substring(0, 1))) {
+        // text = TEXT.substring(0, 1);
+        // } else {
+        // text = selectedSet.get(0);
+        // }
         firePropertyChange(PROPERTY_TEXT, oldText, text);
 
         if (!selectedSet.get(currentSelectionIndex).equals(text)) {

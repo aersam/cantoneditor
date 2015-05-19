@@ -143,6 +143,7 @@ public class CantonEditPanel {
         value.bindTo(selector.getSelectedItems()::reset);
         selector.getSelectedItems().addPropertyChangeListener(
                 l -> {
+<<<<<<< HEAD
                     if (value != null && selector.getSelectedItems().size() != value.get().size()) {
                         if (ObservableList.ADDED_ACTION.equals(l.getPropertyName())) {
                             CommandController.getDefault().execute(
@@ -150,11 +151,22 @@ public class CantonEditPanel {
                         } else if (ObservableList.REMOVE_ACTION.equals(l.getPropertyName())) {
                             Collection<T> cols = getCollection(l.getOldValue());
                             for (T item : cols) {
+=======
+                    if (value.get() != null && selector.getSelectedItems() != null) {
+                        if (selector.getSelectedItems().size() != value.get().size()) {
+                            if (ObservableList.ADDED_ACTION.equals(l.getPropertyName())) {
+>>>>>>> ee16a84593d299b9fde29416a0bf2b0c445c12c9
                                 CommandController.getDefault().execute(
-                                        new ListRemoveCommand<T>(name, value.get(), item));
+                                        new ListAddCommand<T>(name, value.get(), getCollection(l.getNewValue())));
+                            } else if (ObservableList.REMOVE_ACTION.equals(l.getPropertyName())) {
+                                Collection<T> cols = getCollection(l.getOldValue());
+                                for (T item : cols) {
+                                    CommandController.getDefault().execute(
+                                            new ListRemoveCommand<T>(name, value.get(), item));
+                                }
+                            } else {
+                                throw new IllegalArgumentException("List not supported!");
                             }
-                        } else {
-                            throw new IllegalArgumentException("List not supported!");
                         }
                     }
                 });
@@ -175,7 +187,7 @@ public class CantonEditPanel {
             tfObservable = (ValueSubscribable<T>) SwingObservables
                     .getFromFormattedTextField((JFormattedTextField) comp);
         } else if (comp.getClass() == JTextField.class) {
-            tfObservable = (ValueSubscribable<T>) SwingObservables.getFromTextField((JTextField) comp);
+            tfObservable = (ValueSubscribable<T>) SwingObservables.getFromTextField((JTextField) comp, 500);
         } else if (comp.getClass() == JTextArea.class) {
             tfObservable = (ValueSubscribable<T>) SwingObservables.getFromTextArea((JTextArea) comp);
         } else {
