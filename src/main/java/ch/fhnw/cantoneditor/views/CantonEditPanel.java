@@ -143,7 +143,7 @@ public class CantonEditPanel {
         value.bindTo(selector.getSelectedItems()::reset);
         selector.getSelectedItems().addPropertyChangeListener(
                 l -> {
-                    if (selector.getSelectedItems().size() != value.get().size()) {
+                    if (value != null && selector.getSelectedItems().size() != value.get().size()) {
                         if (ObservableList.ADDED_ACTION.equals(l.getPropertyName())) {
                             CommandController.getDefault().execute(
                                     new ListAddCommand<T>(name, value.get(), getCollection(l.getNewValue())));
