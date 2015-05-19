@@ -1,27 +1,39 @@
 package ch.fhnw.cantoneditor.datautils;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Searcher<T extends Searchable> implements Runnable {
 
-    private final Iterable<T> sourcelist;
+    private final Collection<T> sourcelist;
     private final String searchText;
-    private Iterable<T> result;
+    private Collection<T> result;
 
-    public Searcher(String searchText, Iterable<T> sourcelist) {
+    private ActionListener onFinishAction;
+
+    public Searcher(String searchText, Collection<T> sourcelist) {
         this.sourcelist = sourcelist;
         this.searchText = searchText;
+    }
+
+    public Searcher<T> setOnFinish(ActionListener listener) {
+        this.onFinishAction = listener;
+        return this;
     }
 
     @Override
     public void run() {
         this.result = filterList(searchText, this.sourcelist);
+        if (this.onFinishAction != null)
+            this.onFinishAction.actionPerformed(new ActionEvent(this, 0, "run"));
 
     }
 
-    public Iterable<T> getResult() {
+    public Collection<T> getResult() {
         return this.result;
     }
 
@@ -83,7 +95,8 @@ public class Searcher<T extends Searchable> implements Runnable {
         }
     }
 
-    public static <T extends Searchable> Iterable<T> filterList(final String searchText, final Iterable<T> allCantons) {
+    public static <T extends Searchable> Collection<T> filterList(final String searchText,
+            final Collection<T> allCantons) {
         if (searchText == null || searchText.isEmpty())
             return allCantons;
         List<Match<T>> matches = new ArrayList<Searcher.Match<T>>();
@@ -92,17 +105,22 @@ public class Searcher<T extends Searchable> implements Runnable {
 
         for (T cnt : allCantons) {
             String[] searchStrings = cnt.getSearchStrings();
+            int bestMatch = -1;
             for (String toSearch : searchStrings) {
                 if (lowerSearchText.equals(toSearch)) {
-                    matches.add(new Match<T>(1, cnt));
-                } else if (lowerSearchText.contains(toSearch)) {
-                    matches.add(new Match<T>(2, cnt));
+                    bestMatch = 1;
+                    break;
+                } else if (toSearch.contains(lowerSearchText)) {
+                    bestMatch = 2;
                 } else {
                     int absoluteDist = getLevenshteinDistance(lowerSearchText, toSearch);
-                    if ((absoluteDist / (double) lowerSearchText.length()) < 0.5) {
-                        matches.add(new Match<T>(3 + absoluteDist, cnt));
+                    if ((absoluteDist / (double) lowerSearchText.length()) < 0.6) {
+                        bestMatch = 3 + absoluteDist;
                     }
                 }
+            }
+            if (bestMatch != -1) {
+                matches.add(new Match<T>(bestMatch, cnt));
             }
         }
         return matches.stream().sorted((s1, s2) -> Integer.compare(s1.Rank, s2.Rank)).map(s -> s.Item)

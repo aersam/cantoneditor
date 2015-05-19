@@ -12,6 +12,7 @@ import ch.fhnw.cantoneditor.views.TranslationManager;
 import ch.fhnw.command.CommandController;
 import ch.fhnw.observation.ComputedValue;
 import ch.fhnw.observation.Disposable;
+import ch.fhnw.observation.ObservableList;
 import ch.fhnw.observation.ValueSubscribable;
 
 @SuppressWarnings("serial")
@@ -33,7 +34,36 @@ public class CantonTableModel extends DefaultTableModel implements Disposable {
         values = new ValueSubscribable[cantons.size()][6];
         valueConverter = new Function[cantons.size()][6];
         this.cantons = cantons;
+        if (cantons instanceof ObservableList<?>) {
+            ((ObservableList<Canton>) cantons).addPropertyChangeListener(l -> {
+                for (int r = 0; r < values.length; r++) {
+                    for (int c = 0; c < values[r].length; c++) {
+                        if (values[r][c] instanceof Disposable) {
+                            ((Disposable) values[r][c]).dispose();
+                        }
+                    }
+                }
+                for (int r = 0; r < valueConverter.length; r++) {
+                    for (int c = 0; c < valueConverter[r].length; c++) {
+                        if (valueConverter[r][c] instanceof Disposable) {
+                            ((Disposable) valueConverter[r][c]).dispose();
+                        }
+                    }
+                }
 
+                values = new ValueSubscribable[cantons.size()][6];
+                valueConverter = new Function[cantons.size()][6];
+
+                this.fireTableDataChanged();
+            });
+        }
+    }
+
+    @Override
+    public int getRowCount() {
+        if (cantons == null)
+            return super.getRowCount();
+        return cantons.size();
     }
 
     public ListSelectionModel getSelectionModel() {
@@ -89,35 +119,32 @@ public class CantonTableModel extends DefaultTableModel implements Disposable {
 
     @Override
     public Object getValueAt(int row, int column) {
+        Canton canton = cantons.get(row);
         if (column == 0)
-            return getValue(row, column,
-                    () -> cantons.get(row).getName() + " (" + cantons.get(row).getShortCut() + ")", (vl) -> {
-                        Canton cnt = cantons.get(row);
-                        String name, shortcut;
-                        if (vl.contains("(") && vl.contains(")")) {
-                            name = vl.substring(0, vl.indexOf('(') - 1).trim();
-                            shortcut = vl.substring(vl.indexOf('(') + 1, vl.indexOf(')')).trim();
-                        } else {
-                            name = vl;
-                            shortcut = null;
-                        }
-                        if (name != null)
-                            cnt.setName(name);
-                        if (shortcut != null)
-                            cnt.setShortCut(shortcut);
-                    }, null);
+            return getValue(row, column, () -> canton.getName() + " (" + canton.getShortCut() + ")", (vl) -> {
+                String name, shortcut;
+                if (vl.contains("(") && vl.contains(")")) {
+                    name = vl.substring(0, vl.indexOf('(') - 1).trim();
+                    shortcut = vl.substring(vl.indexOf('(') + 1, vl.indexOf(')')).trim();
+                } else {
+                    name = vl;
+                    shortcut = null;
+                }
+                if (name != null)
+                    canton.setName(name);
+                if (shortcut != null)
+                    canton.setShortCut(shortcut);
+            }, null);
         else if (column == 1)
-            return getValue(row, column, cantons.get(row)::getName, cantons.get(row)::setName, null);
+            return getValue(row, column, canton::getName, canton::setName, null);
         else if (column == 2)
-            return getValue(row, column, cantons.get(row)::getShortCut, cantons.get(row)::setShortCut, null);
+            return getValue(row, column, canton::getShortCut, canton::setShortCut, null);
         else if (column == 3)
-            return getValue(row, column, cantons.get(row)::getEntryYear, cantons.get(row)::setEntryYear,
-                    Integer::parseInt);
+            return getValue(row, column, canton::getEntryYear, canton::setEntryYear, Integer::parseInt);
         else if (column == 4)
-            return getValue(row, column, cantons.get(row)::getNrInhabitants, cantons.get(row)::setNrInhabitants,
-                    Integer::parseInt);
+            return getValue(row, column, canton::getNrInhabitants, canton::setNrInhabitants, Integer::parseInt);
         else if (column == 5)
-            return getValue(row, column, cantons.get(row)::getArea, cantons.get(row)::setArea, Double::parseDouble);
+            return getValue(row, column, canton::getArea, canton::setArea, Double::parseDouble);
         return null;
     }
 }
