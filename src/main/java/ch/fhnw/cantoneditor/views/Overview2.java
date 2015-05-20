@@ -19,7 +19,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import ch.fhnw.cantoneditor.datautils.DB4OConnector;
 import ch.fhnw.cantoneditor.datautils.NoDataFoundException;
-import ch.fhnw.cantoneditor.datautils.Searcher;
 import ch.fhnw.cantoneditor.model.Canton;
 import ch.fhnw.cantoneditor.model.CantonTableModel;
 import ch.fhnw.command.CommandController;
@@ -28,6 +27,8 @@ import ch.fhnw.observation.ObservableList;
 import ch.fhnw.observation.SwingObservables;
 import ch.fhnw.observation.ValueSubscribable;
 import ch.fhnw.oop.led.Led;
+
+import com.db4o.internal.btree.Searcher;
 
 public class Overview2 {
     private TranslationManager tm = TranslationManager.getInstance();

@@ -6,7 +6,6 @@ import java.util.Map;
 import ch.fhnw.cantoneditor.datautils.BaseModel;
 import ch.fhnw.cantoneditor.datautils.DB4OConnector;
 import ch.fhnw.cantoneditor.datautils.Initable;
-import ch.fhnw.cantoneditor.datautils.Searchable;
 import ch.fhnw.observation.ObservableList;
 import ch.fhnw.observation.ObservableSet;
 
