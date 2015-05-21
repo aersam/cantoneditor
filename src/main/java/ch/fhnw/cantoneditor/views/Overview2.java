@@ -13,7 +13,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -27,8 +26,6 @@ import ch.fhnw.observation.ObservableList;
 import ch.fhnw.observation.SwingObservables;
 import ch.fhnw.observation.ValueSubscribable;
 import ch.fhnw.oop.led.Led;
-
-import com.db4o.internal.btree.Searcher;
 
 public class Overview2 {
     private TranslationManager tm = TranslationManager.getInstance();
@@ -99,17 +96,17 @@ public class Overview2 {
         tfSearch.setPlaceholder(tm.Translate("Search", "Search") + "...");
         tfSearch.setPreferredSize(new Dimension(100, 30));
         ValueSubscribable<String> searchText = SwingObservables.getFromTextField(tfSearch, 200);
-        searchText.addPropertyChangeListener(l -> {
-            Searcher search = new Searcher<Canton>((String) l.getNewValue(), allCantons);
-            searchCount++;
-            search.setOnFinish(of -> {
-                SwingUtilities.invokeLater(() -> {
-                    searchCompleted(search.getResult(), searchCount);
-                });
-            });
-            Thread th = new Thread(search);
-            th.start();
-        });
+        // searchText.addPropertyChangeListener(l -> {
+        // Searcher search = new Searcher<Canton>((String) l.getNewValue(), allCantons);
+        // searchCount++;
+        // search.setOnFinish(of -> {
+        // SwingUtilities.invokeLater(() -> {
+        // searchCompleted(search.getResult(), searchCount);
+        // });
+        // });
+        // Thread th = new Thread(search);
+        // th.start();
+        // });
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(tfSearch);

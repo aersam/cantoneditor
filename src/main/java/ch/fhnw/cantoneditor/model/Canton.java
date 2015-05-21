@@ -6,13 +6,14 @@ import java.util.Map;
 import ch.fhnw.cantoneditor.datautils.BaseModel;
 import ch.fhnw.cantoneditor.datautils.DB4OConnector;
 import ch.fhnw.cantoneditor.datautils.Initable;
+import ch.fhnw.cantoneditor.datautils.Searchable;
 import ch.fhnw.observation.ObservableList;
 import ch.fhnw.observation.ObservableSet;
 
 public class Canton extends BaseModel implements Initable, Searchable {
     public static final String NAME_PROPERTY = "name";
     public static final String SHORTCUT_PROPERTY = "shortCut";
-    public static final String NRCOUNCILSEATS_PROPERTY = "nrCouncilSeats";
+    public static final String NRCOUNCILSEATS_PROPERTY = "ssknrCouncilSeats";
     public static final String ENTRYYEAR_PROPERTY = "entryYear";
     public static final String NRFOREIGNERS_PROPERTY = "nrForeigners";
     public static final String LANGUAGEID_PROPERTY = "languageId";

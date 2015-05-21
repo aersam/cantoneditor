@@ -4,10 +4,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Rectangle;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -29,12 +29,14 @@ import ch.fhnw.cantoneditor.model.CantonTableModel;
 import ch.fhnw.command.CommandController;
 import ch.fhnw.observation.ComputedValue;
 import ch.fhnw.oop.led.Led;
+import ch.fhnw.oop.splitflap.GlobalTimer;
 import ch.fhnw.oop.splitflap.SplitFlap;
 
 public class Overview {
     private TranslationManager tm = TranslationManager.getInstance();
-    List<SplitFlap> inhabFlaps = new ArrayList<SplitFlap>(10);
-    String[] nums = new String[] { "'", "", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+    SplitFlap[] inhabFlaps = new SplitFlap[10];
+    SplitFlap[] inhabitantFlaps = new SplitFlap[10];
+    SplitFlap[] areaFlaps = new SplitFlap[10];
 
     public void show() throws IOException {
         // JFrame.setDefaultLookAndFeelDecorated(true);
@@ -183,64 +185,46 @@ public class Overview {
 
         localGbm.setWeightX(1.0).setX(x++).setY(y).setComp(new JLabel(""));
 
-        for (int i = 0; i < 10; i++) {
-            // Upper half of flaps
-            SplitFlap inhabitantsFlap0 = new SplitFlap();
-            inhabFlaps.add(inhabitantsFlap0);
-            inhabitantsFlap0.setSelection(nums);
-            inhabitantsFlap0.setSize(20, 20);
+        localGbm.setWeightX(1.0).setX(x).setY(y++).setComp(initSplitFlapPanel(inhabitantFlaps));
+        localGbm.setWeightX(1.0).setX(x).setY(y++).setComp(initSplitFlapPanel(areaFlaps));
 
-            if (i == 3 && inhabitantsHandler.get() > 999 || i == 5 && inhabitantsHandler.get() > 999999) {
-                SplitFlap apostrofFlap = new SplitFlap();
-                localGbm.setX(x++).setY(y).setComp(apostrofFlap);
-                apostrofFlap.setText("'");
-                apostrofFlap.setSize(20, 20);
-            }
-            localGbm.setX(x++).setY(y).setComp(inhabitantsFlap0);
-        }
-        int bla = inhabFlaps.size();
-        inhabitantsHandler.bindTo(nv -> {
-            String value = nv.toString();
-            int len = value.length();
-            if (len > 0) {
-                if (len < 10) {
-                    for (int i = 0; i < 10 - len; i++) {
-                        value = " " + value;
-                    }
-                }
-                for (int i = 0; i < 10; i++) {
-                    // inhabFlaps.get(i).setSelection(nums);
-                    // inhabFlaps.get(i).setText(value.charAt(i) + "");
-                if (value.charAt(i) != ' ') {
-                    while (!inhabFlaps.get(i).getNextText().equals(value.charAt(i) + "")) {
-                        inhabFlaps.get(i).flipForward();
-                    }
-                }
-            }
-        }
-    })  ;
-
-        // y++;
-        // x = 0;
-        // localGbm.setWeightX(1.0).setX(x++).setY(y).setComp(new JLabel(""));
-        // for (int i = 0; i < 10; i++) {
-        // // Lower half of flap
-        // SplitFlap areaFlap0 = new SplitFlap();
-        // areaFlap0.setSelection(nums);
-        // areaFlap0.setSize(20, 20);
-        // if (i == 3 && areaHandler.get() > 999 || i == 5 && areaHandler.get() > 999999) {
-        // localGbm.setX(x++).setY(y).setComp(areaFlap0);
-        // areaFlap0.setText("'");
-        // areaFlap0 = new SplitFlap();
-        // areaFlap0.setSelection(nums);
-        // areaFlap0.setSize(20, 20);
-        // }
-        // localGbm.setX(x++).setY(y).setComp(areaFlap0);
-        // if (!areaString.equals("")) {
-        // areaFlap0.setText(areaString.charAt(areaString.length() - 1 - i) + "");
-        // }
-        // }
+        inhabitantsHandler.bindTo(t -> {
+            updateFlapText(t, inhabitantFlaps);
+        });
+        areaHandler.bindTo(t -> {
+            updateFlapText(t.intValue(), areaFlaps);
+        });
 
         return inhabPanel;
+    }
+
+    private JPanel initSplitFlapPanel(SplitFlap[] flaps) {
+        JPanel panel = new JPanel();
+        GridBagManager gbm = new GridBagManager(panel);
+        int x = 0;
+        for (int i = 0; i < flaps.length; i++) {
+            flaps[i] = new SplitFlap();
+            flaps[i].setBounds(new Rectangle(20, 20));
+            flaps[i].setSelection(SplitFlap.EXTENDED);
+            gbm.setX(x++).setY(0).setComp(flaps[i]);
+        }
+
+        GlobalTimer.INSTANCE.startTimer();
+        return panel;
+    }
+
+    private void updateFlapText(int flapValue, SplitFlap[] flaps) {
+        String flapText = flapValue + "";
+        while (flapText.length() < 10) {
+            flapText = " " + flapText;
+        }
+        for (int i = 0; i < 10; i++) {
+
+            // ITS OVER 9000!
+            if (i == 2 && flapValue > 999999 || i == 6 && flapValue > 999) {
+                flaps[i++].setText("'");
+            }
+            flaps[i].setText(flapText.toUpperCase().substring(i, i + 1));
+        }
     }
 }
