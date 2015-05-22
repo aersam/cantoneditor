@@ -2,7 +2,6 @@ package ch.fhnw.oop.splitflap;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,56 +9,59 @@ import javax.swing.Timer;
 
 public enum GlobalTimer implements ActionListener {
 
-	INSTANCE;
+    INSTANCE;
 
-	// <editor-fold defaultstate="collapsed" desc="Variable declaration">
-	private static final ActionEvent FLIP_EVENT = new ActionEvent("flip", ActionEvent.ACTION_PERFORMED, "flip");
-	private static final ActionEvent FLIP_SEQUENCE_EVENT = new ActionEvent("flipSequence", ActionEvent.ACTION_PERFORMED, "flipSequence");
-	private Timer flipTimer = new Timer(120, this);
-	private Timer flipSequenceTimer = new Timer(15, this);
-	private int currentSequence = 0;
-	private Set<SplitFlap> componentSet = new HashSet<SplitFlap>(32);
-	// </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Variable declaration">
+    private static final ActionEvent FLIP_EVENT = new ActionEvent("flip", ActionEvent.ACTION_PERFORMED, "flip");
+    private static final ActionEvent FLIP_SEQUENCE_EVENT = new ActionEvent("flipSequence",
+            ActionEvent.ACTION_PERFORMED, "flipSequence");
+    private Timer flipTimer = new Timer(60, this);
+    private Timer flipSequenceTimer = new Timer(15, this);
+    private int currentSequence = 0;
+    private Set<SplitFlap> componentSet = new HashSet<SplitFlap>(32);
 
-	// <editor-fold defaultstate="collapsed" desc="Misc">
-	public void startTimer() {
-		flipTimer.start();
-	}
+    // </editor-fold>
 
-	public void stopTimer() {
-		flipTimer.stop();
-	}
+    // <editor-fold defaultstate="collapsed" desc="Misc">
+    public void startTimer() {
+        flipTimer.start();
+    }
 
-	public void addComponent(SplitFlap component) {
-		componentSet.add(component);
-	}
+    public void stopTimer() {
+        flipTimer.stop();
+    }
 
-	public void removeComponent(SplitFlap component) {
-		componentSet.remove(component);
-	}
-	// </editor-fold>
+    public void addComponent(SplitFlap component) {
+        componentSet.add(component);
+    }
 
-	// <editor-fold defaultstate="collapsed" desc="Action Listener">
-	public void actionPerformed(final ActionEvent EVENT) {
-		if (EVENT.getSource().equals(flipTimer)) {
-			for (SplitFlap component : componentSet) {
-				component.actionPerformed(FLIP_EVENT);
-			}
+    public void removeComponent(SplitFlap component) {
+        componentSet.remove(component);
+    }
 
-			flipSequenceTimer.start();
-		}
+    // </editor-fold>
 
-		if (EVENT.getSource().equals(flipSequenceTimer)) {
-			if (currentSequence == 10) {
-				currentSequence = 0;
-				flipSequenceTimer.stop();
-			}
+    // <editor-fold defaultstate="collapsed" desc="Action Listener">
+    public void actionPerformed(final ActionEvent EVENT) {
+        if (EVENT.getSource().equals(flipTimer)) {
+            for (SplitFlap component : componentSet) {
+                component.actionPerformed(FLIP_EVENT);
+            }
 
-			for (SplitFlap component : componentSet) {
-				component.actionPerformed(FLIP_SEQUENCE_EVENT);
-			}
-			currentSequence++;
-		}
-	}
-	// </editor-fold>
+            flipSequenceTimer.start();
+        }
+
+        if (EVENT.getSource().equals(flipSequenceTimer)) {
+            if (currentSequence == 10) {
+                currentSequence = 0;
+                flipSequenceTimer.stop();
+            }
+
+            for (SplitFlap component : componentSet) {
+                component.actionPerformed(FLIP_SEQUENCE_EVENT);
+            }
+            currentSequence++;
+        }
+    }
+    // </editor-fold>
 }

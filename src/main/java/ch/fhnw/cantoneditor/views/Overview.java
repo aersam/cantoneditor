@@ -8,6 +8,7 @@ import java.awt.Rectangle;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -34,9 +35,6 @@ import ch.fhnw.oop.splitflap.SplitFlap;
 
 public class Overview {
     private TranslationManager tm = TranslationManager.getInstance();
-    SplitFlap[] inhabFlaps = new SplitFlap[10];
-    SplitFlap[] inhabitantFlaps = new SplitFlap[10];
-    SplitFlap[] areaFlaps = new SplitFlap[10];
 
     public void show() throws IOException {
         // JFrame.setDefaultLookAndFeelDecorated(true);
@@ -165,9 +163,10 @@ public class Overview {
      * Creates the lower part of the Frame, which contains the flap display to show the number of
      * citizen and the area
      */
-    private JPanel initInhabitantsAndAreaDisplay() {
+    private static JPanel initInhabitantsAndAreaDisplay() {
 
         JPanel inhabPanel = new JPanel();
+        inhabPanel.setMinimumSize(new Dimension(400, 150));
         GridBagManager localGbm = new GridBagManager(inhabPanel);
         ComputedValue<Integer> inhabitantsHandler = new ComputedValue<>(() -> {
             return CantonHandler.getCurrentCanton() == null ? null : CantonHandler.getCurrentCanton()
@@ -185,8 +184,16 @@ public class Overview {
 
         localGbm.setWeightX(1.0).setX(x++).setY(y).setComp(new JLabel(""));
 
+<<<<<<< HEAD
         localGbm.setWeightX(0.0).setX(x).setY(y++).setComp(initSplitFlapPanel(inhabitantFlaps));
         localGbm.setWeightX(0.0).setX(x).setY(y++).setComp(initSplitFlapPanel(areaFlaps));
+=======
+        SplitFlap[] inhabitantFlaps = new SplitFlap[10];
+        SplitFlap[] areaFlaps = new SplitFlap[10];
+
+        localGbm.setWeightX(1.0).setX(x).setY(y++).setComp(initSplitFlapPanel(inhabitantFlaps));
+        localGbm.setWeightX(1.0).setX(x).setY(y++).setComp(initSplitFlapPanel(areaFlaps));
+>>>>>>> origin/master
 
         inhabitantsHandler.bindTo(t -> {
             updateFlapText(t, inhabitantFlaps);
@@ -198,14 +205,15 @@ public class Overview {
         return inhabPanel;
     }
 
-    private JPanel initSplitFlapPanel(SplitFlap[] flaps) {
+    private static JPanel initSplitFlapPanel(final SplitFlap[] flaps) {
         JPanel panel = new JPanel();
         GridBagManager gbm = new GridBagManager(panel);
         int x = 0;
         for (int i = 0; i < flaps.length; i++) {
             flaps[i] = new SplitFlap();
             flaps[i].setBounds(new Rectangle(20, 20));
-            flaps[i].setSelection(SplitFlap.EXTENDED);
+            flaps[i].setSize(new Dimension(20, 20));
+            flaps[i].setSelection(SplitFlap.NUMERIC);
             gbm.setX(x++).setY(0).setComp(flaps[i]);
         }
 
@@ -213,17 +221,11 @@ public class Overview {
         return panel;
     }
 
-    private void updateFlapText(int flapValue, SplitFlap[] flaps) {
-        String flapText = flapValue + "";
-        while (flapText.length() < 10) {
-            flapText = " " + flapText;
-        }
+    private static void updateFlapText(final int flapValue, final SplitFlap[] flaps) {
+        String flapText = NumberFormat.getIntegerInstance().format(flapValue).replace(',', '\'');
+        if (flapText.length() < 10)
+            flapText = new String(new char[10 - flapText.length()]).replace("\0", " ") + flapText;
         for (int i = 0; i < 10; i++) {
-
-            // ITS OVER 9000!
-            if (i == 2 && flapValue > 999999 || i == 6 && flapValue > 999) {
-                flaps[i++].setText("'");
-            }
             flaps[i].setText(flapText.toUpperCase().substring(i, i + 1));
         }
     }
