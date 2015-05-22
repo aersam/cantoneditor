@@ -185,8 +185,8 @@ public class Overview {
 
         localGbm.setWeightX(1.0).setX(x++).setY(y).setComp(new JLabel(""));
 
-        localGbm.setWeightX(1.0).setX(x).setY(y++).setComp(initSplitFlapPanel(inhabitantFlaps));
-        localGbm.setWeightX(1.0).setX(x).setY(y++).setComp(initSplitFlapPanel(areaFlaps));
+        localGbm.setWeightX(0.0).setX(x).setY(y++).setComp(initSplitFlapPanel(inhabitantFlaps));
+        localGbm.setWeightX(0.0).setX(x).setY(y++).setComp(initSplitFlapPanel(areaFlaps));
 
         inhabitantsHandler.bindTo(t -> {
             updateFlapText(t, inhabitantFlaps);
