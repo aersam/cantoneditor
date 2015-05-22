@@ -68,7 +68,7 @@ public class CsvReader {
                     c.setEntryYear(Integer.parseInt(nextLine[4].replace("'", "")));
                     c.setCapital(nextLine[5]);
                     c.setNrInhabitants(Integer.parseInt(nextLine[6].replace("'", "")));
-                    c.setNrForeigners(Double.parseDouble(nextLine[7].replace("'", "")));
+                    c.setNrForeigners(Double.parseDouble(nextLine[7].replace("'", "")) / 100.00);
                     c.setArea(Double.parseDouble(nextLine[8].replace("'", "")));
                     c.setInHabitantDensity(Double.parseDouble(nextLine[9].replace("'", "")));
 

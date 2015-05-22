@@ -8,6 +8,7 @@ import java.awt.Rectangle;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -205,7 +206,7 @@ public class Overview {
         for (int i = 0; i < flaps.length; i++) {
             flaps[i] = new SplitFlap();
             flaps[i].setBounds(new Rectangle(20, 20));
-            flaps[i].setSelection(SplitFlap.EXTENDED);
+            flaps[i].setSelection(SplitFlap.NUMERIC);
             gbm.setX(x++).setY(0).setComp(flaps[i]);
         }
 
@@ -214,16 +215,10 @@ public class Overview {
     }
 
     private void updateFlapText(int flapValue, SplitFlap[] flaps) {
-        String flapText = flapValue + "";
-        while (flapText.length() < 10) {
-            flapText = " " + flapText;
-        }
+        String flapText = NumberFormat.getIntegerInstance().format(flapValue).replace(',', '\'');
+        if (flapText.length() < 10)
+            flapText = new String(new char[10 - flapText.length()]).replace("\0", " ") + flapText;
         for (int i = 0; i < 10; i++) {
-
-            // ITS OVER 9000!
-            if (i == 2 && flapValue > 999999 || i == 6 && flapValue > 999) {
-                flaps[i++].setText("'");
-            }
             flaps[i].setText(flapText.toUpperCase().substring(i, i + 1));
         }
     }

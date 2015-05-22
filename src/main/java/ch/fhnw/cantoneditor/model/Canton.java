@@ -152,15 +152,15 @@ public class Canton extends BaseModel implements Initable, Searchable {
 
     public double getNrForeigners() {
         this.notifyPropertyRead(NRFOREIGNERS_PROPERTY);
-        return nrForeigners / 100.00;// For whatever reason, the field is between 0 and 100, yet
-                                     // should be between 0 and 1
+        return nrForeigners;// For whatever reason, the field is between 0 and 100, yet
+                            // should be between 0 and 1
     }
 
     public void setNrForeigners(double nrForeigners) {
         // For whatever reason, the field is between 0 and 100, yet should be between 0 and 1
-        if (nrForeigners * 100.00 != this.nrForeigners) {
-            Object oldValue = this.nrForeigners / 100.00;
-            this.nrForeigners = nrForeigners * 100.00;
+        if (nrForeigners != this.nrForeigners) {
+            Object oldValue = this.nrForeigners;
+            this.nrForeigners = nrForeigners;
             this.pcs.firePropertyChange(NRFOREIGNERS_PROPERTY, oldValue, this.nrForeigners);
 
         }
