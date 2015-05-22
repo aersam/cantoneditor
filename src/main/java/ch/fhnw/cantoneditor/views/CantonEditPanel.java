@@ -102,6 +102,8 @@ public class CantonEditPanel {
         simpleItems.add(getMultiselector(frame, Language.getAllLanguages(), Canton::getLanguages,
                 tm.Translate("CantonLanguage", "Language")).getContent());
 
+        CantonHandler.getCurrentCantonObservable().bindTo(t -> simpleItems.setVisible(t != null));
+
         return simpleItems;
 
     }

@@ -10,6 +10,10 @@ public class CantonHandler {
         return currentCanton.get();
     }
 
+    public static ObservableValue<Canton> getCurrentCantonObservable() {
+        return currentCanton;
+    }
+
     public static void setCurrentCanton(Canton cnt) {
         currentCanton.set(cnt);
     }
