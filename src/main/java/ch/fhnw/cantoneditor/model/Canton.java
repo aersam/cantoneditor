@@ -8,7 +8,6 @@ import ch.fhnw.cantoneditor.datautils.DB4OConnector;
 import ch.fhnw.cantoneditor.datautils.Initable;
 import ch.fhnw.cantoneditor.datautils.Searchable;
 import ch.fhnw.observation.ObservableList;
-import ch.fhnw.observation.ObservableSet;
 
 public class Canton extends BaseModel implements Initable, Searchable {
     public static final String NAME_PROPERTY = "name";
@@ -39,7 +38,7 @@ public class Canton extends BaseModel implements Initable, Searchable {
     private double inHabitantDensity;
     private int nrCommunes;
 
-    private ObservableSet<Commune> communes = new ObservableSet<>();
+    private ObservableList<String> communes = new ObservableList<>();
 
     private static Map<Integer, Canton> cantons = new HashMap<Integer, Canton>();
 
@@ -213,7 +212,7 @@ public class Canton extends BaseModel implements Initable, Searchable {
         return this.communes.size();
     }
 
-    public ObservableSet<Commune> getCommunes() {
+    public ObservableList<String> getCommunes() {
         return communes;
     }
 
