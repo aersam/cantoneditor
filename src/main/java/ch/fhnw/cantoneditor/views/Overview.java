@@ -176,9 +176,6 @@ public class Overview {
             return CantonHandler.getCurrentCanton() == null ? null : CantonHandler.getCurrentCanton().getArea();
         });
 
-        String areaString = areaHandler.get() == null ? "" : areaHandler.toString();
-        String inhabitantsString = inhabitantsHandler.get() == null ? "" : inhabitantsHandler.toString();
-
         int x = 0;
         int y = 0;
 
@@ -187,8 +184,8 @@ public class Overview {
         SplitFlap[] inhabitantFlaps = new SplitFlap[10];
         SplitFlap[] areaFlaps = new SplitFlap[10];
 
-        localGbm.setWeightX(1.0).setX(x).setY(y++).setComp(initSplitFlapPanel(inhabitantFlaps));
-        localGbm.setWeightX(1.0).setX(x).setY(y++).setComp(initSplitFlapPanel(areaFlaps));
+        localGbm.setWeightX(0).setX(x).setY(y++).setComp(initSplitFlapPanel(inhabitantFlaps));
+        localGbm.setWeightX(0).setX(x).setY(y++).setComp(initSplitFlapPanel(areaFlaps));
 
         inhabitantsHandler.bindTo(t -> {
             updateFlapText(t, inhabitantFlaps);
@@ -216,8 +213,13 @@ public class Overview {
         return panel;
     }
 
-    private static void updateFlapText(final int flapValue, final SplitFlap[] flaps) {
-        String flapText = NumberFormat.getIntegerInstance().format(flapValue).replace(',', '\'');
+    private static void updateFlapText(final Integer flapValue, final SplitFlap[] flaps) {
+        String flapText;
+        if (flapValue == null) {
+            flapText = "          ";
+        } else {
+            flapText = NumberFormat.getIntegerInstance().format(flapValue).replace(',', '\'');
+        }
         if (flapText.length() < 10)
             flapText = new String(new char[10 - flapText.length()]).replace("\0", " ") + flapText;
         for (int i = 0; i < 10; i++) {
