@@ -3,9 +3,16 @@ package ch.fhnw.observation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.text.ParseException;
+
 import org.junit.Test;
 
+import ch.fhnw.cantoneditor.datautils.NoDataFoundException;
 import ch.fhnw.cantoneditor.model.Canton;
+
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 
 public class ComputedValueTest {
 
@@ -16,8 +23,10 @@ public class ComputedValueTest {
     }
 
     @Test
-    public void testDependencies() {
-        Canton c = Canton.getById(1, true);
+    public void testDependencies() throws JsonIOException, JsonSyntaxException, ClassNotFoundException, IOException,
+            ParseException, NoDataFoundException {
+        Canton c;
+        c = Canton.getById(1, true);
 
         ComputedValue<String> comp = new ComputedValue<String>(() -> c.getName() + " " + c.getCapital());
 

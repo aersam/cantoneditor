@@ -25,8 +25,10 @@ public class ObservableList<T> implements List<T>, PropertyChangeable {
     }
 
     public ObservableList(Iterable<T> items) {
-        for (T c : items) {
-            underlyingList.add(c);
+        if (items != null) {
+            for (T c : items) {
+                underlyingList.add(c);
+            }
         }
     }
 

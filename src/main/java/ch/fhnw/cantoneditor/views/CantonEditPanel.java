@@ -1,15 +1,16 @@
 package ch.fhnw.cantoneditor.views;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -24,7 +25,6 @@ import javax.swing.ListCellRenderer;
 import javax.swing.SpinnerNumberModel;
 
 import ch.fhnw.cantoneditor.model.Canton;
-import ch.fhnw.cantoneditor.model.Commune;
 import ch.fhnw.cantoneditor.model.Language;
 import ch.fhnw.command.CommandController;
 import ch.fhnw.command.ListAddCommand;
@@ -42,23 +42,18 @@ public class CantonEditPanel {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         panel.add(getEditingGrid(frame));
+        panel.add(Box.createVerticalGlue());
+        JLabel label = new JLabel(tm.Translate("CantonCommunities", "Communities"));
+        label.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.add(label);
 
-        panel.add(new JLabel(tm.Translate("CantonCommunities", "Communities")));
+        panel.add(getTextArea(
+                c -> String.join(", ", c.getCommunes()),
+                (c, str) -> {
 
-        panel.add(getTextArea(c -> String.join(", ",
-                c.getCommunes().stream().map(s -> s.toString()).collect(Collectors.toList())), (c, str) -> {
-            String[] communes = str.split(",");
-            List<Commune> allCommunes = new java.util.ArrayList<Commune>();
-            for (String commune : communes) {
-                Optional<Commune> existing = c.getCommunes().stream().filter(s -> s.getName().equals(commune))
-                        .findFirst();
-                if (!existing.isPresent()) {
-                    allCommunes.add(Commune.getByName(commune.trim(), true));
-                } else {
-                    allCommunes.add(existing.get());
-                }
-            }
-        }));
+                    c.getCommunes().reset(
+                            Arrays.asList(str.split(",")).stream().map(s -> s.trim()).collect(Collectors.toList()));
+                }));
         return panel;
 
     }
@@ -229,6 +224,8 @@ public class CantonEditPanel {
         JTextArea tf = new JTextArea(CantonHandler.getCurrentCanton() == null ? "" : getValue.apply(CantonHandler
                 .getCurrentCanton()));
         tf.setMaximumSize(new Dimension(500, 1000));
+        tf.setPreferredSize(new Dimension(200, 100));
+        tf.setLineWrap(true);
         tf.setWrapStyleWord(true);
         bindObservables(tf, getValue, setValue);
 

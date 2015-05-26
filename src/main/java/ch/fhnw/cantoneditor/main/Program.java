@@ -1,21 +1,13 @@
 package ch.fhnw.cantoneditor.main;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.List;
-
-import ch.fhnw.cantoneditor.datautils.CsvReader;
-import ch.fhnw.cantoneditor.datautils.DB4OConnector;
-import ch.fhnw.cantoneditor.datautils.NoDataFoundException;
-import ch.fhnw.cantoneditor.model.Canton;
-import ch.fhnw.cantoneditor.model.Commune;
+import ch.fhnw.cantoneditor.datautils.DataStorage;
 import ch.fhnw.cantoneditor.views.Overview2;
 
 public class Program {
 
     public static void main(String[] args) {
         try {
-            loadData(false);
+            DataStorage.init();
 
             Overview2 v = new Overview2();
             v.show();
@@ -24,31 +16,4 @@ public class Program {
         }
     }
 
-    private static void loadData(boolean reread) throws IOException, ParseException, NoDataFoundException {
-        if (reread) {
-            for (Canton c : DB4OConnector.getAll(Canton.class)) {
-                c.init();
-                DB4OConnector.removeObject(c);
-            }
-            for (Commune c : DB4OConnector.getAll(Commune.class)) {
-                c.init();
-                DB4OConnector.removeObject(c);
-            }
-            DB4OConnector.saveChanges();
-        }
-        List<Canton> cantons = DB4OConnector.getAll(Canton.class);
-        if (cantons.size() == 0) {
-            Iterable<Canton> cantonList = CsvReader.readCantons();
-            for (Canton canton : cantonList) {
-                DB4OConnector.addObject(canton);
-            }
-        }
-        List<Commune> communes = DB4OConnector.getAll(Commune.class);
-        if (communes.size() == 0) {
-            Iterable<Commune> cantonList = CsvReader.readCommunes();
-            for (Commune commune : cantonList) {
-                DB4OConnector.addObject(commune);
-            }
-        }
-    }
 }
