@@ -7,9 +7,13 @@ import java.io.PrintWriter;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import ch.fhnw.observation.ObservableValue;
+
 /** Helper class for translation the Application */
 public class TranslationManager {
     private static TranslationManager instance;
+
+    private static ObservableValue<String> locale = new ObservableValue<String>();
 
     /**
      * This indicates that not existing values should be inserted into
@@ -30,17 +34,19 @@ public class TranslationManager {
     }
 
     /** Gets the Translation for the given key */
-    public String Translate(String key) {
-        return Translate(key, key);
+    public String translate(String key) {
+        return translate(key, key);
     }
 
     /**
      * Gets the Translation for the given key. If the key is not found, defaultValue will be
      * returned
      */
-    public String Translate(String key, String defaultValue) {
-        Locale locale = Locale.getDefault();
-        ResourceBundle rb = ResourceBundle.getBundle("ApplicationTranslation", locale);
+    public String translate(String key, String defaultValue) {
+        if (locale.get() == null)
+            locale.set(Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry());
+        Locale sysloc = new Locale(locale.get().split("_")[0], locale.get().split("_")[1]);
+        ResourceBundle rb = ResourceBundle.getBundle("ApplicationTranslation", sysloc);
         if (rb.containsKey(key)) {// Everything is fine, just return it
             return rb.getString(key);
         } else {

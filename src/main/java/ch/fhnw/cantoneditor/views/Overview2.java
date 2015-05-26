@@ -58,7 +58,7 @@ public class Overview2 {
             e.printStackTrace();
         }
 
-        JFrame frame = new JFrame(tm.Translate("OverviewTitle"));
+        JFrame frame = new JFrame(tm.translate("OverviewTitle"));
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         frame.addWindowListener(new WindowAdapter() {
@@ -86,6 +86,7 @@ public class Overview2 {
         table.setSelectionModel(tableModel.getSelectionModel());
         table.setMinimumSize(new Dimension(400, 400));
         JScrollPane scroller = new JScrollPane(table);
+
         CsvReader.class.getResourceAsStream("/Communes.txt");
         ImageIcon iconUndo = new ImageIcon(getClass().getResource("/undo-icon.png"), "undo");
         ImageIcon iconRedo = new ImageIcon(getClass().getResource("/redo-icon.png"), "undo");
@@ -103,7 +104,7 @@ public class Overview2 {
         redoButton.addActionListener((e) -> CommandController.getDefault().redo());
 
         PlaceholderTextField tfSearch = new PlaceholderTextField();
-        tfSearch.setPlaceholder(tm.Translate("Search", "Search") + "...");
+        tfSearch.setPlaceholder(tm.translate("Search", "Search") + "...");
         tfSearch.setPreferredSize(new Dimension(100, 30));
         ValueSubscribable<String> searchText = SwingObservables.getFromTextField(tfSearch, 200);
         searchText.addPropertyChangeListener(l -> {

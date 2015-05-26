@@ -26,7 +26,7 @@ public class ComputedValueTest {
     public void testDependencies() throws JsonIOException, JsonSyntaxException, ClassNotFoundException, IOException,
             ParseException, NoDataFoundException {
         Canton c;
-        c = Canton.getById(1, true);
+        c = new Canton();
 
         ComputedValue<String> comp = new ComputedValue<String>(() -> c.getName() + " " + c.getCapital());
 

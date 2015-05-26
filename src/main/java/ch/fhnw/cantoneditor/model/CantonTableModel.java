@@ -19,17 +19,19 @@ import ch.fhnw.observation.ValueSubscribable;
 public class CantonTableModel extends DefaultTableModel implements Disposable {
 
     final List<Canton> cantons;
+    @SuppressWarnings("rawtypes")
     private ValueSubscribable[][] values;
+    @SuppressWarnings("rawtypes")
     private Function[][] valueConverter;
 
     public CantonTableModel(List<Canton> cantons) {
 
-        super(new String[] { TranslationManager.getInstance().Translate("Canton", "Canton"),
-                TranslationManager.getInstance().Translate("CantonName", "CantonName"),
-                TranslationManager.getInstance().Translate("CantonShortcut", "Shortcut"),
-                TranslationManager.getInstance().Translate("CantonSwitzerlandEntry", "Entry to Switzerland"),
-                TranslationManager.getInstance().Translate("CantonInhabitants", "Inhabitants"),
-                TranslationManager.getInstance().Translate("CantonArea", "Area") }, cantons.size());
+        super(new String[] { TranslationManager.getInstance().translate("Canton", "Canton"),
+                TranslationManager.getInstance().translate("CantonName", "CantonName"),
+                TranslationManager.getInstance().translate("CantonShortcut", "Shortcut"),
+                TranslationManager.getInstance().translate("CantonSwitzerlandEntry", "Entry to Switzerland"),
+                TranslationManager.getInstance().translate("CantonInhabitants", "Inhabitants"),
+                TranslationManager.getInstance().translate("CantonArea", "Area") }, cantons.size());
 
         values = new ValueSubscribable[cantons.size()][6];
         valueConverter = new Function[cantons.size()][6];
@@ -106,9 +108,11 @@ public class CantonTableModel extends DefaultTableModel implements Disposable {
         return true;
     };
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public void setValueAt(Object aValue, int row, int column) {
         // TODO Auto-generated method stub
+
         Function converter = valueConverter[row][column];
         if (converter == null) {
             CommandController.getDefault().executePropertySet(aValue, values[row][column]);

@@ -33,7 +33,7 @@ public class ListAddCommand<T> implements Executable {
 
     @Override
     public String toString() {
-        return TranslationManager.getInstance().Translate("AddItem", "Add \"{item}\" from \"{list}\"")
+        return TranslationManager.getInstance().translate("AddItem", "Add \"{item}\" from \"{list}\"")
                 .replace("{item}", toAdd == null ? "null" : toAdd.toString()).replace("{list}", this.collectionName);
 
     }

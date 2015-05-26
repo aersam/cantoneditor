@@ -6,6 +6,7 @@ import javax.swing.event.ListSelectionListener;
 
 import ch.fhnw.cantoneditor.views.CantonHandler;
 
+@SuppressWarnings("serial")
 public class CantonTableSelectionModel extends DefaultListSelectionModel {
 
     private CantonTableModel table;
