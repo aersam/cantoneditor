@@ -19,7 +19,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import ch.fhnw.cantoneditor.datautils.CsvReader;
 import ch.fhnw.cantoneditor.datautils.DataStorage;
@@ -52,10 +51,8 @@ public class Overview2 {
     public void show() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-                | UnsupportedLookAndFeelException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (Exception e) {
+            // If Nimbus is not available, you can set the GUI to another look and feel.
         }
 
         JFrame frame = new JFrame(tm.translate("OverviewTitle"));
@@ -156,6 +153,11 @@ public class Overview2 {
                         || !(cnt.getCommunes().equals(old.getCommunes()));
             });
             Led flapper = new Led();
+            CantonHandler.getCurrentCantonObservable().addPropertyChangeListener(e -> {
+                if (CantonHandler.getCurrentCanton() != null) {
+                    flapper.setOn(CantonHandler.getCurrentCanton() == cnt);
+                }
+            });
             flapper.init(30, 30);
             flapper.setSize(30, 30);
             hasChanged.bindTo((vl) -> {
