@@ -1,14 +1,21 @@
 package ch.fhnw.cantoneditor.model;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 import ch.fhnw.cantoneditor.datautils.BaseModel;
-import ch.fhnw.cantoneditor.datautils.DB4OConnector;
+import ch.fhnw.cantoneditor.datautils.DataStorage;
 import ch.fhnw.cantoneditor.datautils.Initable;
+import ch.fhnw.cantoneditor.datautils.NoDataFoundException;
 import ch.fhnw.cantoneditor.datautils.Searchable;
 import ch.fhnw.observation.ObservableList;
-import ch.fhnw.observation.ObservableSet;
+
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.annotations.Expose;
 
 public class Canton extends BaseModel implements Initable, Searchable {
     public static final String NAME_PROPERTY = "name";
@@ -31,7 +38,10 @@ public class Canton extends BaseModel implements Initable, Searchable {
     private double nrForeigners;
     private int nrInhabitants;
 
-    private ObservableList<Language> languageId = new ObservableList<>();
+    private String languageString;// 4 Gson
+
+    @Expose(serialize = false, deserialize = false)
+    private transient ObservableList<Language> languageId = new ObservableList<>();
     private String capital;
     private double area;
 
@@ -39,60 +49,84 @@ public class Canton extends BaseModel implements Initable, Searchable {
     private double inHabitantDensity;
     private int nrCommunes;
 
-    private ObservableSet<Commune> communes = new ObservableSet<>();
+    private String communeString;// 4 gson
 
-    private static Map<Integer, Canton> cantons = new HashMap<Integer, Canton>();
+    @Expose(serialize = false, deserialize = false)
+    private transient ObservableList<String> communes = new ObservableList<>();
 
-    private boolean isInited = false;
-
-    private Canton(int nr) {
-
-        this.id = nr;
-        if (nr != 0) { // Special for new entries without
-            cantons.put(id, this);
-
-        }
-    }
+    @Expose(serialize = false, deserialize = false)
+    private transient boolean isInited = false;
 
     public void init() {
         if (isInited)
             return;
+
+        if (languageString != null && !languageString.isEmpty()) {
+
+            java.util.List<Language> lngIds = Arrays
+                    .asList(languageString.split(","))
+                    .stream()
+                    .map(s -> Integer.parseInt(s))
+                    .map(s -> Language.getAllLanguages().stream().filter(l -> l.getId() == s.intValue()).findFirst()
+                            .get()).collect(Collectors.toList());
+
+            languageId = new ObservableList<Language>(lngIds);
+            languageString = null;
+
+        }
+
+        if (communeString != null && !communeString.isEmpty()) {
+
+            communes = new ObservableList<String>(Arrays.asList(communeString.split(",")));
+            communeString = null;
+        }
+
         isInited = true;
         this.languageId.addPropertyChangeListener((evt) -> {
             if (this.id != 0) {
-                DB4OConnector.markChanged(this);
+                DataStorage.markChanged(this);
             }
         });
         this.addPropertyChangeListener((evt) -> {
             if (this.id != 0) {
-                DB4OConnector.markChanged(this);
+                DataStorage.markChanged(this);
             }
         });
     }
 
     public static Canton createNew() {
-        return new Canton(0);
+        return new Canton();
     }
 
-    public static Canton getById(int nr, boolean createIfNotExists) {
-        if (cantons.containsKey(nr))
-            return cantons.get(nr);
+    public static Canton getById(int nr, boolean createIfNotExists) throws JsonIOException, JsonSyntaxException,
+            ClassNotFoundException, IOException, ParseException, NoDataFoundException {
+        Collection<Canton> cantons = DataStorage.getAllCantons();
+        if (cantons != null) {
+            for (Canton c : cantons) {
+                if (c.id == nr)
+                    return c;
+            }
+        }
         if (createIfNotExists) {
-            Canton c = new Canton(nr);
+            Canton c = new Canton();
+            c.setId(nr);
+            DataStorage.getAllCantons().add(c);
             return c;
         }
         return null;
     }
 
-    public static Canton getByShortcut(String shortcut, boolean createIfNotExists) {
-        for (Canton c : cantons.values()) {
-            if (c.getShortCut().equals(shortcut)) {
+    public static Canton getByShortcut(String shortcut, boolean createIfNotExists) throws JsonIOException,
+            JsonSyntaxException, ClassNotFoundException, IOException, ParseException, NoDataFoundException {
+        Collection<Canton> cantons = DataStorage.getAllCantons();
+        for (Canton c : cantons) {
+            if (c.shortCut.equals(shortcut))
                 return c;
-            }
         }
         if (createIfNotExists) {
-            Canton c = new Canton(0);
+            Canton c = new Canton();
             c.setShortCut(shortcut);
+            DataStorage.getAllCantons().add(c);
             return c;
         }
         return null;
@@ -167,10 +201,12 @@ public class Canton extends BaseModel implements Initable, Searchable {
     }
 
     public ObservableList<Language> getLanguages() {
+
         return languageId;
     }
 
     public String getCapital() {
+
         this.notifyPropertyRead(CAPITAL_PROPERTY);
         return capital;
     }
@@ -213,7 +249,8 @@ public class Canton extends BaseModel implements Initable, Searchable {
         return this.communes.size();
     }
 
-    public ObservableSet<Commune> getCommunes() {
+    public ObservableList<String> getCommunes() {
+
         return communes;
     }
 
@@ -259,7 +296,7 @@ public class Canton extends BaseModel implements Initable, Searchable {
 
     /** Creates a new canton with the same properties as this canton */
     public Canton copyToNew() {
-        Canton c = new Canton(0);
+        Canton c = new Canton();
         c.name = this.name;
         c.shortCut = this.shortCut;
         c.nrCouncilSeats = this.nrCouncilSeats;
@@ -274,10 +311,15 @@ public class Canton extends BaseModel implements Initable, Searchable {
         for (Language lng : this.languageId) {
             c.getLanguages().add(lng);
         }
-        for (Commune comm : this.communes) {
+        for (String comm : this.communes) {
             c.getCommunes().add(comm);
         }
         return c;
+    }
+
+    public void beforeSerialize() {
+        communeString = String.join(",", this.communes);
+        languageString = String.join(",", languageId.stream().map(s -> s.getId() + "").collect(Collectors.toList()));
     }
 
     @Override

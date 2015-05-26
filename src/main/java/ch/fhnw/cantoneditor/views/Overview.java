@@ -9,6 +9,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -22,7 +23,7 @@ import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import ch.fhnw.cantoneditor.datautils.DB4OConnector;
+import ch.fhnw.cantoneditor.datautils.DataStorage;
 import ch.fhnw.cantoneditor.datautils.NoDataFoundException;
 import ch.fhnw.cantoneditor.libs.GridBagManager;
 import ch.fhnw.cantoneditor.model.Canton;
@@ -33,10 +34,14 @@ import ch.fhnw.oop.led.Led;
 import ch.fhnw.oop.splitflap.GlobalTimer;
 import ch.fhnw.oop.splitflap.SplitFlap;
 
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+
 public class Overview {
     private TranslationManager tm = TranslationManager.getInstance();
 
-    public void show() throws IOException {
+    public void show() throws IOException, JsonIOException, JsonSyntaxException, ClassNotFoundException,
+            ParseException, NoDataFoundException {
         // JFrame.setDefaultLookAndFeelDecorated(true);
 
         try {
@@ -55,9 +60,8 @@ public class Overview {
             @Override
             public void windowClosing(WindowEvent arg0) {
                 try {
-                    DB4OConnector.saveChanges();
-                    DB4OConnector.terminate();
-                } catch (NoDataFoundException e) {
+                    DataStorage.save();
+                } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
@@ -88,7 +92,7 @@ public class Overview {
         GridBagManager lowerManager = new GridBagManager(lowerPane);
 
         // WHY doesnt it show headers?
-        List<Canton> cantons = DB4OConnector.getAll(Canton.class);
+        List<Canton> cantons = DataStorage.getAllCantons();
         CantonHandler.setCurrentCanton(cantons.get(0));
         CantonTableModel tableModel = new CantonTableModel(cantons);
         JTable table = new JTable(tableModel);
@@ -136,7 +140,7 @@ public class Overview {
     }
 
     private JPanel getLedPanel() {
-        List<Canton> cantons = DB4OConnector.getAll(Canton.class);
+        List<Canton> cantons = DataStorage.getAllCantons();
         JPanel panel = new JPanel();
         // panel.setSize(panel.getWidth(), 5);
         for (Canton cnt : cantons) {

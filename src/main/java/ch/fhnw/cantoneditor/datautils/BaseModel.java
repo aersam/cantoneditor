@@ -6,6 +6,8 @@ import java.beans.PropertyChangeSupport;
 import ch.fhnw.observation.PropertyChangeable;
 import ch.fhnw.observation.ReadObserver;
 
+import com.google.gson.annotations.Expose;
+
 /** A base class for PropertyChangeable Support. */
 public abstract class BaseModel implements PropertyChangeable {
 
@@ -14,7 +16,8 @@ public abstract class BaseModel implements PropertyChangeable {
     protected int id = 0;
 
     /** The property Change Support Field */
-    protected final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    @Expose(serialize = false, deserialize = false)
+    protected transient final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     /** Listen to changes made to this object */
     public void addPropertyChangeListener(PropertyChangeListener listener) {

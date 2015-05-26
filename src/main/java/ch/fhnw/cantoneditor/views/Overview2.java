@@ -22,8 +22,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import ch.fhnw.cantoneditor.datautils.CsvReader;
-import ch.fhnw.cantoneditor.datautils.DB4OConnector;
-import ch.fhnw.cantoneditor.datautils.NoDataFoundException;
+import ch.fhnw.cantoneditor.datautils.DataStorage;
 import ch.fhnw.cantoneditor.datautils.Searcher;
 import ch.fhnw.cantoneditor.libs.GridBagManager;
 import ch.fhnw.cantoneditor.model.Canton;
@@ -67,12 +66,10 @@ public class Overview2 {
             @Override
             public void windowClosing(WindowEvent arg0) {
                 try {
-                    DB4OConnector.saveChanges();
-                    DB4OConnector.terminate();
-                } catch (NoDataFoundException e) {
+                    DataStorage.save();
+                } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
-                    DB4OConnector.terminate();
                 }
             }
 
@@ -82,7 +79,7 @@ public class Overview2 {
             }
         });
 
-        allCantons = DB4OConnector.getAll(Canton.class);
+        allCantons = DataStorage.getAllCantons();
         filteredCantons = new ObservableList<>(allCantons);
         CantonTableModel tableModel = new CantonTableModel(filteredCantons);
         JTable table = new JTable(tableModel);
@@ -145,7 +142,7 @@ public class Overview2 {
     }
 
     private JPanel getLedPanel() {
-        List<Canton> cantons = DB4OConnector.getAll(Canton.class);
+        List<Canton> cantons = DataStorage.getAllCantons();
         JPanel panel = new JPanel();
         // panel.setSize(panel.getWidth(), 5);
         for (Canton cnt : cantons) {

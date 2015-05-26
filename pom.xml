@@ -6,6 +6,9 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Kanton Editor</name>
 	<description>Is able to edit cantons of Switzerland</description>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<build>
 		<plugins>
 			<plugin>
@@ -16,6 +19,23 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.5.3</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>ch.fhnw.cantoneditor.main.Program</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+
+			</plugin>
+
 		</plugins>
 	</build>
 	<dependencies>
@@ -33,11 +53,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.db4o</groupId>
-			<artifactId>db4o-nodep</artifactId>
-			<version>8.1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/db4o-8.1.0-all-java5.jar</systemPath>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-beanutils</groupId>
