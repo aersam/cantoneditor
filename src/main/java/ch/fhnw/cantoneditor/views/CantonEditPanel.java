@@ -3,6 +3,9 @@ package ch.fhnw.cantoneditor.views;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,6 +13,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -23,6 +27,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.border.EmptyBorder;
 
 import ch.fhnw.cantoneditor.model.Canton;
 import ch.fhnw.cantoneditor.model.Language;
@@ -40,12 +45,29 @@ public class CantonEditPanel {
 
     public JPanel getComponent(JFrame frame) {
         JPanel panel = new JPanel();
+
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+        panel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        FlagDisplayer displayer = new FlagDisplayer(null);
+        ComputedValue<Image> flag = new ComputedValue<Image>(() -> {
+            Canton current = CantonHandler.getCurrentCanton();
+            if (current == null)
+                return null;
+            return getFlagFromCanton(current.getShortCut());
+        });
+        flag.bindTo(displayer::setImage);
+
+        JPanel flagpanel = new JPanel(new BorderLayout());
+        flagpanel.add(displayer, BorderLayout.LINE_END);
+
+        panel.add(flagpanel);
+
         panel.add(getEditingGrid(frame));
 
         JLabel label = new JLabel(tm.translate("CantonCommunities", "Communities"));
         JPanel labelpanel = new JPanel(new BorderLayout());
         labelpanel.add(label, BorderLayout.LINE_START);
+
         panel.add(labelpanel);
 
         JScrollPane commScroller = new JScrollPane(getTextArea(
@@ -65,9 +87,19 @@ public class CantonEditPanel {
 
     }
 
+    private BufferedImage getFlagFromCanton(String shortcut) {
+        try {
+            BufferedImage img = ImageIO.read(CantonEditPanel.class.getResourceAsStream("/wappen/" + shortcut + ".png"));
+            return img;
+        } catch (IOException err) {
+            return null;
+        }
+    }
+
     private JPanel getEditingGrid(JFrame frame) {
 
         JPanel simpleItems = new JPanel(new GridLayout(0, 4, 5, 5));
+
         simpleItems.add(new JLabel(tm.translate("Canton")));
         simpleItems.add(getTextField(Canton::getName, Canton::setName));
         simpleItems.add(new JLabel(tm.translate("CantonNr")));

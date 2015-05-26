@@ -19,7 +19,7 @@ public class FlagDisplayer extends JPanel {
     private void setImage(Image image, boolean repaint) {
         this.img = image;
 
-        Dimension size = image == null ? new Dimension(0, 0) : new Dimension(img.getWidth(null), img.getHeight(null));
+        Dimension size = getDimensions();
         setPreferredSize(size);
         setMinimumSize(size);
         setMaximumSize(size);
@@ -28,12 +28,35 @@ public class FlagDisplayer extends JPanel {
             repaint();
     }
 
+    private Dimension getDimensions() {
+        int width = 0;
+        int height = 0;
+
+        if (img != null) {
+            width = img.getWidth(null);
+            height = img.getHeight(null);
+            int maxwidth = width / 2;
+            int maxheight = 2000;
+            if (width > maxwidth) {
+                height = (int) (((double) maxwidth / width) * height);
+                width = maxwidth;
+            }
+            if (height > maxheight) {
+                width = (int) (((double) maxheight / width) * width);
+                height = maxheight;
+            }
+        }
+        return new Dimension(width, height);
+    }
+
     public void setImage(Image image) {
         this.setImage(image, true);
     }
 
     public void paintComponent(Graphics g) {
-        if (img != null)
-            g.drawImage(img, 0, 0, null);
+        if (img != null) {
+            Dimension dim = getDimensions();
+            g.drawImage(img, 0, 0, (int) dim.getWidth(), (int) dim.getHeight(), null);
+        }
     }
 }
