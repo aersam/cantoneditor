@@ -10,6 +10,7 @@ import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -20,6 +21,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import ch.fhnw.cantoneditor.datautils.CsvReader;
 import ch.fhnw.cantoneditor.datautils.DB4OConnector;
 import ch.fhnw.cantoneditor.datautils.NoDataFoundException;
 import ch.fhnw.cantoneditor.datautils.Searcher;
@@ -87,9 +89,11 @@ public class Overview2 {
         table.setSelectionModel(tableModel.getSelectionModel());
         table.setMinimumSize(new Dimension(400, 400));
         JScrollPane scroller = new JScrollPane(table);
-
-        JButton undoButton = new JButton(tm.Translate("Undo", "Undo"));
-        JButton redoButton = new JButton(tm.Translate("Redo", "Redo"));
+        CsvReader.class.getResourceAsStream("/Communes.txt");
+        ImageIcon iconUndo = new ImageIcon(getClass().getResource("/undo-icon.png"), "undo");
+        ImageIcon iconRedo = new ImageIcon(getClass().getResource("/redo-icon.png"), "undo");
+        JButton undoButton = new JButton(iconUndo);
+        JButton redoButton = new JButton(iconRedo);
 
         new ComputedValue<Boolean>(() -> {
             return CommandController.getDefault().getDoneCommands().iterator().hasNext();
