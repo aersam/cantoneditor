@@ -30,6 +30,7 @@ import java.util.Arrays;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
+@SuppressWarnings("serial")
 public class SplitFlap extends JComponent implements ActionListener {
     // <editor-fold defaultstate="collapsed" desc="Variable declarations">
     public static final String[] TIME_0_TO_5 = { "1", "2", "3", "4", "5", "0" };

@@ -56,7 +56,7 @@ public class Overview2 {
             e.printStackTrace();
         }
 
-        JFrame frame = new JFrame(tm.Translate("OverviewTitle"));
+        JFrame frame = new JFrame(tm.translate("OverviewTitle"));
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         frame.addWindowListener(new WindowAdapter() {
@@ -85,8 +85,8 @@ public class Overview2 {
         table.setMinimumSize(new Dimension(400, 400));
         JScrollPane scroller = new JScrollPane(table);
 
-        JButton undoButton = new JButton(tm.Translate("Undo", "Undo"));
-        JButton redoButton = new JButton(tm.Translate("Redo", "Redo"));
+        JButton undoButton = new JButton(tm.translate("Undo", "Undo"));
+        JButton redoButton = new JButton(tm.translate("Redo", "Redo"));
 
         new ComputedValue<Boolean>(() -> {
             return CommandController.getDefault().getDoneCommands().iterator().hasNext();
@@ -99,7 +99,7 @@ public class Overview2 {
         redoButton.addActionListener((e) -> CommandController.getDefault().redo());
 
         PlaceholderTextField tfSearch = new PlaceholderTextField();
-        tfSearch.setPlaceholder(tm.Translate("Search", "Search") + "...");
+        tfSearch.setPlaceholder(tm.translate("Search", "Search") + "...");
         tfSearch.setPreferredSize(new Dimension(100, 30));
         ValueSubscribable<String> searchText = SwingObservables.getFromTextField(tfSearch, 200);
         searchText.addPropertyChangeListener(l -> {

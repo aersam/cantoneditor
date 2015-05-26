@@ -209,7 +209,7 @@ public class MultiSelector<E> {
         public String getSelectedString() {
 
             if (selectedItems.size() == 0)
-                return TranslationManager.getInstance().Translate("NoSelection", "Keine Auswahl");
+                return TranslationManager.getInstance().translate("NoSelection", "Keine Auswahl");
             return selectedItems.stream().map(s -> s.toString()).collect(Collectors.joining(", "));
 
         }

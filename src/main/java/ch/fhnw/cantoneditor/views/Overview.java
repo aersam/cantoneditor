@@ -52,7 +52,7 @@ public class Overview {
             e.printStackTrace();
         }
 
-        JFrame frame = new JFrame(tm.Translate("OverviewTitle"));
+        JFrame frame = new JFrame(tm.translate("OverviewTitle"));
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         frame.addWindowListener(new WindowAdapter() {
@@ -102,8 +102,8 @@ public class Overview {
 
         JScrollPane scroller = new JScrollPane(table);
 
-        JButton undoButton = new JButton(tm.Translate("Undo", "Undo"));
-        JButton redoButton = new JButton(tm.Translate("Redo", "Redo"));
+        JButton undoButton = new JButton(tm.translate("Undo", "Undo"));
+        JButton redoButton = new JButton(tm.translate("Redo", "Redo"));
 
         new ComputedValue<Boolean>(() -> {
             return CommandController.getDefault().getDoneCommands().iterator().hasNext();

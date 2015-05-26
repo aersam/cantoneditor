@@ -51,7 +51,7 @@ public class ListRemoveCommand<T> implements Executable {
 
     @Override
     public String toString() {
-        return TranslationManager.getInstance().Translate("RemoveItem", "Remove \"{item}\" from \"{list}\"")
+        return TranslationManager.getInstance().translate("RemoveItem", "Remove \"{item}\" from \"{list}\"")
                 .replace("{item}", toRemove == null ? "null" : toRemove.toString())
                 .replace("{list}", this.collectionName);
 

@@ -62,13 +62,13 @@ public class ObjectSetCommand<TObject, TValue> implements Executable {
     public String toString() {
 
         if (this.hasBeenExecuted) {
-            String template = TranslationManager.getInstance().Translate("PropertyChangeObject",
+            String template = TranslationManager.getInstance().translate("PropertyChangeObject",
                     "Change \"{old}\" to \"{new}\" of \"{obj}\"");
 
             return template.replace("{old}", this.oldValue == null ? "null" : this.oldValue.toString())
                     .replace("{new}", this.newValue == null ? "null" : this.newValue.toString())
                     .replace("{obj}", obj.toString());
         }
-        return TranslationManager.getInstance().Translate("PropertyChange", "Chanage property");
+        return TranslationManager.getInstance().translate("PropertyChange", "Chanage property");
     }
 }
