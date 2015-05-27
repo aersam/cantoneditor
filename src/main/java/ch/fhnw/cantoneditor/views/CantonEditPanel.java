@@ -2,8 +2,9 @@ package ch.fhnw.cantoneditor.views;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -29,6 +30,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 
+import ch.fhnw.cantoneditor.libs.GridBagManager;
 import ch.fhnw.cantoneditor.model.Canton;
 import ch.fhnw.cantoneditor.model.Language;
 import ch.fhnw.command.CommandController;
@@ -58,7 +60,7 @@ public class CantonEditPanel {
         flag.bindTo(displayer::setImage);
 
         JPanel flagpanel = new JPanel(new BorderLayout());
-        flagpanel.add(displayer, BorderLayout.LINE_END);
+        flagpanel.add(displayer, BorderLayout.LINE_START);
 
         panel.add(flagpanel);
 
@@ -77,6 +79,7 @@ public class CantonEditPanel {
                     c.getCommunes().reset(
                             Arrays.asList(str.split(",")).stream().map(s -> s.trim()).collect(Collectors.toList()));
                 }));
+        commScroller.setPreferredSize(new Dimension(200, 100));
         commScroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         commScroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         panel.add(commScroller);
@@ -98,43 +101,61 @@ public class CantonEditPanel {
 
     private JPanel getEditingGrid(JFrame frame) {
 
-        JPanel simpleItems = new JPanel(new GridLayout(0, 4, 5, 5));
+        JPanel simpleItems = new JPanel(new GridBagLayout());
+        GridBagManager man = new GridBagManager(simpleItems);
 
-        simpleItems.add(new JLabel(tm.translate("Canton")));
-        simpleItems.add(getTextField(Canton::getName, Canton::setName));
-        simpleItems.add(new JLabel(tm.translate("CantonNr")));
+        int x = 0;
+        int y = 0;
+        man.setX(x++).setY(y).setComp(new JLabel(tm.translate("Canton")));
+        man.setX(x++).setY(y).setComp(getTextField(Canton::getName, Canton::setName));
+        man.setX(x++).setY(y).setComp(new JLabel(tm.translate("CantonNr")));
 
         ComputedValue<String> cantonNrDisplay = new ComputedValue<String>(
                 () -> CantonHandler.getCurrentCanton() == null ? "" : CantonHandler.getCurrentCanton().getId() + "");
         JLabel nrLabel = new JLabel(cantonNrDisplay.get());
         cantonNrDisplay.bindTo(nrLabel::setText);
-        simpleItems.add(nrLabel);
+        man.setX(x).setY(y++).setComp(nrLabel);
 
-        simpleItems.add(new JLabel(tm.translate("CantonShortcut")));
-        simpleItems.add(getTextField(Canton::getShortCut, Canton::setShortCut));
+        x = 0;
 
-        simpleItems.add(new JLabel(tm.translate("NrCouncilSeats")));
-        simpleItems.add(getNumberField(Canton::getNrCouncilSeats, Canton::setNrCouncilSeats, 1, 2));
+        man.setX(x++).setY(y).setComp(new JLabel(tm.translate("CantonShortcut")));
+        man.setX(x++).setY(y).setComp(getTextField(Canton::getShortCut, Canton::setShortCut));
 
-        simpleItems.add(new JLabel(tm.translate("Capital")));
-        simpleItems.add(getTextField(Canton::getCapital, Canton::setCapital));
+        man.setX(x++).setY(y).setComp(new JLabel(tm.translate("NrCouncilSeats")));
+        man.setX(x).setY(y++).setComp(getNumberField(Canton::getNrCouncilSeats, Canton::setNrCouncilSeats, 1, 2));
 
-        simpleItems.add(new JLabel(tm.translate("CantonSwitzerlandEntry")));
-        simpleItems.add(getNumberField(Canton::getEntryYear, Canton::setEntryYear, 1000, 2100));
+        x = 0;
 
-        simpleItems.add(new JLabel(tm.translate("CantonInhabitants")));
-        simpleItems.add(getNumberField(Canton::getNrInhabitants, Canton::setNrInhabitants, 1000, 2100000));
+        man.setX(x++).setY(y).setComp(new JLabel(tm.translate("Capital")));
+        man.setX(x++).setY(y).setComp(getTextField(Canton::getCapital, Canton::setCapital));
 
-        simpleItems.add(new JLabel(tm.translate("CantonNrForeigners")));
-        simpleItems.add(getFloatField(Canton::getNrForeigners, Canton::setNrForeigners,
-                NumberFormat.getPercentInstance()));
+        man.setX(x++).setY(y).setComp(new JLabel(tm.translate("CantonSwitzerlandEntry")));
+        man.setX(x).setY(y++).setComp(getNumberField(Canton::getEntryYear, Canton::setEntryYear, 1000, 2100));
 
-        simpleItems.add(new JLabel(tm.translate("CantonArea")));
-        simpleItems.add(getFloatField(Canton::getArea, Canton::setArea, NumberFormat.getNumberInstance()));
+        x = 0;
 
-        simpleItems.add(new JLabel(tm.translate("CantonLanguage", "Language")));
-        simpleItems.add(getMultiselector(frame, Language.getAllLanguages(), Canton::getLanguages,
-                tm.translate("CantonLanguage", "Language")).getContent());
+        man.setX(x++).setY(y).setComp(new JLabel(tm.translate("CantonInhabitants")));
+        man.setX(x++).setY(y)
+                .setComp(getNumberField(Canton::getNrInhabitants, Canton::setNrInhabitants, 1000, 2100000));
+
+        man.setX(x++).setY(y).setComp(new JLabel(tm.translate("CantonNrForeigners")));
+        man.setX(x)
+                .setY(y++)
+                .setComp(
+                        getFloatField(Canton::getNrForeigners, Canton::setNrForeigners,
+                                NumberFormat.getPercentInstance()));
+
+        x = 0;
+        man.setX(x++).setY(y).setComp(new JLabel(tm.translate("CantonArea")));
+        man.setX(x++).setY(y)
+                .setComp(getFloatField(Canton::getArea, Canton::setArea, NumberFormat.getNumberInstance()));
+
+        man.setX(x++).setY(y).setComp(new JLabel(tm.translate("CantonLanguage", "Language")));
+        man.setX(x)
+                .setY(y)
+                .setComp(
+                        getMultiselector(frame, Language.getAllLanguages(), Canton::getLanguages,
+                                tm.translate("CantonLanguage", "Language")).getContent());
 
         return simpleItems;
 
@@ -253,7 +274,7 @@ public class CantonEditPanel {
         JTextField tf = new JTextField(CantonHandler.getCurrentCanton() == null ? "" : getValue.apply(CantonHandler
                 .getCurrentCanton()));
         bindObservables(tf, getValue, setValue);
-
+        tf.setMargin(new Insets(0, 0, 0, 0));
         return tf;
     }
 

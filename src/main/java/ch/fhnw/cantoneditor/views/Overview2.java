@@ -3,6 +3,7 @@ package ch.fhnw.cantoneditor.views;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Rectangle;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -16,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -84,11 +86,36 @@ public class Overview2 {
         table.setMinimumSize(new Dimension(400, 400));
         JScrollPane scroller = new JScrollPane(table);
 
+        JSplitPane splitter = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scroller,
+                new CantonEditPanel().getComponent(frame));
         CsvReader.class.getResourceAsStream("/Communes.txt");
+
+        JPanel rootPane = new JPanel(new BorderLayout());
+        rootPane.add(initButtonPanel(), BorderLayout.PAGE_START);
+
+        rootPane.add(splitter, BorderLayout.CENTER);
+        // rootPane.add(new CantonEditPanel().getComponent(frame), BorderLayout.LINE_END);
+
+        JPanel pageEndPanel = new JPanel(new BorderLayout());
+        pageEndPanel.add(getLedPanel(), BorderLayout.PAGE_START);
+        pageEndPanel.add(initInhabitantsAndAreaDisplay(), BorderLayout.PAGE_END);
+
+        rootPane.add(pageEndPanel, BorderLayout.PAGE_END);
+
+        frame.add(rootPane);
+        frame.pack();
+        CantonHandler.setCurrentCanton(allCantons.get(0));
+        frame.setVisible(true);
+
+    }
+
+    private JPanel initButtonPanel() {
         ImageIcon iconUndo = new ImageIcon(getClass().getResource("/undo-icon.png"), "undo");
         ImageIcon iconRedo = new ImageIcon(getClass().getResource("/redo-icon.png"), "undo");
         JButton undoButton = new JButton(iconUndo);
         JButton redoButton = new JButton(iconRedo);
+        undoButton.setSize(5, 5);
+        redoButton.setSize(5, 5);
 
         new ComputedValue<Boolean>(() -> {
             return CommandController.getDefault().getDoneCommands().iterator().hasNext();
@@ -116,27 +143,11 @@ public class Overview2 {
             th.start();
         });
 
-        JPanel buttonPanel = new JPanel();
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         buttonPanel.add(tfSearch);
         buttonPanel.add(undoButton);
         buttonPanel.add(redoButton);
-
-        JPanel rootPane = new JPanel(new BorderLayout());
-        rootPane.add(buttonPanel, BorderLayout.PAGE_START);
-        rootPane.add(scroller, BorderLayout.CENTER);
-        rootPane.add(new CantonEditPanel().getComponent(frame), BorderLayout.LINE_END);
-
-        JPanel pageEndPanel = new JPanel(new BorderLayout());
-        pageEndPanel.add(getLedPanel(), BorderLayout.PAGE_START);
-        pageEndPanel.add(initInhabitantsAndAreaDisplay(), BorderLayout.PAGE_END);
-
-        rootPane.add(pageEndPanel, BorderLayout.PAGE_END);
-
-        frame.add(rootPane);
-        frame.pack();
-        CantonHandler.setCurrentCanton(allCantons.get(0));
-        frame.setVisible(true);
-
+        return buttonPanel;
     }
 
     private JPanel getLedPanel() {
@@ -175,14 +186,21 @@ public class Overview2 {
     private JPanel initInhabitantsAndAreaDisplay() {
 
         JPanel inhabPanel = new JPanel();
-        inhabPanel.setMinimumSize(new Dimension(400, 150));
+        inhabPanel.setMinimumSize(new Dimension(400, 200));
         GridBagManager localGbm = new GridBagManager(inhabPanel);
         ComputedValue<Integer> inhabitantsHandler = new ComputedValue<>(() -> {
-            return CantonHandler.getCurrentCanton() == null ? null : CantonHandler.getCurrentCanton()
-                    .getNrInhabitants();
+            int inhabs = 0;
+            for (Canton c : allCantons) {
+                inhabs += c.getNrInhabitants();
+            }
+            return inhabs;
         });
         ComputedValue<Double> areaHandler = new ComputedValue<>(() -> {
-            return CantonHandler.getCurrentCanton() == null ? null : CantonHandler.getCurrentCanton().getArea();
+            double area = 0;
+            for (Canton c : allCantons) {
+                area += c.getArea();
+            }
+            return area;
         });
 
         int x = 0;

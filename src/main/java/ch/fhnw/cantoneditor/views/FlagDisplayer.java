@@ -20,6 +20,7 @@ public class FlagDisplayer extends JPanel {
         this.img = image;
 
         Dimension size = getDimensions();
+
         setPreferredSize(size);
         setMinimumSize(size);
         setMaximumSize(size);
@@ -32,6 +33,8 @@ public class FlagDisplayer extends JPanel {
         int width = 0;
         int height = 0;
 
+        // width = 150;
+        // height = 150;
         if (img != null) {
             width = img.getWidth(null);
             height = img.getHeight(null);
