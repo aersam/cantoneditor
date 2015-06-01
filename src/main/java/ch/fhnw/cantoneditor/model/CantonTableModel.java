@@ -1,5 +1,6 @@
 package ch.fhnw.cantoneditor.model;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -24,15 +25,19 @@ public class CantonTableModel extends DefaultTableModel implements Disposable {
     @SuppressWarnings("rawtypes")
     private Function[][] valueConverter;
 
+    private static List<ValueSubscribable<String>> columnNames = Arrays.asList(TranslationManager.getInstance()
+            .translate("Canton", "Canton"), TranslationManager.getInstance().translate("CantonName", "CantonName"),
+            TranslationManager.getInstance().translate("CantonShortcut", "Shortcut"), TranslationManager.getInstance()
+                    .translate("CantonSwitzerlandEntry", "Entry to Switzerland"), TranslationManager.getInstance()
+                    .translate("CantonInhabitants", "Inhabitants"),
+            TranslationManager.getInstance().translate("CantonArea", "Area"));
+
     public CantonTableModel(List<Canton> cantons) {
 
-        super(new String[] { TranslationManager.getInstance().translate("Canton", "Canton"),
-                TranslationManager.getInstance().translate("CantonName", "CantonName"),
-                TranslationManager.getInstance().translate("CantonShortcut", "Shortcut"),
-                TranslationManager.getInstance().translate("CantonSwitzerlandEntry", "Entry to Switzerland"),
-                TranslationManager.getInstance().translate("CantonInhabitants", "Inhabitants"),
-                TranslationManager.getInstance().translate("CantonArea", "Area") }, cantons.size());
-
+        super(cantons.size(), columnNames.size());
+        for (ValueSubscribable<String> vl : columnNames) {
+            vl.addPropertyChangeListener(l -> this.fireTableStructureChanged());
+        }
         values = new ValueSubscribable[cantons.size()][6];
         valueConverter = new Function[cantons.size()][6];
         this.cantons = cantons;
@@ -60,6 +65,11 @@ public class CantonTableModel extends DefaultTableModel implements Disposable {
             });
         }
     }
+
+    @Override
+    public String getColumnName(int column) {
+        return columnNames.get(column).get();
+    };
 
     @Override
     public int getRowCount() {

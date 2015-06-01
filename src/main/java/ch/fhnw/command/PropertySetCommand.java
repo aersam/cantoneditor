@@ -69,13 +69,13 @@ public class PropertySetCommand<T> implements Executable {
     @Override
     public String toString() {
         if (this.hasBeenExecuted) {
-            String template = TranslationManager.getInstance().translate("PropertyChangeObservable",
-                    "Change \"{old}\" to \"{new}\"");
+            String template = TranslationManager.getInstance()
+                    .translate("PropertyChangeObservable", "Change \"{old}\" to \"{new}\"").get();
 
             return template.replace("{old}", this.oldValue == null ? "null" : this.oldValue.toString()).replace(
                     "{new}", this.newValue == null ? "null" : this.newValue.toString());
         }
-        return TranslationManager.getInstance().translate("PropertyChange", "Chanage property");
+        return TranslationManager.getInstance().translate("PropertyChange", "Chanage property").get();
     }
 
 }

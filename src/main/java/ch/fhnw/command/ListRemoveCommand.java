@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import ch.fhnw.cantoneditor.views.TranslationManager;
+import ch.fhnw.observation.ValueSubscribable;
 
 public class ListRemoveCommand<T> implements Executable {
 
@@ -13,9 +14,9 @@ public class ListRemoveCommand<T> implements Executable {
     private boolean hasBeenExecuted = false;
     private int oldIndex = -1;
 
-    private String collectionName;
+    private ValueSubscribable<String> collectionName;
 
-    public ListRemoveCommand(String collectionName, Collection<T> list, T toRemove) {
+    public ListRemoveCommand(ValueSubscribable<String> collectionName, Collection<T> list, T toRemove) {
         this.collection = list;
         this.collectionName = collectionName;
         this.toRemove = toRemove;
@@ -51,9 +52,9 @@ public class ListRemoveCommand<T> implements Executable {
 
     @Override
     public String toString() {
-        return TranslationManager.getInstance().translate("RemoveItem", "Remove \"{item}\" from \"{list}\"")
+        return TranslationManager.getInstance().translate("RemoveItem", "Remove \"{item}\" from \"{list}\"").get()
                 .replace("{item}", toRemove == null ? "null" : toRemove.toString())
-                .replace("{list}", this.collectionName);
+                .replace("{list}", this.collectionName.get());
 
     }
 }

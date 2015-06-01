@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -65,7 +66,8 @@ public class Overview2 {
             // If Nimbus is not available, you can set the GUI to another look and feel.
         }
 
-        JFrame frame = new JFrame(tm.translate("OverviewTitle"));
+        JFrame frame = new JFrame();
+        tm.translate("OverviewTitle").bindTo(frame::setTitle);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         frame.addWindowListener(new WindowAdapter() {
@@ -139,6 +141,12 @@ public class Overview2 {
         buttonPanel.add(tfSearch);
         buttonPanel.add(getUndoButton());
         buttonPanel.add(getRedoButton());
+
+        for (TranslationManager.TranslationLocale locale : TranslationManager.getInstance().SupportedLocales) {
+            JButton btn = new JButton(locale.Local);
+            btn.addActionListener(l -> TranslationManager.getInstance().setLocale(locale.Local));
+            buttonPanel.add(btn);
+        }
         return buttonPanel;
     }
 

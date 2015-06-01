@@ -66,7 +66,8 @@ public class CantonEditPanel {
 
         panel.add(getEditingGrid(frame));
 
-        JLabel label = new JLabel(tm.translate("CantonCommunities", "Communities"));
+        JLabel label = new JLabel();
+        tm.translate("CantonCommunities", "Communities").bindTo(label::setText);
         JPanel labelpanel = new JPanel(new BorderLayout());
         labelpanel.add(label, BorderLayout.LINE_START);
 
@@ -102,6 +103,12 @@ public class CantonEditPanel {
         }
     }
 
+    private JLabel getLabel(String translationKey) {
+        JLabel label = new JLabel();
+        tm.translate(translationKey).bindTo(label::setText);
+        return label;
+    }
+
     private JPanel getEditingGrid(JFrame frame) {
 
         JPanel simpleItems = new JPanel(new GridBagLayout());
@@ -109,9 +116,9 @@ public class CantonEditPanel {
 
         int x = 0;
         int y = 0;
-        man.setX(x++).setY(y).setComp(new JLabel(tm.translate("Canton")));
+        man.setX(x++).setY(y).setComp(getLabel("Canton"));
         man.setX(x++).setY(y).setComp(getTextField(Canton::getName, Canton::setName));
-        man.setX(x++).setY(y).setComp(new JLabel(tm.translate("CantonNr")));
+        man.setX(x++).setY(y).setComp(getLabel("CantonNr"));
 
         ComputedValue<String> cantonNrDisplay = new ComputedValue<String>(
                 () -> CantonHandler.getCurrentCanton() == null ? "" : CantonHandler.getCurrentCanton().getId() + "");
@@ -121,27 +128,27 @@ public class CantonEditPanel {
 
         x = 0;
 
-        man.setX(x++).setY(y).setComp(new JLabel(tm.translate("CantonShortcut")));
+        man.setX(x++).setY(y).setComp(getLabel("CantonShortcut"));
         man.setX(x++).setY(y).setComp(getTextField(Canton::getShortCut, Canton::setShortCut));
 
-        man.setX(x++).setY(y).setComp(new JLabel(tm.translate("NrCouncilSeats")));
+        man.setX(x++).setY(y).setComp(getLabel("NrCouncilSeats"));
         man.setX(x).setY(y++).setComp(getNumberField(Canton::getNrCouncilSeats, Canton::setNrCouncilSeats, 1, 2));
 
         x = 0;
 
-        man.setX(x++).setY(y).setComp(new JLabel(tm.translate("Capital")));
+        man.setX(x++).setY(y).setComp(getLabel("Capital"));
         man.setX(x++).setY(y).setComp(getTextField(Canton::getCapital, Canton::setCapital));
 
-        man.setX(x++).setY(y).setComp(new JLabel(tm.translate("CantonSwitzerlandEntry")));
+        man.setX(x++).setY(y).setComp(getLabel("CantonSwitzerlandEntry"));
         man.setX(x).setY(y++).setComp(getNumberField(Canton::getEntryYear, Canton::setEntryYear, 1000, 2100));
 
         x = 0;
 
-        man.setX(x++).setY(y).setComp(new JLabel(tm.translate("CantonInhabitants")));
+        man.setX(x++).setY(y).setComp(getLabel("CantonInhabitants"));
         man.setX(x++).setY(y)
                 .setComp(getNumberField(Canton::getNrInhabitants, Canton::setNrInhabitants, 1000, 2100000));
 
-        man.setX(x++).setY(y).setComp(new JLabel(tm.translate("CantonNrForeigners")));
+        man.setX(x++).setY(y).setComp(getLabel("CantonNrForeigners"));
         man.setX(x)
                 .setY(y++)
                 .setComp(
@@ -149,11 +156,11 @@ public class CantonEditPanel {
                                 NumberFormat.getPercentInstance()));
 
         x = 0;
-        man.setX(x++).setY(y).setComp(new JLabel(tm.translate("CantonArea")));
+        man.setX(x++).setY(y).setComp(getLabel("CantonArea"));
         man.setX(x++).setY(y)
                 .setComp(getFloatField(Canton::getArea, Canton::setArea, NumberFormat.getNumberInstance()));
 
-        man.setX(x++).setY(y).setComp(new JLabel(tm.translate("CantonLanguage", "Language")));
+        man.setX(x++).setY(y).setComp(getLabel("CantonLanguage"));
         man.setX(x)
                 .setY(y)
                 .setComp(
@@ -190,7 +197,7 @@ public class CantonEditPanel {
     }
 
     private <T> MultiSelector<T> getMultiselector(JFrame frame, Collection<T> allItems,
-            Function<Canton, ObservableList<T>> getObservable, String name) {
+            Function<Canton, ObservableList<T>> getObservable, ValueSubscribable<String> name) {
         MultiSelector<T> selector = new MultiSelector<>(frame, allItems);
         if (CantonHandler.getCurrentCanton() != null) {
             selector.getSelectedItems().reset(getObservable.apply(CantonHandler.getCurrentCanton()));

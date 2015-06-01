@@ -3,15 +3,16 @@ package ch.fhnw.command;
 import java.util.Collection;
 
 import ch.fhnw.cantoneditor.views.TranslationManager;
+import ch.fhnw.observation.ValueSubscribable;
 
 public class ListAddCommand<T> implements Executable {
 
     private final Collection<T> toAdd;
     private final Collection<T> collection;
-    private final String collectionName;
+    private final ValueSubscribable<String> collectionName;
     private boolean hasBeenExecuted = false;
 
-    public ListAddCommand(String collectionName, Collection<T> list, Collection<T> toAdd) {
+    public ListAddCommand(ValueSubscribable<String> collectionName, Collection<T> list, Collection<T> toAdd) {
         this.collection = list;
         this.toAdd = toAdd;
         this.collectionName = collectionName;
@@ -43,8 +44,8 @@ public class ListAddCommand<T> implements Executable {
         } else {
             itemString = toAdd.toString();
         }
-        return TranslationManager.getInstance().translate("AddItem", "Add \"{item}\" to \"{list}\"")
-                .replace("{item}", itemString).replace("{list}", this.collectionName);
+        return TranslationManager.getInstance().translate("AddItem", "Add \"{item}\" to \"{list}\"").get()
+                .replace("{item}", itemString).replace("{list}", this.collectionName.get());
 
     }
 }

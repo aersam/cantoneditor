@@ -51,7 +51,9 @@ public class Overview {
             e.printStackTrace();
         }
 
-        JFrame frame = new JFrame(tm.translate("OverviewTitle"));
+        JFrame frame = new JFrame();
+        tm.translate("OverviewTitle").bindTo(frame::setTitle);
+
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         frame.addWindowListener(new WindowAdapter() {
