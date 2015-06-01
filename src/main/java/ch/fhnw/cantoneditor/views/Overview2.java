@@ -4,22 +4,28 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Supplier;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+
+import org.gpl.jsplitbutton.JSplitButton;
+import org.gpl.jsplitbutton.SplitButtonActionListener;
 
 import ch.fhnw.cantoneditor.datautils.CsvReader;
 import ch.fhnw.cantoneditor.datautils.DataStorage;
@@ -28,6 +34,7 @@ import ch.fhnw.cantoneditor.libs.GridBagManager;
 import ch.fhnw.cantoneditor.model.Canton;
 import ch.fhnw.cantoneditor.model.CantonTableModel;
 import ch.fhnw.command.CommandController;
+import ch.fhnw.command.Executable;
 import ch.fhnw.observation.ComputedValue;
 import ch.fhnw.observation.ObservableList;
 import ch.fhnw.observation.SwingObservables;
@@ -88,20 +95,6 @@ public class Overview2 {
         JScrollPane scroller = new JScrollPane(table);
 
         CsvReader.class.getResourceAsStream("/Communes.txt");
-        ImageIcon iconUndo = new ImageIcon(getClass().getResource("/undo-icon.png"), "undo");
-        ImageIcon iconRedo = new ImageIcon(getClass().getResource("/redo-icon.png"), "undo");
-        JButton undoButton = new JButton(iconUndo);
-        JButton redoButton = new JButton(iconRedo);
-
-        new ComputedValue<Boolean>(() -> {
-            return CommandController.getDefault().getDoneCommands().iterator().hasNext();
-        }).bindTo(undoButton::setEnabled);
-        new ComputedValue<Boolean>(() -> {
-            return CommandController.getDefault().getRedoCommands().iterator().hasNext();
-        }).bindTo(redoButton::setEnabled);
-
-        undoButton.addActionListener((e) -> CommandController.getDefault().undo());
-        redoButton.addActionListener((e) -> CommandController.getDefault().redo());
 
         PlaceholderTextField tfSearch = new PlaceholderTextField();
         tfSearch.setPlaceholder(tm.translate("Search", "Search") + "...");
@@ -121,8 +114,8 @@ public class Overview2 {
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(tfSearch);
-        buttonPanel.add(undoButton);
-        buttonPanel.add(redoButton);
+        buttonPanel.add(getUndoButton());
+        buttonPanel.add(getRedoButton());
 
         JPanel rootPane = new JPanel(new BorderLayout());
         rootPane.add(buttonPanel, BorderLayout.PAGE_START);
@@ -140,6 +133,65 @@ public class Overview2 {
         CantonHandler.setCurrentCanton(allCantons.get(0));
         frame.setVisible(true);
 
+    }
+
+    private static JComponent getUndoRedoButton(String translationKey, ObservableList<Executable> commands,
+            Supplier<Boolean> execute) {
+        // Not a nice hack, but works :)
+        JSplitButton undoButton = new JSplitButton(TranslationManager.getInstance().translate(translationKey) + "   ");
+        JPopupMenu popupMenu = new JPopupMenu();
+        commands.bindTo(undos -> {
+            popupMenu.removeAll();
+
+            for (int last = undos.size() - 1; last >= 0; last--) {
+                Executable exe = undos.get(last);
+                JMenuItem item = new JMenuItem(exe.toString());
+
+                item.addActionListener(l -> {
+                    int index = undos.size() - undos.indexOf(item) - 1;
+                    for (int i = 1; i <= index; i++) {
+                        execute.get();
+                    }
+                });
+                popupMenu.add(item);
+            }
+        });
+        undoButton.setPopupMenu(popupMenu);
+
+        new ComputedValue<Boolean>(() -> {
+            return commands.iterator().hasNext();
+        }).bindTo(undoButton::setEnabled);
+
+        undoButton.addSplitButtonActionListener(new SplitButtonActionListener() {
+
+            @Override
+            public void splitButtonClicked(ActionEvent e, JComponent originalSource) {
+                if (originalSource != null && originalSource.getClass() != JSplitButton.class) {
+                    System.out.println(originalSource);
+                    System.out.println(e);
+                }
+            }
+
+            @Override
+            public void buttonClicked(ActionEvent e) {
+                execute.get();
+            }
+        });
+
+        return undoButton;
+
+    }
+
+    public static JComponent getUndoButton() {
+        // Not a nice hack, but works :)
+        return getUndoRedoButton("Undo", CommandController.getDefault().getDoneCommands(),
+                CommandController.getDefault()::undo);
+    }
+
+    public static JComponent getRedoButton() {
+        // Not a nice hack, but works :)
+        return getUndoRedoButton("Redo", CommandController.getDefault().getRedoCommands(),
+                CommandController.getDefault()::redo);
     }
 
     private JPanel getLedPanel() {

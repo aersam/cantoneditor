@@ -89,7 +89,10 @@ public class CantonEditPanel {
 
     private BufferedImage getFlagFromCanton(String shortcut) {
         try {
-            BufferedImage img = ImageIO.read(CantonEditPanel.class.getResourceAsStream("/wappen/" + shortcut + ".png"));
+            java.io.InputStream stream = CantonEditPanel.class.getResourceAsStream("/wappen/" + shortcut + ".png");
+            if (stream == null)
+                return null;
+            BufferedImage img = ImageIO.read(stream);
             return img;
         } catch (IOException err) {
             return null;

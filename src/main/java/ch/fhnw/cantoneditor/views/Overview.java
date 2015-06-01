@@ -28,7 +28,6 @@ import ch.fhnw.cantoneditor.datautils.NoDataFoundException;
 import ch.fhnw.cantoneditor.libs.GridBagManager;
 import ch.fhnw.cantoneditor.model.Canton;
 import ch.fhnw.cantoneditor.model.CantonTableModel;
-import ch.fhnw.command.CommandController;
 import ch.fhnw.observation.ComputedValue;
 import ch.fhnw.oop.led.Led;
 import ch.fhnw.oop.splitflap.GlobalTimer;
@@ -101,24 +100,13 @@ public class Overview {
         table.setSize(500, 500);
 
         JScrollPane scroller = new JScrollPane(table);
-
-        JButton undoButton = new JButton(tm.translate("Undo", "Undo"));
-        JButton redoButton = new JButton(tm.translate("Redo", "Redo"));
-
-        new ComputedValue<Boolean>(() -> {
-            return CommandController.getDefault().getDoneCommands().iterator().hasNext();
-        }).bindTo(undoButton::setEnabled);
-        new ComputedValue<Boolean>(() -> {
-            return CommandController.getDefault().getRedoCommands().iterator().hasNext();
-        }).bindTo(redoButton::setEnabled);
-
-        undoButton.addActionListener((e) -> CommandController.getDefault().undo());
-        redoButton.addActionListener((e) -> CommandController.getDefault().redo());
         int x = 0;
         int y = 0;
 
-        motherOfPanesManager.setFill(GridBagConstraints.NONE).setWeightX(0).setX(0).setY(y).setComp(undoButton);
-        motherOfPanesManager.setFill(GridBagConstraints.NONE).setWeightX(0).setX(1).setY(y++).setComp(redoButton);
+        motherOfPanesManager.setFill(GridBagConstraints.NONE).setWeightX(0).setX(0).setY(y)
+                .setComp(Overview2.getUndoButton());
+        motherOfPanesManager.setFill(GridBagConstraints.NONE).setWeightX(0).setX(1).setY(y++)
+                .setComp(Overview2.getRedoButton());
         motherOfPanesManager.setWeightX(1.0).setWidth(2).setX(0).setY(1).setComp(verticalSplitPane);
 
         upperManager.setWidth(2).setX(0).setY(y++).setComp(scroller);

@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.function.Consumer;
 
 /** Wrapper around ArrayList with Observability Support */
 public class ObservableList<T> implements List<T>, PropertyChangeable {
@@ -71,8 +72,9 @@ public class ObservableList<T> implements List<T>, PropertyChangeable {
 
     @Override
     public void clear() {
+        Object[] oldValue = this.toArray();
         this.underlyingList.clear();
-        this.pcs.firePropertyChange(RESET_ACTION, this, this);
+        this.pcs.firePropertyChange(RESET_ACTION, this, oldValue);
     }
 
     @Override
@@ -213,5 +215,10 @@ public class ObservableList<T> implements List<T>, PropertyChangeable {
     @Override
     public int hashCode() {
         return this.underlyingList.hashCode();
+    }
+
+    public void bindTo(Consumer<ObservableList<T>> target) {
+        target.accept(this);
+        this.addPropertyChangeListener((evt) -> target.accept(this));
     }
 }
