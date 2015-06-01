@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -147,12 +148,16 @@ public class Overview2 {
         // panel.setSize(panel.getWidth(), 5);
         for (Canton cnt : cantons) {
             Canton old = cnt.copyToNew();
+            String oldCommunes = String.join(",", old.getCommunes());
 
             ComputedValue<Boolean> hasChanged = new ComputedValue<>(() -> {
                 return !cnt.getName().equals(old.getName()) || !cnt.getCapital().equals(old.getCapital())
                         || !cnt.getShortCut().equals(old.getShortCut())
                         || !(cnt.getNrInhabitants() == old.getNrInhabitants()) || !(cnt.getArea() == old.getArea())
-                        || !(cnt.getCommunes().equals(old.getCommunes()));
+                        || !(cnt.getNrForeigners() == old.getNrForeigners())
+                        || !(cnt.getEntryYear() == old.getEntryYear())
+                        || !(cnt.getNrCouncilSeats() == old.getNrCouncilSeats())
+                        || !(String.join(",", cnt.getCommunes()).equals(oldCommunes));
             });
             Led flapper = new Led();
             CantonHandler.getCurrentCantonObservable().addPropertyChangeListener(e -> {
@@ -246,7 +251,11 @@ public class Overview2 {
     private static JComponent getUndoRedoButton(String translationKey, ObservableList<Executable> commands,
             Supplier<Boolean> execute) {
         // Not a nice hack, but works :)
-        JSplitButton undoButton = new JSplitButton(TranslationManager.getInstance().translate(translationKey) + "   ");
+
+        ImageIcon iconUndo = new ImageIcon(Overview2.class.getResource("/undo-icon.png"), "undo");
+        ImageIcon iconRedo = new ImageIcon(Overview2.class.getResource("/redo-icon.png"), "undo");
+
+        JSplitButton undoButton = new JSplitButton(translationKey.equals("Undo") ? iconUndo : iconRedo);
         JPopupMenu popupMenu = new JPopupMenu();
         commands.bindTo(undos -> {
             popupMenu.removeAll();
@@ -274,10 +283,6 @@ public class Overview2 {
 
             @Override
             public void splitButtonClicked(ActionEvent e, JComponent originalSource) {
-                if (originalSource != null && originalSource.getClass() != JSplitButton.class) {
-                    System.out.println(originalSource);
-                    System.out.println(e);
-                }
             }
 
             @Override

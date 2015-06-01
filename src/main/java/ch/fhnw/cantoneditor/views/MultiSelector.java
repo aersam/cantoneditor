@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Arrays;
 import java.util.Collection;
@@ -94,11 +95,35 @@ public class MultiSelector<E> {
             JPanel panel = new JPanel();
             panel.add(toggler);
             content = panel;
-            frame.addMouseListener(new MouseAdapter() {
+
+            frame.addMouseListener(new MouseListener() {
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    if (dialog != null)
+                        dialog.setVisible(false);
+                }
+
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    if (dialog != null)
+                        dialog.setVisible(false);
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                }
+
+                @Override
                 public void mouseClicked(MouseEvent e) {
                     if (dialog != null)
                         dialog.setVisible(false);
-                };
+
+                }
             });
 
             this.isCalculatedContent = true;
