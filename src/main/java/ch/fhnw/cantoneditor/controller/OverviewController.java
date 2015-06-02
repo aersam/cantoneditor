@@ -1,5 +1,8 @@
 package ch.fhnw.cantoneditor.controller;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import ch.fhnw.cantoneditor.datautils.DataStorage;
 import ch.fhnw.cantoneditor.views.Overview;
 
@@ -27,7 +30,18 @@ public class OverviewController {
             view.setAllCantons(DataStorage.getAllCantons());
             view.setCurrentCantonObservable(CantonHandler.getCurrentCantonObservable());
             view.setDetailView(new CantonEditPanelController().getView());
-            view.show(this);
+            view.show(new WindowAdapter() {
+
+                @Override
+                public void windowClosing(WindowEvent arg0) {
+                    save();
+                }
+
+                @Override
+                public void windowClosed(WindowEvent arg0) {
+                    System.exit(0);
+                }
+            });
         } catch (Exception err) {
             err.printStackTrace();
 

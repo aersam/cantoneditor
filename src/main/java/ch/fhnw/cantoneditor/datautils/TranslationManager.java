@@ -1,4 +1,4 @@
-package ch.fhnw.cantoneditor.views;
+package ch.fhnw.cantoneditor.datautils;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -16,12 +16,17 @@ public class TranslationManager {
     private static TranslationManager instance;
 
     public static class TranslationLocale {
-        public final String Local;
+        public final String Locale;
         public final String Name;
 
         public TranslationLocale(String locale, String name) {
-            this.Local = locale;
+            this.Locale = locale;
             this.Name = name;
+        }
+
+        @Override
+        public String toString() {
+            return Name;
         }
     }
 
@@ -29,7 +34,7 @@ public class TranslationManager {
             new TranslationLocale("de_CH", "Schwiizerdüütsch"), new TranslationLocale("en_US", "English") };
 
     private java.util.List<String> writtenProperties = new java.util.ArrayList<>();
-    private static ObservableValue<String> locale = new ObservableValue<String>();
+    private static ObservableValue<TranslationLocale> locale = new ObservableValue<TranslationLocale>();
 
     /**
      * This indicates that not existing values should be inserted into
@@ -49,11 +54,15 @@ public class TranslationManager {
 
     }
 
-    public String getLocale() {
+    public TranslationLocale getLocale() {
         return locale.get();
     }
 
-    public void setLocale(String locale) {
+    public ValueSubscribable<TranslationLocale> getLocaleObservable() {
+        return locale;
+    }
+
+    public void setLocale(TranslationLocale locale) {
         TranslationManager.locale.set(locale);
     }
 
@@ -68,9 +77,10 @@ public class TranslationManager {
      */
     public ValueSubscribable<String> translate(String key, String defaultValue) {
         if (locale.get() == null)
-            locale.set(Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry());
+            locale.set(SupportedLocales[0]);
         return new ComputedValue<String>(() -> {
-            Locale sysloc = new Locale(locale.get().split("_")[0], locale.get().split("_")[1]);
+            String locStr = locale.get().Locale;
+            Locale sysloc = new Locale(locStr.split("_")[0], locStr.split("_")[1]);
             ResourceBundle rb = ResourceBundle.getBundle("ApplicationTranslation", sysloc);
             if (rb.containsKey(key)) {// Everything is fine, just return it
                     return rb.getString(key);

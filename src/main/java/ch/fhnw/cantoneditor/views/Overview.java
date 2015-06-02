@@ -6,15 +6,14 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,9 +29,9 @@ import javax.swing.UIManager;
 import org.gpl.jsplitbutton.JSplitButton;
 import org.gpl.jsplitbutton.SplitButtonActionListener;
 
-import ch.fhnw.cantoneditor.controller.OverviewController;
 import ch.fhnw.cantoneditor.datautils.CsvReader;
 import ch.fhnw.cantoneditor.datautils.Searcher;
+import ch.fhnw.cantoneditor.datautils.TranslationManager;
 import ch.fhnw.cantoneditor.libs.GridBagManager;
 import ch.fhnw.cantoneditor.model.Canton;
 import ch.fhnw.cantoneditor.model.CantonTableModel;
@@ -81,31 +80,18 @@ public class Overview {
         }
     }
 
-    public void show(OverviewController controller) {
+    public void show(WindowListener onClose) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            // If Nimbus is not available, you can set the GUI to another look and feel.
+
         }
 
         JFrame frame = new JFrame();
         tm.translate("OverviewTitle").bindTo(frame::setTitle);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        frame.addWindowListener(new WindowAdapter() {
-
-            @Override
-            public void windowClosing(WindowEvent arg0) {
-
-                controller.save();
-
-            }
-
-            @Override
-            public void windowClosed(WindowEvent arg0) {
-                System.exit(0);
-            }
-        });
+        if (onClose != null)
+            frame.addWindowListener(onClose);
 
         filteredCantons = new ObservableList<>(getAllCantons());
         CantonTableModel tableModel = new CantonTableModel(filteredCantons);
@@ -160,11 +146,12 @@ public class Overview {
         buttonPanel.add(getUndoButton());
         buttonPanel.add(getRedoButton());
 
-        for (TranslationManager.TranslationLocale locale : TranslationManager.getInstance().SupportedLocales) {
-            JButton btn = new JButton(locale.Local);
-            btn.addActionListener(l -> TranslationManager.getInstance().setLocale(locale.Local));
-            buttonPanel.add(btn);
-        }
+        JComboBox<TranslationManager.TranslationLocale> languages = new JComboBox<>(
+                TranslationManager.getInstance().SupportedLocales);
+
+        TranslationManager.getInstance().getLocaleObservable().bindTwoWay(SwingObservables.getFromComboBox(languages));
+        buttonPanel.add(languages);
+
         return buttonPanel;
     }
 

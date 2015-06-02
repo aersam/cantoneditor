@@ -4,7 +4,7 @@ import java.security.AccessControlException;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import ch.fhnw.cantoneditor.views.TranslationManager;
+import ch.fhnw.cantoneditor.datautils.TranslationManager;
 import ch.fhnw.observation.ReadObserver;
 
 public class ObjectSetCommand<TObject, TValue> implements Executable {

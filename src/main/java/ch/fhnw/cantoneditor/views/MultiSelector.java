@@ -27,6 +27,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import ch.fhnw.cantoneditor.datautils.ListUtils;
+import ch.fhnw.cantoneditor.datautils.TranslationManager;
 import ch.fhnw.observation.ComputedValue;
 import ch.fhnw.observation.ObservableList;
 import ch.fhnw.observation.PropertyChangeable;

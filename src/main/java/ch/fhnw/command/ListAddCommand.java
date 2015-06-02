@@ -2,7 +2,7 @@ package ch.fhnw.command;
 
 import java.util.Collection;
 
-import ch.fhnw.cantoneditor.views.TranslationManager;
+import ch.fhnw.cantoneditor.datautils.TranslationManager;
 import ch.fhnw.observation.ValueSubscribable;
 
 public class ListAddCommand<T> implements Executable {

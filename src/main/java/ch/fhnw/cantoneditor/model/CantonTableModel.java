@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
-import ch.fhnw.cantoneditor.views.TranslationManager;
+import ch.fhnw.cantoneditor.datautils.TranslationManager;
 import ch.fhnw.command.CommandController;
 import ch.fhnw.observation.ComputedValue;
 import ch.fhnw.observation.Disposable;

@@ -4,7 +4,7 @@ import java.security.AccessControlException;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import ch.fhnw.cantoneditor.views.TranslationManager;
+import ch.fhnw.cantoneditor.datautils.TranslationManager;
 import ch.fhnw.observation.ReadObserver;
 import ch.fhnw.observation.ValueSubscribable;
 

@@ -10,8 +10,8 @@ import java.text.ParseException;
 import org.junit.Test;
 
 import ch.fhnw.cantoneditor.datautils.NoDataFoundException;
+import ch.fhnw.cantoneditor.datautils.TranslationManager;
 import ch.fhnw.cantoneditor.model.Canton;
-import ch.fhnw.cantoneditor.views.TranslationManager;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
@@ -41,7 +41,7 @@ public class ComputedValueTest {
         assertEquals(comp.get(), c.getName() + " " + c.getCapital());
 
         int oldReadCount = ComputedValueTest.readCounter;
-        c.setName("Zürich");
+        c.setName("Zï¿½rich");
 
         // Should have changed
         assertTrue(ComputedValueTest.readCounter > oldReadCount);
@@ -73,14 +73,14 @@ public class ComputedValueTest {
     @Test
     public void testTranslation() {
         TranslationManager tm = TranslationManager.getInstance();
-        tm.setLocale("en_US");
+        tm.setLocale(TranslationManager.getInstance().SupportedLocales[0]);
         ObservableValue<String> test = new ObservableValue<String>();
 
         new ComputedValue<String>(() -> {
             return tm.translate("Search", "Search").get() + "...";
         }).bindTo(test::set);
         String str1 = test.get();
-        tm.setLocale("de_CH");
+        tm.setLocale(TranslationManager.getInstance().SupportedLocales[1]);
         assertNotEquals(str1, test.get());
     }
 
