@@ -24,7 +24,6 @@ public class CantonTableSelectionModel extends DefaultListSelectionModel {
                     return;
                 }
                 if (isSelectionEmpty()) {
-                    currentCanton.set(null);
                     return;
                 }
                 int index = getMaxSelectionIndex();
