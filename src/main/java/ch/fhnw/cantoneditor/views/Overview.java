@@ -30,8 +30,8 @@ import javax.swing.UIManager;
 import org.gpl.jsplitbutton.JSplitButton;
 import org.gpl.jsplitbutton.SplitButtonActionListener;
 
+import ch.fhnw.cantoneditor.controller.OverviewController;
 import ch.fhnw.cantoneditor.datautils.CsvReader;
-import ch.fhnw.cantoneditor.datautils.DataStorage;
 import ch.fhnw.cantoneditor.datautils.Searcher;
 import ch.fhnw.cantoneditor.libs.GridBagManager;
 import ch.fhnw.cantoneditor.model.Canton;
@@ -61,6 +61,15 @@ public class Overview {
         return currentCantonObservable;
     }
 
+    public List<Canton> getAllCantons() {
+        return allCantons;
+    }
+
+    public void setAllCantons(List<Canton> allCantons) {
+        this.allCantons = allCantons;
+
+    }
+
     public void setCurrentCantonObservable(ValueSubscribable<Canton> currentCantonObservable) {
         this.currentCantonObservable = currentCantonObservable;
 
@@ -72,7 +81,7 @@ public class Overview {
         }
     }
 
-    public void show() {
+    public void show(OverviewController controller) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
@@ -87,12 +96,9 @@ public class Overview {
 
             @Override
             public void windowClosing(WindowEvent arg0) {
-                try {
-                    DataStorage.save();
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+
+                controller.save();
+
             }
 
             @Override
@@ -101,8 +107,7 @@ public class Overview {
             }
         });
 
-        allCantons = DataStorage.getAllCantons();
-        filteredCantons = new ObservableList<>(allCantons);
+        filteredCantons = new ObservableList<>(getAllCantons());
         CantonTableModel tableModel = new CantonTableModel(filteredCantons);
         JTable table = new JTable(tableModel);
         table.setSelectionModel(tableModel.getSelectionModel(this.currentCantonObservable));
@@ -119,14 +124,14 @@ public class Overview {
         // rootPane.add(new CantonEditPanel().getComponent(frame), BorderLayout.LINE_END);
 
         JPanel pageEndPanel = new JPanel(new BorderLayout());
-        pageEndPanel.add(getLedPanel(this.currentCantonObservable), BorderLayout.PAGE_START);
+        pageEndPanel.add(getLedPanel(this.currentCantonObservable, this.allCantons), BorderLayout.PAGE_START);
         pageEndPanel.add(initInhabitantsAndAreaDisplay(), BorderLayout.PAGE_END);
 
         rootPane.add(pageEndPanel, BorderLayout.PAGE_END);
 
         frame.add(rootPane);
         frame.pack();
-        this.currentCantonObservable.set(allCantons.get(0));
+        this.currentCantonObservable.set(getAllCantons().get(0));
         frame.setVisible(true);
 
     }
@@ -139,7 +144,7 @@ public class Overview {
         tfSearch.setPreferredSize(new Dimension(100, 30));
         ValueSubscribable<String> searchText = SwingObservables.getFromTextField(tfSearch, 200);
         searchText.addPropertyChangeListener(l -> {
-            Searcher<Canton> search = new Searcher<Canton>((String) l.getNewValue(), allCantons);
+            Searcher<Canton> search = new Searcher<Canton>((String) l.getNewValue(), getAllCantons());
             searchCount++;
             search.setOnFinish(of -> {
                 SwingUtilities.invokeLater(() -> {
@@ -163,11 +168,11 @@ public class Overview {
         return buttonPanel;
     }
 
-    private static JPanel getLedPanel(ValueSubscribable<Canton> currentCanton) {
-        List<Canton> cantons = DataStorage.getAllCantons();
+    private static JPanel getLedPanel(ValueSubscribable<Canton> currentCanton, List<Canton> allCantons) {
+
         JPanel panel = new JPanel();
         // panel.setSize(panel.getWidth(), 5);
-        for (Canton cnt : cantons) {
+        for (Canton cnt : allCantons) {
             Canton old = cnt.copyToNew();
             String oldCommunes = String.join(",", old.getCommunes());
 
@@ -207,14 +212,14 @@ public class Overview {
         GridBagManager localGbm = new GridBagManager(inhabPanel);
         ComputedValue<Integer> inhabitantsHandler = new ComputedValue<>(() -> {
             int inhabs = 0;
-            for (Canton c : allCantons) {
+            for (Canton c : getAllCantons()) {
                 inhabs += c.getNrInhabitants();
             }
             return inhabs;
         });
         ComputedValue<Double> areaHandler = new ComputedValue<>(() -> {
             double area = 0;
-            for (Canton c : allCantons) {
+            for (Canton c : getAllCantons()) {
                 area += c.getArea();
             }
             return area;

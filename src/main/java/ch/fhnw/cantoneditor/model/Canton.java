@@ -1,20 +1,13 @@
 package ch.fhnw.cantoneditor.model;
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.stream.Collectors;
 
 import ch.fhnw.cantoneditor.datautils.BaseModel;
-import ch.fhnw.cantoneditor.datautils.DataStorage;
 import ch.fhnw.cantoneditor.datautils.Initable;
-import ch.fhnw.cantoneditor.datautils.NoDataFoundException;
 import ch.fhnw.cantoneditor.datautils.Searchable;
 import ch.fhnw.observation.ObservableList;
 
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.Expose;
 
 public class Canton extends BaseModel implements Initable, Searchable {
@@ -82,54 +75,10 @@ public class Canton extends BaseModel implements Initable, Searchable {
         }
 
         isInited = true;
-        this.languageId.addPropertyChangeListener((evt) -> {
-            if (this.id != 0) {
-                DataStorage.markChanged(this);
-            }
-        });
-        this.addPropertyChangeListener((evt) -> {
-            if (this.id != 0) {
-                DataStorage.markChanged(this);
-            }
-        });
     }
 
     public static Canton createNew() {
         return new Canton();
-    }
-
-    public static Canton getById(int nr, boolean createIfNotExists) throws JsonIOException, JsonSyntaxException,
-            ClassNotFoundException, IOException, ParseException, NoDataFoundException {
-        Collection<Canton> cantons = DataStorage.getAllCantons();
-        if (cantons != null) {
-            for (Canton c : cantons) {
-                if (c.id == nr)
-                    return c;
-            }
-        }
-        if (createIfNotExists) {
-            Canton c = new Canton();
-            c.setId(nr);
-            DataStorage.getAllCantons().add(c);
-            return c;
-        }
-        return null;
-    }
-
-    public static Canton getByShortcut(String shortcut, boolean createIfNotExists) throws JsonIOException,
-            JsonSyntaxException, ClassNotFoundException, IOException, ParseException, NoDataFoundException {
-        Collection<Canton> cantons = DataStorage.getAllCantons();
-        for (Canton c : cantons) {
-            if (c.shortCut.equals(shortcut))
-                return c;
-        }
-        if (createIfNotExists) {
-            Canton c = new Canton();
-            c.setShortCut(shortcut);
-            DataStorage.getAllCantons().add(c);
-            return c;
-        }
-        return null;
     }
 
     public String getName() {

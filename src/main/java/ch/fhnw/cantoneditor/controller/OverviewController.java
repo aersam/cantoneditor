@@ -9,14 +9,25 @@ public class OverviewController {
 
     }
 
+    public void save() {
+        try {
+            DataStorage.save();
+        } catch (Exception err) {
+            err.printStackTrace();
+
+        }
+
+    }
+
     public void show() {
         try {
             DataStorage.init();
 
             Overview view = new Overview();
+            view.setAllCantons(DataStorage.getAllCantons());
             view.setCurrentCantonObservable(CantonHandler.getCurrentCantonObservable());
             view.setDetailView(new CantonEditPanelController().getView());
-            view.show();
+            view.show(this);
         } catch (Exception err) {
             err.printStackTrace();
 

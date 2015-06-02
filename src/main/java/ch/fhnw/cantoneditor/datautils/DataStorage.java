@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.List;
 
 import ch.fhnw.cantoneditor.model.Canton;
@@ -48,7 +49,38 @@ public class DataStorage {
         DataConnector.getInstance().saveAll(Canton.class, cantons);
     }
 
-    public static void markChanged(Canton c) {
-        // No more needed
+    public static Canton getCantonById(int nr, boolean createIfNotExists) throws JsonIOException, JsonSyntaxException,
+            ClassNotFoundException, IOException, ParseException, NoDataFoundException {
+        Collection<Canton> cantons = DataStorage.getAllCantons();
+        if (cantons != null) {
+            for (Canton c : cantons) {
+                if (c.getId() == nr)
+                    return c;
+            }
+        }
+        if (createIfNotExists) {
+            Canton c = new Canton();
+            c.setId(nr);
+            DataStorage.getAllCantons().add(c);
+            return c;
+        }
+        return null;
     }
+
+    public static Canton getCantonByShortcut(String shortcut, boolean createIfNotExists) throws JsonIOException,
+            JsonSyntaxException, ClassNotFoundException, IOException, ParseException, NoDataFoundException {
+        Collection<Canton> cantons = DataStorage.getAllCantons();
+        for (Canton c : cantons) {
+            if (c.getShortCut().equals(shortcut))
+                return c;
+        }
+        if (createIfNotExists) {
+            Canton c = new Canton();
+            c.setShortCut(shortcut);
+            DataStorage.getAllCantons().add(c);
+            return c;
+        }
+        return null;
+    }
+
 }

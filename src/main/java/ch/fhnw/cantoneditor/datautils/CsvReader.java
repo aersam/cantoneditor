@@ -31,7 +31,7 @@ public class CsvReader {
             String[] nextLine;
             while ((nextLine = reader.readNext()) != null) {
                 if (nextLine != null) {
-                    Canton canton = Canton.getByShortcut(nextLine[0], true);
+                    Canton canton = DataStorage.getCantonByShortcut(nextLine[0], true);
                     canton.getCommunes().add(nextLine[4]);
 
                 }
