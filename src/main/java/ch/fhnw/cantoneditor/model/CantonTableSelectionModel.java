@@ -4,14 +4,14 @@ import javax.swing.DefaultListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import ch.fhnw.cantoneditor.views.CantonHandler;
+import ch.fhnw.observation.ValueSubscribable;
 
 @SuppressWarnings("serial")
 public class CantonTableSelectionModel extends DefaultListSelectionModel {
 
     private CantonTableModel table;
 
-    public CantonTableSelectionModel(CantonTableModel model) {
+    public CantonTableSelectionModel(CantonTableModel model, ValueSubscribable<Canton> currentCanton) {
         this.table = model;
         this.setSelectionMode(SINGLE_SELECTION);
 
@@ -24,11 +24,11 @@ public class CantonTableSelectionModel extends DefaultListSelectionModel {
                     return;
                 }
                 if (isSelectionEmpty()) {
-                    CantonHandler.setCurrentCanton(null);
+                    currentCanton.set(null);
                     return;
                 }
                 int index = getMaxSelectionIndex();
-                CantonHandler.setCurrentCanton(model.cantons.get(index));
+                currentCanton.set(model.cantons.get(index));
             }
         });
     }

@@ -1,6 +1,7 @@
 package ch.fhnw.observation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -10,6 +11,7 @@ import org.junit.Test;
 
 import ch.fhnw.cantoneditor.datautils.NoDataFoundException;
 import ch.fhnw.cantoneditor.model.Canton;
+import ch.fhnw.cantoneditor.views.TranslationManager;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
@@ -66,6 +68,20 @@ public class ComputedValueTest {
         int oldCount = ComputedValueTest.readCounter;
         c.setName("newstring");
         assertTrue(ComputedValueTest.readCounter > oldCount);
+    }
+
+    @Test
+    public void testTranslation() {
+        TranslationManager tm = TranslationManager.getInstance();
+        tm.setLocale("en_US");
+        ObservableValue<String> test = new ObservableValue<String>();
+
+        new ComputedValue<String>(() -> {
+            return tm.translate("Search", "Search").get() + "...";
+        }).bindTo(test::set);
+        String str1 = test.get();
+        tm.setLocale("de_CH");
+        assertNotEquals(str1, test.get());
     }
 
     @Test

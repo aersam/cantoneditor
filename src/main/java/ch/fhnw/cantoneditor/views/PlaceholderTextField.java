@@ -52,6 +52,7 @@ public class PlaceholderTextField extends JTextField {
 
     public void setPlaceholder(final String s) {
         placeholder = s;
+        repaint();
     }
 
 }

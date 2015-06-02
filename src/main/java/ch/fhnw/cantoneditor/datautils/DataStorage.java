@@ -2,6 +2,7 @@ package ch.fhnw.cantoneditor.datautils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class DataStorage {
     }
 
     public static void save() throws JsonIOException, JsonSyntaxException, FileNotFoundException,
-            ClassNotFoundException {
+            ClassNotFoundException, UnsupportedEncodingException {
         for (Canton c : cantons) {
             c.beforeSerialize();
         }

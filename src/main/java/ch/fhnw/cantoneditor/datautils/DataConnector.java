@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
@@ -116,7 +117,7 @@ public class DataConnector {
     }
 
     public <T> void saveAll(Class<T> type, Collection<T> items) throws JsonIOException, JsonSyntaxException,
-            FileNotFoundException, ClassNotFoundException {
+            FileNotFoundException, ClassNotFoundException, UnsupportedEncodingException {
         Gson gson = new Gson();
         Class<?> namedClass = Class.forName("[L" + type.getName() + ";");
         JsonElement el = gson.toJsonTree(items.toArray(), namedClass);
@@ -126,7 +127,7 @@ public class DataConnector {
         existing.add(type.getName(), el);
         String json = gson.toJson(existing);
         File dataFile = new File(getDataFolder(true), DATA_FILE);
-        PrintWriter writer = new PrintWriter(dataFile);
+        PrintWriter writer = new PrintWriter(dataFile, "utf-8");
         writer.print(json);
         writer.close();
     }

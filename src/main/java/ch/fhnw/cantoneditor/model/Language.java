@@ -30,9 +30,9 @@ public class Language {
     }
 
     public static final Language German = new Language(1, "deutsch", "de");
-    public static final Language French = new Language(2, "französisch", "fr");
+    public static final Language French = new Language(2, "franzÃ¶sisch", "fr");
     public static final Language Italian = new Language(3, "italienisch", "it");
-    public static final Language Rumantsch = new Language(4, "rätoromanisch", "rm");
+    public static final Language Rumantsch = new Language(4, "rÃ¤toromanisch", "rm");
 
     public String getName() {
         return this.name;

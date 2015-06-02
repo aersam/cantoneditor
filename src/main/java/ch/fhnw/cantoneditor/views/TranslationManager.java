@@ -26,7 +26,7 @@ public class TranslationManager {
     }
 
     public TranslationLocale[] SupportedLocales = new TranslationLocale[] { new TranslationLocale("de_DE", "Deutsch"),
-            new TranslationLocale("de_CH", "Schwiizerdüütsch"), new TranslationLocale("en_US", "English") };
+            new TranslationLocale("de_CH", "SchwiizerdÃ¼Ã¼tsch"), new TranslationLocale("en_US", "English") };
 
     private java.util.List<String> writtenProperties = new java.util.ArrayList<>();
     private static ObservableValue<String> locale = new ObservableValue<String>();

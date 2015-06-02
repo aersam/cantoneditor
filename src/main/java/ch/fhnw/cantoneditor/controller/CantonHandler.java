@@ -1,9 +1,9 @@
-package ch.fhnw.cantoneditor.views;
+package ch.fhnw.cantoneditor.controller;
 
 import ch.fhnw.cantoneditor.model.Canton;
 import ch.fhnw.observation.ObservableValue;
 
-public class CantonHandler {
+class CantonHandler {
     private static final ObservableValue<Canton> currentCanton = new ObservableValue<>();
 
     public static Canton getCurrentCanton() {
@@ -15,6 +15,9 @@ public class CantonHandler {
     }
 
     public static void setCurrentCanton(Canton cnt) {
+        if (cnt == null && currentCanton.get() != null) {
+            return;
+        }
         currentCanton.set(cnt);
     }
 }

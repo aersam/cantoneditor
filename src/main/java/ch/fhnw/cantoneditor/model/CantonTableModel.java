@@ -78,8 +78,8 @@ public class CantonTableModel extends DefaultTableModel implements Disposable {
         return cantons.size();
     }
 
-    public ListSelectionModel getSelectionModel() {
-        return new CantonTableSelectionModel(this);
+    public ListSelectionModel getSelectionModel(ValueSubscribable<Canton> currentCanton) {
+        return new CantonTableSelectionModel(this, currentCanton);
     }
 
     private <T> ValueSubscribable<?> getValue(int row, int column, Supplier<T> getFunction, Consumer<T> writer,

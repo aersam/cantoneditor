@@ -38,21 +38,32 @@ import ch.fhnw.command.ListAddCommand;
 import ch.fhnw.command.ListRemoveCommand;
 import ch.fhnw.observation.ComputedValue;
 import ch.fhnw.observation.ObservableList;
+import ch.fhnw.observation.ObservableValue;
 import ch.fhnw.observation.SwingObservables;
 import ch.fhnw.observation.ValueSubscribable;
 
-public class CantonEditPanel {
+public class CantonEditPanel implements IView {
 
     private TranslationManager tm = TranslationManager.getInstance();
 
-    public JPanel getComponent(JFrame frame) {
+    private ValueSubscribable<Canton> editingCanton = new ObservableValue<Canton>();
+
+    public Canton getCantonToEdit(Canton c) {
+        return this.editingCanton.get();
+    }
+
+    public void setCantonToEdit(Canton c) {
+        this.editingCanton.set(c);
+    }
+
+    public JComponent getComponent(JFrame frame) {
         JPanel panel = new JPanel();
 
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         panel.setBorder(new EmptyBorder(5, 5, 5, 5));
         FlagDisplayer displayer = new FlagDisplayer(null);
         ComputedValue<Image> flag = new ComputedValue<Image>(() -> {
-            Canton current = CantonHandler.getCurrentCanton();
+            Canton current = this.editingCanton.get();
             if (current == null)
                 return null;
             return getFlagFromCanton(current.getShortCut());
@@ -85,7 +96,11 @@ public class CantonEditPanel {
         commScroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         panel.add(commScroller);
 
-        CantonHandler.getCurrentCantonObservable().bindTo(t -> panel.setVisible(t != null));
+        this.editingCanton.bindTo(t -> {
+            if (panel.isVisible() != (t != null)) {
+                panel.setVisible(t != null);
+            }
+        });
 
         return panel;
 
@@ -120,8 +135,8 @@ public class CantonEditPanel {
         man.setX(x++).setY(y).setComp(getTextField(Canton::getName, Canton::setName));
         man.setX(x++).setY(y).setComp(getLabel("CantonNr"));
 
-        ComputedValue<String> cantonNrDisplay = new ComputedValue<String>(
-                () -> CantonHandler.getCurrentCanton() == null ? "" : CantonHandler.getCurrentCanton().getId() + "");
+        ComputedValue<String> cantonNrDisplay = new ComputedValue<String>(() -> this.editingCanton.get() == null ? ""
+                : this.editingCanton.get().getId() + "");
         JLabel nrLabel = new JLabel(cantonNrDisplay.get());
         cantonNrDisplay.bindTo(nrLabel::setText);
         man.setX(x).setY(y++).setComp(nrLabel);
@@ -180,8 +195,7 @@ public class CantonEditPanel {
                 return new JTextField(getText.apply(value));
             };
         });
-        comboBox.setSelectedItem(CantonHandler.getCurrentCanton() == null ? null : getValue.apply(CantonHandler
-                .getCurrentCanton()));
+        comboBox.setSelectedItem(this.editingCanton.get() == null ? null : getValue.apply(this.editingCanton.get()));
         bindObservables(comboBox, getValue, setValue);
         return comboBox;
     }
@@ -199,12 +213,11 @@ public class CantonEditPanel {
     private <T> MultiSelector<T> getMultiselector(JFrame frame, Collection<T> allItems,
             Function<Canton, ObservableList<T>> getObservable, ValueSubscribable<String> name) {
         MultiSelector<T> selector = new MultiSelector<>(frame, allItems);
-        if (CantonHandler.getCurrentCanton() != null) {
-            selector.getSelectedItems().reset(getObservable.apply(CantonHandler.getCurrentCanton()));
+        if (this.editingCanton.get() != null) {
+            selector.getSelectedItems().reset(getObservable.apply(this.editingCanton.get()));
         }
-        ComputedValue<ObservableList<T>> value = new ComputedValue<>(
-                () -> CantonHandler.getCurrentCanton() == null ? null : getObservable.apply(CantonHandler
-                        .getCurrentCanton()));
+        ComputedValue<ObservableList<T>> value = new ComputedValue<>(() -> this.editingCanton.get() == null ? null
+                : getObservable.apply(this.editingCanton.get()));
         value.bindTo(selector.getSelectedItems()::reset);
         selector.getSelectedItems().addPropertyChangeListener(
                 l -> {
@@ -229,9 +242,8 @@ public class CantonEditPanel {
     }
 
     private <T> void bindObservables(JComponent comp, Function<Canton, T> getValue, BiConsumer<Canton, T> setValue) {
-        ComputedValue<T> value = new ComputedValue<T>(() -> CantonHandler.getCurrentCanton() == null ? null
-                : getValue.apply(CantonHandler.getCurrentCanton()), (s) -> setValue.accept(
-                CantonHandler.getCurrentCanton(), s));
+        ComputedValue<T> value = new ComputedValue<T>(() -> this.editingCanton.get() == null ? null
+                : getValue.apply(this.editingCanton.get()), (s) -> setValue.accept(this.editingCanton.get(), s));
 
         ValueSubscribable<T> tfObservable;
         if (comp.getClass() == JComboBox.class) {
@@ -252,10 +264,8 @@ public class CantonEditPanel {
         value.bindTo(tfObservable::set);
         tfObservable.bindTo((s) -> {
             T currentValue = value.get();
-            if (!(s == null ? currentValue == null : s.equals(currentValue))
-                    && CantonHandler.getCurrentCanton() != null) {
-                CommandController.getDefault().executePropertySet(CantonHandler.getCurrentCanton(), s, getValue,
-                        setValue);
+            if (!(s == null ? currentValue == null : s.equals(currentValue)) && this.editingCanton.get() != null) {
+                CommandController.getDefault().executePropertySet(this.editingCanton.get(), s, getValue, setValue);
             }
         });
 
@@ -263,8 +273,8 @@ public class CantonEditPanel {
 
     private JSpinner getNumberField(Function<Canton, Integer> getValue, BiConsumer<Canton, Integer> setValue,
             int minValue, int maxValue) {
-        int initvalue = CantonHandler.getCurrentCanton() == null ? minValue : getValue.apply(
-                CantonHandler.getCurrentCanton()).intValue();
+        int initvalue = this.editingCanton.get() == null ? minValue : getValue.apply(this.editingCanton.get())
+                .intValue();
         JSpinner jSpinner1 = new JSpinner(new SpinnerNumberModel(initvalue, minValue, maxValue, 1));
 
         bindObservables(jSpinner1, getValue, setValue);
@@ -281,16 +291,14 @@ public class CantonEditPanel {
     }
 
     private JTextField getTextField(Function<Canton, String> getValue, BiConsumer<Canton, String> setValue) {
-        JTextField tf = new JTextField(CantonHandler.getCurrentCanton() == null ? "" : getValue.apply(CantonHandler
-                .getCurrentCanton()));
+        JTextField tf = new JTextField(this.editingCanton.get() == null ? "" : getValue.apply(this.editingCanton.get()));
         bindObservables(tf, getValue, setValue);
         tf.setMargin(new Insets(0, 0, 0, 0));
         return tf;
     }
 
     private JTextArea getTextArea(Function<Canton, String> getValue, BiConsumer<Canton, String> setValue) {
-        JTextArea tf = new JTextArea(CantonHandler.getCurrentCanton() == null ? "" : getValue.apply(CantonHandler
-                .getCurrentCanton()));
+        JTextArea tf = new JTextArea(this.editingCanton.get() == null ? "" : getValue.apply(this.editingCanton.get()));
         tf.setMaximumSize(new Dimension(500, 1000));
         // tf.setPreferredSize(new Dimension(200, 100));
         tf.setLineWrap(true);
