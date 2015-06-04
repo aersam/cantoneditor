@@ -83,7 +83,7 @@ public class Overview {
         } catch (Exception e) {
 
         }
-
+        currentCantonObservable.set(allCantons.get(0));
         JFrame frame = new JFrame();
         tm.translate("OverviewTitle").bindTo(frame::setTitle);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -116,6 +116,7 @@ public class Overview {
         frame.pack();
         this.currentCantonObservable.set(getAllCantons().get(0));
         frame.setVisible(true);
+
     }
 
     private JPanel initButtonPanel() {

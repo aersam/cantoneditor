@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
@@ -63,16 +64,19 @@ public class CantonEditPanel implements IView {
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         panel.setBorder(new EmptyBorder(5, 5, 5, 5));
         FlagDisplayer displayer = new FlagDisplayer(null);
+        JLabel icon = new JLabel();
         ComputedValue<Image> flag = new ComputedValue<Image>(() -> {
             Canton current = this.editingCanton.get();
             if (current == null)
                 return null;
             return getFlagFromCanton(current.getShortCut());
         });
-        flag.bindTo(displayer::setImage);
-
+        flag.bindTo(e -> {
+            icon.setIcon(new ImageIcon(e));
+        });
         JPanel flagpanel = new JPanel(new BorderLayout());
-        flagpanel.add(displayer, BorderLayout.LINE_START);
+
+        flagpanel.add(icon, BorderLayout.LINE_START);
 
         panel.add(flagpanel);
 
