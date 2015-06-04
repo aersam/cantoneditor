@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -28,6 +29,7 @@ import org.gpl.jsplitbutton.JSplitButton;
 import org.gpl.jsplitbutton.SplitButtonActionListener;
 
 import ch.fhnw.cantoneditor.datautils.CsvReader;
+import ch.fhnw.cantoneditor.datautils.DataStorage;
 import ch.fhnw.cantoneditor.datautils.Searcher;
 import ch.fhnw.cantoneditor.datautils.TranslationManager;
 import ch.fhnw.cantoneditor.libs.GridBagManager;
@@ -46,6 +48,7 @@ public class Overview {
     private TranslationManager tm = TranslationManager.getInstance();
     private List<Canton> allCantons;
     private ObservableList<Canton> filteredCantons;
+    private JButton btnSave;
 
     private int searchCount = 0;
 
@@ -140,16 +143,31 @@ public class Overview {
 
         BackgroundPanel buttonPanel = new BackgroundPanel();
         GridBagManager gbm = new GridBagManager(buttonPanel);
-        gbm.setX(0).setFill(GridBagConstraints.NONE).setComp(tfSearch);
-        gbm.setX(1).setFill(GridBagConstraints.NONE).setComp(getUndoButton());
-        gbm.setX(2).setFill(GridBagConstraints.NONE).setComp(getRedoButton());
+        int x = 0;
+        ImageIcon iconUndo = new ImageIcon(Overview.class.getResource("/save-icon.png"), "undo");
+        btnSave = new JButton(iconUndo);
+        btnSave.setPreferredSize(new Dimension(30, 30));
+        btnSave.addActionListener(e -> {
+            try {
+                DataStorage.save();
+            } catch (Exception e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+
+        });
+
+        gbm.setX(x++).setFill(GridBagConstraints.NONE).setComp(btnSave);
+        gbm.setX(x++).setFill(GridBagConstraints.NONE).setComp(tfSearch);
+        gbm.setX(x++).setFill(GridBagConstraints.NONE).setComp(getUndoButton());
+        gbm.setX(x++).setFill(GridBagConstraints.NONE).setComp(getRedoButton());
 
         JComboBox<TranslationManager.TranslationLocale> languages = new JComboBox<>(
                 TranslationManager.getInstance().SupportedLocales);
 
         TranslationManager.getInstance().getLocaleObservable().bindTwoWay(SwingObservables.getFromComboBox(languages));
-        gbm.setX(3).setFill(GridBagConstraints.NONE).setComp(languages);
-        gbm.setX(4).setFill(GridBagConstraints.HORIZONTAL).setWeightX(1.0).setComp(new JLabel());
+        gbm.setX(x++).setFill(GridBagConstraints.NONE).setComp(languages);
+        gbm.setX(x++).setFill(GridBagConstraints.HORIZONTAL).setWeightX(1.0).setComp(new JLabel());
         return buttonPanel;
     }
 
@@ -176,6 +194,7 @@ public class Overview {
                     flapper.setOn(c == cnt);
                 }
             });
+
             flapper.init(30, 30);
             flapper.setSize(30, 30);
             hasChanged.bindTo((vl) -> {

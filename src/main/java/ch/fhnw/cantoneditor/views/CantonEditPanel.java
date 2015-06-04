@@ -2,6 +2,8 @@ package ch.fhnw.cantoneditor.views;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
@@ -75,8 +77,28 @@ public class CantonEditPanel implements IView {
             icon.setIcon(new ImageIcon(e));
         });
         JPanel flagpanel = new JPanel(new BorderLayout());
+        GridBagManager gbm = new GridBagManager(flagpanel);
+        gbm.setHeight(3).setX(0).setY(0).setComp(icon);
 
-        flagpanel.add(icon, BorderLayout.LINE_START);
+        JLabel cantonName = new JLabel();
+        JLabel cantonShort = new JLabel();
+        Font titleFont = new Font("Verdana", Font.BOLD, 25);
+        Font subFont = new Font("Verdana", Font.BOLD, 20);
+
+        cantonName.setFont(titleFont);
+
+        cantonShort.setFont(subFont);
+
+        editingCanton.bindTo(e -> {
+            cantonName.setText(e.getName());
+            cantonShort.setText(e.getShortCut());
+        });
+        gbm.setX(1).setY(0).setComp(cantonName);
+        gbm.setX(1).setY(1).setComp(cantonShort);
+        gbm.setX(1).setY(1).setComp(new JLabel());
+
+        // Used to Align the flag on the left edge
+        gbm.setHeight(3).setFill(GridBagConstraints.HORIZONTAL).setWeightX(1.0).setX(2).setY(0).setComp(new JLabel());
 
         panel.add(flagpanel);
 
