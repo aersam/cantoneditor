@@ -3,11 +3,9 @@ package ch.fhnw.cantoneditor.views;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Rectangle;
+import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowListener;
-import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
@@ -42,8 +40,7 @@ import ch.fhnw.observation.ObservableList;
 import ch.fhnw.observation.SwingObservables;
 import ch.fhnw.observation.ValueSubscribable;
 import ch.fhnw.oop.led.Led;
-import ch.fhnw.oop.splitflap.GlobalTimer;
-import ch.fhnw.oop.splitflap.SplitFlap;
+import ch.fhnw.oop.nixienumber.BackgroundPanel;
 
 public class Overview {
     private TranslationManager tm = TranslationManager.getInstance();
@@ -111,7 +108,7 @@ public class Overview {
 
         JPanel pageEndPanel = new JPanel(new BorderLayout());
         pageEndPanel.add(getLedPanel(this.currentCantonObservable, this.allCantons), BorderLayout.PAGE_START);
-        pageEndPanel.add(initInhabitantsAndAreaDisplay(), BorderLayout.PAGE_END);
+        pageEndPanel.add(new InhabitantsAreaPanel(getAllCantons(), tm), BorderLayout.PAGE_END);
 
         rootPane.add(pageEndPanel, BorderLayout.PAGE_END);
 
@@ -119,7 +116,6 @@ public class Overview {
         frame.pack();
         this.currentCantonObservable.set(getAllCantons().get(0));
         frame.setVisible(true);
-
     }
 
     private JPanel initButtonPanel() {
@@ -141,23 +137,24 @@ public class Overview {
             th.start();
         });
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        buttonPanel.add(tfSearch);
-        buttonPanel.add(getUndoButton());
-        buttonPanel.add(getRedoButton());
+        BackgroundPanel buttonPanel = new BackgroundPanel();
+        GridBagManager gbm = new GridBagManager(buttonPanel);
+        gbm.setX(0).setFill(GridBagConstraints.NONE).setComp(tfSearch);
+        gbm.setX(1).setFill(GridBagConstraints.NONE).setComp(getUndoButton());
+        gbm.setX(2).setFill(GridBagConstraints.NONE).setComp(getRedoButton());
 
         JComboBox<TranslationManager.TranslationLocale> languages = new JComboBox<>(
                 TranslationManager.getInstance().SupportedLocales);
 
         TranslationManager.getInstance().getLocaleObservable().bindTwoWay(SwingObservables.getFromComboBox(languages));
-        buttonPanel.add(languages);
-
+        gbm.setX(3).setFill(GridBagConstraints.NONE).setComp(languages);
+        gbm.setX(4).setFill(GridBagConstraints.HORIZONTAL).setWeightX(1.0).setComp(new JLabel());
         return buttonPanel;
     }
 
     private static JPanel getLedPanel(ValueSubscribable<Canton> currentCanton, List<Canton> allCantons) {
 
-        JPanel panel = new JPanel();
+        BackgroundPanel panel = new BackgroundPanel();
         // panel.setSize(panel.getWidth(), 5);
         for (Canton cnt : allCantons) {
             Canton old = cnt.copyToNew();
@@ -186,79 +183,6 @@ public class Overview {
             panel.add(flapper);
         }
         return panel;
-    }
-
-    /**
-     * Creates the lower part of the Frame, which contains the flap display to show the number of
-     * citizen and the area
-     */
-    private JPanel initInhabitantsAndAreaDisplay() {
-
-        JPanel inhabPanel = new JPanel();
-        inhabPanel.setMinimumSize(new Dimension(400, 200));
-        GridBagManager localGbm = new GridBagManager(inhabPanel);
-        ComputedValue<Integer> inhabitantsHandler = new ComputedValue<>(() -> {
-            int inhabs = 0;
-            for (Canton c : getAllCantons()) {
-                inhabs += c.getNrInhabitants();
-            }
-            return inhabs;
-        });
-        ComputedValue<Double> areaHandler = new ComputedValue<>(() -> {
-            double area = 0;
-            for (Canton c : getAllCantons()) {
-                area += c.getArea();
-            }
-            return area;
-        });
-
-        int x = 0;
-        int y = 0;
-        SplitFlap[] inhabitantFlaps = new SplitFlap[10];
-        SplitFlap[] areaFlaps = new SplitFlap[10];
-        localGbm.setWeightX(1.0).setX(x++).setY(y).setComp(new JLabel(""));
-
-        localGbm.setWeightX(0).setX(x).setY(y++).setComp(initSplitFlapPanel(inhabitantFlaps));
-        localGbm.setWeightX(0).setX(x).setY(y++).setComp(initSplitFlapPanel(areaFlaps));
-
-        inhabitantsHandler.bindTo(t -> {
-            updateFlapText(t, inhabitantFlaps);
-        });
-        areaHandler.bindTo(t -> {
-            updateFlapText((t == null) ? null : t.intValue(), areaFlaps);
-        });
-
-        return inhabPanel;
-    }
-
-    private JPanel initSplitFlapPanel(final SplitFlap[] flaps) {
-        JPanel panel = new JPanel();
-        GridBagManager gbm = new GridBagManager(panel);
-        int x = 0;
-        for (int i = 0; i < flaps.length; i++) {
-            flaps[i] = new SplitFlap();
-            flaps[i].setBounds(new Rectangle(20, 20));
-            flaps[i].setSize(new Dimension(20, 20));
-            flaps[i].setSelection(SplitFlap.NUMERIC);
-            gbm.setX(x++).setY(0).setComp(flaps[i]);
-        }
-
-        GlobalTimer.INSTANCE.startTimer();
-        return panel;
-    }
-
-    private void updateFlapText(final Integer flapValue, final SplitFlap[] flaps) {
-        String flapText;
-        if (flapValue == null) {
-            flapText = "          ";
-        } else {
-            flapText = NumberFormat.getIntegerInstance().format(flapValue).replace(',', '\'');
-        }
-        if (flapText.length() < 10)
-            flapText = new String(new char[10 - flapText.length()]).replace("\0", " ") + flapText;
-        for (int i = 0; i < 10; i++) {
-            flaps[i].setText(flapText.toUpperCase().substring(i, i + 1));
-        }
     }
 
     private static JComponent getUndoRedoButton(String translationKey, ObservableList<Executable> commands,
