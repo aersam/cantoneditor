@@ -116,7 +116,7 @@ public class ObservableSet<T> implements Set<T>, PropertyChangeable {
     }
 
     @Override
-    public <T> T[] toArray(T[] arg0) {
+    public <T2> T2[] toArray(T2[] arg0) {
         ReadObserver.notifyRead(this, null);
         // TODO Auto-generated method stub
         return underlyingList.toArray(arg0);

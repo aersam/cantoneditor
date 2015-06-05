@@ -29,6 +29,7 @@ import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
+@SuppressWarnings("serial")
 public class Led extends JComponent implements ActionListener {
     public static final String COLOR_PROPERTY = "COLOR";
     public static final String BLINKING_PROPERTY = "BLINKING";

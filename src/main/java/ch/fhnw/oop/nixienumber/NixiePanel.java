@@ -9,6 +9,7 @@ import net.miginfocom.swing.MigLayout;
 /**
  * @author Dieter Holz
  */
+@SuppressWarnings("serial")
 public class NixiePanel extends JPanel {
     private final NixieNumber[] numbers = new NixieNumber[9];
     private BackgroundPanel backgroundPanel;

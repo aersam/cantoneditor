@@ -9,10 +9,7 @@ import ch.fhnw.observation.ValueSubscribable;
 @SuppressWarnings("serial")
 public class CantonTableSelectionModel extends DefaultListSelectionModel {
 
-    private CantonTableModel table;
-
     public CantonTableSelectionModel(CantonTableModel model, ValueSubscribable<Canton> currentCanton) {
-        this.table = model;
         this.setSelectionMode(SINGLE_SELECTION);
 
         this.addListSelectionListener(new ListSelectionListener() {

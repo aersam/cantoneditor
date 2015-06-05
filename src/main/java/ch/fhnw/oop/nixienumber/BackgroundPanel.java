@@ -1,7 +1,6 @@
 package ch.fhnw.oop.nixienumber;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
@@ -18,72 +17,69 @@ import javax.swing.JPanel;
 /**
  * @author hansolo
  */
+@SuppressWarnings("serial")
 public class BackgroundPanel extends JPanel {
-	private BufferedImage backgroundImage;
+    private BufferedImage backgroundImage;
 
-	public BackgroundPanel() {
-		setOpaque(false);
-		init();
-	}
+    public BackgroundPanel() {
+        setOpaque(false);
+        init();
+    }
 
-	private void init() {
-		this.backgroundImage = null;
-		addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent e) {
-				backgroundImage = null;
-			}
-		});
-	}
+    private void init() {
+        this.backgroundImage = null;
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                backgroundImage = null;
+            }
+        });
+    }
 
-	@Override
-	protected void paintComponent(java.awt.Graphics g) {
-		super.paintComponent(g);
+    @Override
+    protected void paintComponent(java.awt.Graphics g) {
+        super.paintComponent(g);
 
-		final Graphics2D G2 = (Graphics2D) g.create();
+        final Graphics2D G2 = (Graphics2D) g.create();
 
-		if (this.backgroundImage == null) {
-			this.backgroundImage = createBackgroundImage();
-		}
+        if (this.backgroundImage == null) {
+            this.backgroundImage = createBackgroundImage();
+        }
 
-		G2.drawImage(backgroundImage, 0, 0, null);
+        G2.drawImage(backgroundImage, 0, 0, null);
 
-		G2.dispose();
-	}
+        G2.dispose();
+    }
 
-	private BufferedImage createBackgroundImage() {
-		final GraphicsConfiguration GFX_CONF = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-		final BufferedImage IMAGE = GFX_CONF.createCompatibleImage(getWidth(), getHeight(), java.awt.Transparency.TRANSLUCENT);
+    private BufferedImage createBackgroundImage() {
+        final GraphicsConfiguration GFX_CONF = GraphicsEnvironment.getLocalGraphicsEnvironment()
+                .getDefaultScreenDevice().getDefaultConfiguration();
+        final BufferedImage IMAGE = GFX_CONF.createCompatibleImage(getWidth(), getHeight(),
+                java.awt.Transparency.TRANSLUCENT);
 
-		final Graphics2D G2 = IMAGE.createGraphics();
+        final Graphics2D G2 = IMAGE.createGraphics();
 
-		G2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        G2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		Point2D BACKGROUND_START = new Point2D.Double(0, 0);
-		Point2D BACKGROUND_STOP = new Point2D.Double(0, getHeight());
+        Point2D BACKGROUND_START = new Point2D.Double(0, 0);
+        Point2D BACKGROUND_STOP = new Point2D.Double(0, getHeight());
 
-		final float[] BACKGROUND_FRACTIONS =
-				{
-						0.0f,
-						1.0f
-				};
+        final float[] BACKGROUND_FRACTIONS = { 0.0f, 1.0f };
 
-		final Color[] BACKGROUND_COLORS =
-				{
-						new Color(0x444444),
-						new Color(0x222222)
-				};
+        final Color[] BACKGROUND_COLORS = { new Color(0x444444), new Color(0x222222) };
 
-		//final java.awt.Shape BACKGROUND = new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 10, 10);
-		final java.awt.Shape BACKGROUND = new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 0, 0);
+        // final java.awt.Shape BACKGROUND = new RoundRectangle2D.Double(0, 0, getWidth(),
+        // getHeight(), 10, 10);
+        final java.awt.Shape BACKGROUND = new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 0, 0);
 
-		final LinearGradientPaint BACKGROUND_GRADIENT = new LinearGradientPaint(BACKGROUND_START, BACKGROUND_STOP, BACKGROUND_FRACTIONS, BACKGROUND_COLORS);
+        final LinearGradientPaint BACKGROUND_GRADIENT = new LinearGradientPaint(BACKGROUND_START, BACKGROUND_STOP,
+                BACKGROUND_FRACTIONS, BACKGROUND_COLORS);
 
-		G2.setPaint(BACKGROUND_GRADIENT);
-		G2.fill(BACKGROUND);
+        G2.setPaint(BACKGROUND_GRADIENT);
+        G2.fill(BACKGROUND);
 
-		G2.dispose();
+        G2.dispose();
 
-		return IMAGE;
-	}
+        return IMAGE;
+    }
 }

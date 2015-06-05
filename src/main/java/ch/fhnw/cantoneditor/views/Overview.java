@@ -32,7 +32,6 @@ import ch.fhnw.cantoneditor.datautils.CsvReader;
 import ch.fhnw.cantoneditor.datautils.DataStorage;
 import ch.fhnw.cantoneditor.datautils.Searcher;
 import ch.fhnw.cantoneditor.datautils.TranslationManager;
-import ch.fhnw.cantoneditor.libs.GridBagManager;
 import ch.fhnw.cantoneditor.model.Canton;
 import ch.fhnw.cantoneditor.model.CantonTableModel;
 import ch.fhnw.command.CommandController;
@@ -111,7 +110,7 @@ public class Overview {
 
         JPanel pageEndPanel = new JPanel(new BorderLayout());
         pageEndPanel.add(getLedPanel(this.currentCantonObservable, this.allCantons), BorderLayout.PAGE_START);
-        pageEndPanel.add(new InhabitantsAreaPanel(getAllCantons(), tm), BorderLayout.PAGE_END);
+        pageEndPanel.add(new InhabitantsAreaPanel(getAllCantons()), BorderLayout.PAGE_END);
 
         rootPane.add(pageEndPanel, BorderLayout.PAGE_END);
 

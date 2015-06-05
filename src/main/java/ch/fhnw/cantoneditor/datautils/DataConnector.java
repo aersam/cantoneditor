@@ -1,15 +1,14 @@
 package ch.fhnw.cantoneditor.datautils;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -23,11 +22,6 @@ import com.google.gson.stream.JsonReader;
 public class DataConnector {
 
     private static final String DATA_FILE = "db.json";
-
-    private static class PropertyInformation {
-        public Method Getter;
-        public Method Setter;
-    }
 
     private static DataConnector instance;
 
@@ -48,44 +42,24 @@ public class DataConnector {
         return dataDir1;
     }
 
-    private JsonObject getJson() throws JsonIOException, JsonSyntaxException, FileNotFoundException {
+    private JsonObject getJson() throws JsonIOException, JsonSyntaxException, UnsupportedEncodingException, IOException {
         JsonParser parser = new JsonParser();
         File dataFile = new File(getDataFolder(true), DATA_FILE);
         if (!dataFile.exists())
             return new JsonObject();
-        JsonElement el = parser.parse(new JsonReader(new FileReader(dataFile)));
-        return (JsonObject) el;
 
-    }
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(dataFile), "UTF8"))) {
 
-    private <T> HashMap<String, PropertyInformation> getTypeInformation(Class<T> type) {
+            JsonElement el = parser.parse(new JsonReader(in));
+            return (JsonObject) el;
 
-        HashMap<String, PropertyInformation> parsers = new HashMap<>();
-        for (Method m : type.getMethods()) {
-            if (m.getName().startsWith("set")) {
-                String normalName = m.getName().substring(3);
-                if (!parsers.containsKey(normalName))
-                    parsers.put(normalName, new PropertyInformation());
-                parsers.get(normalName).Setter = m;
-            }
-            if (m.getName().startsWith("get")) {
-                String normalName = m.getName().substring(3);
-                if (!parsers.containsKey(normalName))
-                    parsers.put(normalName, new PropertyInformation());
-                parsers.get(normalName).Getter = m;
-            }
         }
-        for (Entry<String, PropertyInformation> ent : parsers.entrySet()) {
-            if (ent.getValue().Getter == null || ent.getValue().Setter == null) {
-                parsers.remove(ent.getKey());// Should we do this after the loop?
-            }
-        }
-        return parsers;
+
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> getAll(Class<T> type) throws JsonIOException, JsonSyntaxException, FileNotFoundException,
-            ClassNotFoundException {
+    public <T> List<T> getAll(Class<T> type) throws JsonIOException, JsonSyntaxException, ClassNotFoundException,
+            UnsupportedEncodingException, IOException {
         File dataFile = new File(getDataFolder(true), DATA_FILE);
         if (!dataFile.exists())
             return null;
@@ -117,7 +91,7 @@ public class DataConnector {
     }
 
     public <T> void saveAll(Class<T> type, Collection<T> items) throws JsonIOException, JsonSyntaxException,
-            FileNotFoundException, ClassNotFoundException, UnsupportedEncodingException {
+            ClassNotFoundException, IOException {
         Gson gson = new Gson();
         Class<?> namedClass = Class.forName("[L" + type.getName() + ";");
         JsonElement el = gson.toJsonTree(items.toArray(), namedClass);
@@ -127,8 +101,8 @@ public class DataConnector {
         existing.add(type.getName(), el);
         String json = gson.toJson(existing);
         File dataFile = new File(getDataFolder(true), DATA_FILE);
-        PrintWriter writer = new PrintWriter(dataFile, "utf-8");
-        writer.print(json);
+        PrintWriter writer = new PrintWriter(dataFile, "utf8");
+        writer.write(json);
         writer.close();
     }
 }

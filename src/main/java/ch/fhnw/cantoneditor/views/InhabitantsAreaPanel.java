@@ -12,22 +12,20 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import ch.fhnw.cantoneditor.datautils.TranslationManager;
-import ch.fhnw.cantoneditor.libs.GridBagManager;
 import ch.fhnw.cantoneditor.model.Canton;
 import ch.fhnw.observation.ComputedValue;
 import ch.fhnw.oop.nixienumber.BackgroundPanel;
 import ch.fhnw.oop.splitflap.GlobalTimer;
 import ch.fhnw.oop.splitflap.SplitFlap;
 
+@SuppressWarnings("serial")
 public class InhabitantsAreaPanel extends BackgroundPanel {
-    TranslationManager tm;
 
     /**
      * Creates the lower part of the Frame, which contains the flap display to show the number of
      * citizen and the area
      */
-    public InhabitantsAreaPanel(List<Canton> cantons, TranslationManager tm) {
-        this.tm = tm;
+    public InhabitantsAreaPanel(List<Canton> cantons) {
         this.setMinimumSize(new Dimension(400, 200));
         GridBagManager localGbm = new GridBagManager(this);
         ComputedValue<Integer> inhabitantsHandler = new ComputedValue<>(() -> {
@@ -79,7 +77,7 @@ public class InhabitantsAreaPanel extends BackgroundPanel {
         Font font = new Font("Verdana", Font.BOLD, 15);
         title.setPreferredSize(new Dimension(100, 30));
         title.setFont(font);
-        tm.translate(labelText).bindTo(title::setText);
+        TranslationManager.getInstance().translate(labelText).bindTo(title::setText);
 
         gbm.setX(x++).setFill(GridBagConstraints.HORIZONTAL).setY(0).setComp(title);
         GlobalTimer.INSTANCE.startTimer();

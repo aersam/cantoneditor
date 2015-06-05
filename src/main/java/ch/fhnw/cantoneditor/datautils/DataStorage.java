@@ -1,8 +1,6 @@
 package ch.fhnw.cantoneditor.datautils;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.List;
@@ -17,12 +15,12 @@ public class DataStorage {
     private static List<Canton> cantons;
 
     public static void init() throws JsonIOException, JsonSyntaxException, ClassNotFoundException, IOException,
-            ParseException, NoDataFoundException {
+            ParseException {
         loadData(false);
     }
 
-    private static void loadData(boolean reread) throws IOException, ParseException, NoDataFoundException,
-            JsonIOException, JsonSyntaxException, ClassNotFoundException {
+    private static void loadData(boolean reread) throws IOException, ParseException, JsonIOException,
+            JsonSyntaxException, ClassNotFoundException {
         if (reread) {
             DataConnector.getInstance().deleteDataFile();
         }
@@ -41,8 +39,7 @@ public class DataStorage {
         cantons = value;
     }
 
-    public static void save() throws JsonIOException, JsonSyntaxException, FileNotFoundException,
-            ClassNotFoundException, UnsupportedEncodingException {
+    public static void save() throws JsonIOException, JsonSyntaxException, ClassNotFoundException, IOException {
         for (Canton c : cantons) {
             c.beforeSerialize();
         }
@@ -50,7 +47,7 @@ public class DataStorage {
     }
 
     public static Canton getCantonById(int nr, boolean createIfNotExists) throws JsonIOException, JsonSyntaxException,
-            ClassNotFoundException, IOException, ParseException, NoDataFoundException {
+            ClassNotFoundException, IOException, ParseException {
         Collection<Canton> cantons = DataStorage.getAllCantons();
         if (cantons != null) {
             for (Canton c : cantons) {
@@ -68,7 +65,7 @@ public class DataStorage {
     }
 
     public static Canton getCantonByShortcut(String shortcut, boolean createIfNotExists) throws JsonIOException,
-            JsonSyntaxException, ClassNotFoundException, IOException, ParseException, NoDataFoundException {
+            JsonSyntaxException, ClassNotFoundException, IOException, ParseException {
         Collection<Canton> cantons = DataStorage.getAllCantons();
         for (Canton c : cantons) {
             if (c.getShortCut().equals(shortcut))

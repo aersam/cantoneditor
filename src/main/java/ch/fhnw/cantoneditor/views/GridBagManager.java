@@ -1,4 +1,4 @@
-package ch.fhnw.cantoneditor.libs;
+package ch.fhnw.cantoneditor.views;
 
 import java.awt.Component;
 import java.awt.Container;

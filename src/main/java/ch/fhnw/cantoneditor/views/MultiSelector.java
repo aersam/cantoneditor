@@ -7,7 +7,6 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.beans.PropertyChangeSupport;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -152,6 +151,7 @@ public class MultiSelector<E> {
         f.setVisible(true);
     }
 
+    @SuppressWarnings("serial")
     static class JTextToggler extends JTextField implements PropertyChangeable {
         private boolean isSelected;
 
@@ -190,11 +190,9 @@ public class MultiSelector<E> {
 
         private Collection<E> sourceItems;
 
-        private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-
         private JList<E> target;
 
-        public SelectionManager(Collection<E> sourceItems, JList target) {
+        public SelectionManager(Collection<E> sourceItems, JList<E> target) {
             this.sourceItems = sourceItems;
             this.target = target;
             this.sourceChanged();
@@ -243,8 +241,9 @@ public class MultiSelector<E> {
         public void valueChanged(ListSelectionEvent e) {
             if (!e.getValueIsAdjusting()) {
 
+                @SuppressWarnings("unchecked")
                 E value = ((JList<E>) e.getSource()).getSelectedValue();
-                String selectedString = this.getSelectedString();
+
                 // Toggle the selection state for value.
                 if (selectedItems.contains(value)) {
                     selectedItems.remove(value);
@@ -265,6 +264,7 @@ public class MultiSelector<E> {
     }
 
     /** Implementation copied from source code. */
+    @SuppressWarnings("serial")
     static class MultiRenderer<E> extends DefaultListCellRenderer {
         SelectionManager<E> selectionManager;
 
@@ -272,7 +272,8 @@ public class MultiSelector<E> {
             selectionManager = sm;
         }
 
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+        @SuppressWarnings("unchecked")
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
                 boolean cellHasFocus) {
             setComponentOrientation(list.getComponentOrientation());
 

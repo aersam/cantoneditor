@@ -9,7 +9,6 @@ import java.text.ParseException;
 
 import org.junit.Test;
 
-import ch.fhnw.cantoneditor.datautils.NoDataFoundException;
 import ch.fhnw.cantoneditor.datautils.TranslationManager;
 import ch.fhnw.cantoneditor.model.Canton;
 
@@ -26,7 +25,7 @@ public class ComputedValueTest {
 
     @Test
     public void testDependencies() throws JsonIOException, JsonSyntaxException, ClassNotFoundException, IOException,
-            ParseException, NoDataFoundException {
+            ParseException {
         Canton c;
         c = new Canton();
 

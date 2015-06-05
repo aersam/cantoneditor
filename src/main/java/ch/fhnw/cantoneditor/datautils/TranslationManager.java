@@ -41,7 +41,7 @@ public class TranslationManager {
      * ApplicationTranslation.properties file. This is only meaningful during development, we should
      * set this to false before release.
      * */
-    public static final boolean WRITE_PROPERTIES = true;
+    public static final boolean WRITE_PROPERTIES = false;
 
     /** Gets the TranslationManager Default Instance */
     public static TranslationManager getInstance() {

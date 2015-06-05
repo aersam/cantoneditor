@@ -1200,11 +1200,15 @@ public class JSplitButtonBeanInfo extends SimpleBeanInfo {
         return methods;
     }// GEN-LAST:Methods
 
+    @SuppressWarnings("unused")
     private static java.awt.Image iconColor16 = null;// GEN-BEGIN:IconsDef
+    @SuppressWarnings("unused")
     private static java.awt.Image iconColor32 = null;
     private static java.awt.Image iconMono16 = null;
     private static java.awt.Image iconMono32 = null;// GEN-END:IconsDef
+    @SuppressWarnings("unused")
     private static String iconNameC16 = "/splitbutton_16.png";// GEN-BEGIN:Icons
+    @SuppressWarnings("unused")
     private static String iconNameC32 = "/splitbutton_32.png";
     private static String iconNameM16 = null;
     private static String iconNameM32 = null;// GEN-END:Icons

@@ -17,6 +17,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 public class SwingObservables {
+    @SuppressWarnings("unchecked")
     public static <T> ValueSubscribable<T> getFromComboBox(JComboBox<T> comboBox) {
         ObservableValue<T> vl = new ObservableValue<T>((T) comboBox.getSelectedItem());
         comboBox.addActionListener(new ActionListener() {

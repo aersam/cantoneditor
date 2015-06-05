@@ -29,12 +29,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ListCellRenderer;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 
 import ch.fhnw.cantoneditor.datautils.TranslationManager;
-import ch.fhnw.cantoneditor.libs.GridBagManager;
 import ch.fhnw.cantoneditor.model.Canton;
 import ch.fhnw.cantoneditor.model.Language;
 import ch.fhnw.command.CommandController;
@@ -65,7 +63,7 @@ public class CantonEditPanel implements IView {
 
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         panel.setBorder(new EmptyBorder(5, 5, 5, 5));
-        FlagDisplayer displayer = new FlagDisplayer(null);
+
         JLabel icon = new JLabel();
         ComputedValue<Image> flag = new ComputedValue<Image>(() -> {
             Canton current = this.editingCanton.get();
@@ -88,11 +86,15 @@ public class CantonEditPanel implements IView {
         cantonName.setFont(titleFont);
 
         cantonShort.setFont(subFont);
+        new ComputedValue<String>(() -> {
+            Canton c = editingCanton.get();
+            return c == null ? "" : c.getName();
+        }).bindTo(cantonName::setText);
+        new ComputedValue<String>(() -> {
+            Canton c = editingCanton.get();
+            return c == null ? "" : c.getShortCut();
+        }).bindTo(cantonShort::setText);
 
-        editingCanton.bindTo(e -> {
-            cantonName.setText(e.getName());
-            cantonShort.setText(e.getShortCut());
-        });
         gbm.setX(1).setY(0).setComp(cantonName);
         gbm.setX(1).setY(1).setComp(cantonShort);
         gbm.setX(1).setY(1).setComp(new JLabel());
@@ -213,20 +215,7 @@ public class CantonEditPanel implements IView {
 
     }
 
-    private <T> JComboBox<T> getComboBox(T[] list, Function<Canton, T> getValue, BiConsumer<Canton, T> setValue,
-            Function<T, String> getText) {
-        JComboBox<T> comboBox = new JComboBox<T>(list);
-        comboBox.setRenderer(new ListCellRenderer<T>() {
-            public java.awt.Component getListCellRendererComponent(javax.swing.JList<? extends T> list, T value,
-                    int index, boolean isSelected, boolean cellHasFocus) {
-                return new JTextField(getText.apply(value));
-            };
-        });
-        comboBox.setSelectedItem(this.editingCanton.get() == null ? null : getValue.apply(this.editingCanton.get()));
-        bindObservables(comboBox, getValue, setValue);
-        return comboBox;
-    }
-
+    @SuppressWarnings("unchecked")
     private <T> Collection<T> getCollection(Object o) {
         if (o instanceof Collection<?>) {
             return (Collection<T>) o;
@@ -268,6 +257,7 @@ public class CantonEditPanel implements IView {
         return selector;
     }
 
+    @SuppressWarnings("unchecked")
     private <T> void bindObservables(JComponent comp, Function<Canton, T> getValue, BiConsumer<Canton, T> setValue) {
         ComputedValue<T> value = new ComputedValue<T>(() -> this.editingCanton.get() == null ? null
                 : getValue.apply(this.editingCanton.get()), (s) -> setValue.accept(this.editingCanton.get(), s));

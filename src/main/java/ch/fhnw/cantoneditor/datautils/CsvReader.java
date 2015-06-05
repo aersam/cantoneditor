@@ -17,14 +17,14 @@ import com.google.gson.JsonSyntaxException;
 public class CsvReader {
 
     public static void readAll() throws IOException, ParseException, JsonIOException, JsonSyntaxException,
-            ClassNotFoundException, NoDataFoundException {
+            ClassNotFoundException {
         DataStorage.setAllCantons(readCantons());
         readCommunes();
 
     }
 
     public static void readCommunes() throws IOException, ParseException, JsonIOException, JsonSyntaxException,
-            ClassNotFoundException, NoDataFoundException {
+            ClassNotFoundException {
         BufferedReader fileReader = new BufferedReader(new InputStreamReader(
                 CsvReader.class.getResourceAsStream("/Communes.txt"), "UTF-8"));
         try (CSVReader reader = new CSVReader(fileReader, '\t', '"', 1)) {
@@ -40,7 +40,7 @@ public class CsvReader {
     }
 
     public static List<Canton> readCantons() throws IOException, JsonIOException, JsonSyntaxException,
-            ClassNotFoundException, ParseException, NoDataFoundException {
+            ClassNotFoundException, ParseException {
         BufferedReader fileReader = new BufferedReader(new InputStreamReader(
                 CsvReader.class.getResourceAsStream("/cantons.csv"), "UTF-8"));
         try (CSVReader reader = new CSVReader(fileReader, ';', '"', 1)) {
