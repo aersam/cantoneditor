@@ -7,6 +7,7 @@ import java.util.function.Function;
 import ch.fhnw.cantoneditor.datautils.TranslationManager;
 import ch.fhnw.observation.ReadObserver;
 
+/** A command that sets a property of a given object */
 public class ObjectSetCommand<TObject, TValue> implements Executable {
 
     private TValue oldValue;

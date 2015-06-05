@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/** This class is for searching in a List by using Levenshtein, Contains and exact search */
 public class Searcher<T extends Searchable> implements Runnable {
 
     private final Collection<T> sourcelist;

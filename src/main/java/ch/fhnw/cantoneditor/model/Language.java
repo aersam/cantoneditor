@@ -4,7 +4,8 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * A Class for handling Swiss Languages. Currently, these Languages are hard coded
+ * A Class for handling Swiss Languages. Currently, these Languages are hard coded as they should
+ * not change very often
  * 
  * @author Adrian Ehrsam, Stefan Mettler
  *

@@ -44,6 +44,7 @@ import ch.fhnw.observation.ObservableValue;
 import ch.fhnw.observation.SwingObservables;
 import ch.fhnw.observation.ValueSubscribable;
 
+/** A control for editing a canton */
 public class CantonEditPanel implements IView {
 
     private TranslationManager tm = TranslationManager.getInstance();

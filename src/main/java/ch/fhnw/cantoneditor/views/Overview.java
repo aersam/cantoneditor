@@ -43,6 +43,7 @@ import ch.fhnw.observation.ValueSubscribable;
 import ch.fhnw.oop.led.Led;
 import ch.fhnw.oop.nixienumber.BackgroundPanel;
 
+/** Displays an overview over multiple cantons and is for editing of a canton */
 public class Overview {
     private TranslationManager tm = TranslationManager.getInstance();
     private List<Canton> allCantons;

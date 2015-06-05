@@ -31,6 +31,7 @@ import ch.fhnw.observation.ComputedValue;
 import ch.fhnw.observation.ObservableList;
 import ch.fhnw.observation.PropertyChangeable;
 
+/** A helper class for a trivial MultiSelector. */
 public class MultiSelector<E> {
     JDialog dialog;
     JComponent displayPanel;

@@ -5,6 +5,7 @@ import java.util.Collection;
 import ch.fhnw.cantoneditor.datautils.TranslationManager;
 import ch.fhnw.observation.ValueSubscribable;
 
+/** A command that adds on more items to a Collection */
 public class ListAddCommand<T> implements Executable {
 
     private final Collection<T> toAdd;

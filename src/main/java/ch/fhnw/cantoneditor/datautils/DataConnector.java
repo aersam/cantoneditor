@@ -19,7 +19,11 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
 
-public class DataConnector {
+/**
+ * A class which is responsible to save data of any class. There is no dependency on this projects
+ * models (in contrast to DataStorage)
+ */
+class DataConnector {
 
     private static final String DATA_FILE = "db.json";
 

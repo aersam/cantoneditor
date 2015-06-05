@@ -3,6 +3,7 @@ package ch.fhnw.cantoneditor.controller;
 import ch.fhnw.cantoneditor.model.Canton;
 import ch.fhnw.observation.ObservableValue;
 
+/** A very simple class for saving the current canton */
 class CantonHandler {
     private static final ObservableValue<Canton> currentCanton = new ObservableValue<>();
 

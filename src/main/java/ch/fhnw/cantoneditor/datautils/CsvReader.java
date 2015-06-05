@@ -14,6 +14,10 @@ import ch.fhnw.cantoneditor.model.Language;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+/**
+ * This class initially reads the Communes.txt and the Cantons.csv files to generate objects which
+ * are afterwards stored as JSON (which is much more modern, of course :) )
+ */
 public class CsvReader {
 
     public static void readAll() throws IOException, ParseException, JsonIOException, JsonSyntaxException,
@@ -23,7 +27,7 @@ public class CsvReader {
 
     }
 
-    public static void readCommunes() throws IOException, ParseException, JsonIOException, JsonSyntaxException,
+    private static void readCommunes() throws IOException, ParseException, JsonIOException, JsonSyntaxException,
             ClassNotFoundException {
         BufferedReader fileReader = new BufferedReader(new InputStreamReader(
                 CsvReader.class.getResourceAsStream("/Communes.txt"), "UTF-8"));
@@ -39,7 +43,7 @@ public class CsvReader {
         }
     }
 
-    public static List<Canton> readCantons() throws IOException, JsonIOException, JsonSyntaxException,
+    private static List<Canton> readCantons() throws IOException, JsonIOException, JsonSyntaxException,
             ClassNotFoundException, ParseException {
         BufferedReader fileReader = new BufferedReader(new InputStreamReader(
                 CsvReader.class.getResourceAsStream("/cantons.csv"), "UTF-8"));

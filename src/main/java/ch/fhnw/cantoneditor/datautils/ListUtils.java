@@ -2,6 +2,7 @@ package ch.fhnw.cantoneditor.datautils;
 
 import java.util.Collection;
 
+/** A simple utility class for comparing two lists on equality of content */
 public class ListUtils {
     public static <T> boolean contentEquals(Collection<T> list1, Collection<T> list2) {
         if (list1 == list2) {

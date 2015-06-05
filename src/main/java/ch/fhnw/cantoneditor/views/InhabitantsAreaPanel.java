@@ -18,6 +18,7 @@ import ch.fhnw.oop.nixienumber.BackgroundPanel;
 import ch.fhnw.oop.splitflap.GlobalTimer;
 import ch.fhnw.oop.splitflap.SplitFlap;
 
+/** A Component that displays the area and the inhabitants of Switzerland */
 @SuppressWarnings("serial")
 public class InhabitantsAreaPanel extends BackgroundPanel {
 

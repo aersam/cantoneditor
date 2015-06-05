@@ -6,6 +6,7 @@ import java.util.List;
 import ch.fhnw.cantoneditor.datautils.TranslationManager;
 import ch.fhnw.observation.ValueSubscribable;
 
+/** A command that removes an Item from an collection */
 public class ListRemoveCommand<T> implements Executable {
 
     private final T toRemove;

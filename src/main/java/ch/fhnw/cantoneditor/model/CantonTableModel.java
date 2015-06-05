@@ -125,6 +125,7 @@ public class CantonTableModel extends DefaultTableModel implements Disposable {
 
         Function converter = valueConverter[row][column];
         if (converter == null) {
+
             CommandController.getDefault().executePropertySet(aValue, values[row][column]);
         } else {
             CommandController.getDefault().executePropertySet(converter.apply(aValue), values[row][column]);

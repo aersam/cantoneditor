@@ -10,6 +10,7 @@ import ch.fhnw.cantoneditor.model.Canton;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+/** This is for strongly typed (JSON-)Database access which is what is used outside this package */
 public class DataStorage {
 
     private static List<Canton> cantons;

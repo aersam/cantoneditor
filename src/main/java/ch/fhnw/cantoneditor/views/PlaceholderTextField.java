@@ -7,6 +7,7 @@ import java.awt.RenderingHints;
 import javax.swing.JTextField;
 import javax.swing.text.Document;
 
+/** Just a simple Textfield with a placeholder as used often in HTML */
 @SuppressWarnings("serial")
 public class PlaceholderTextField extends JTextField {
 
