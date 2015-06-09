@@ -4,6 +4,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import ch.fhnw.cantoneditor.datautils.DataStorage;
+import ch.fhnw.cantoneditor.datautils.TranslationManager;
+import ch.fhnw.cantoneditor.views.ErrorWindow;
 import ch.fhnw.cantoneditor.views.Overview;
 
 /** The main controller for Displaying the whole view with editing and tables */
@@ -44,9 +46,13 @@ public class OverviewController {
                     System.exit(0);// Close the application reporting success
                 }
             });
+
         } catch (Exception err) {// Should never occur, and if we are dead anyway :)
             err.printStackTrace();
-            throw new RuntimeException("Fatal error when starting application", err);
+
+            ErrorWindow window = new ErrorWindow(TranslationManager.getInstance().translate("FatalErrorWhenStarting",
+                    "A fatal error occured when starting the application"), err);
+            window.show();
         }
     }
 }
