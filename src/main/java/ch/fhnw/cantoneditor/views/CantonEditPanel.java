@@ -73,7 +73,9 @@ public class CantonEditPanel implements IView {
             return getFlagFromCanton(current.getShortCut());
         });
         flag.bindTo(e -> {
-            icon.setIcon(new ImageIcon(e));
+            if (e != null) {
+                icon.setIcon(new ImageIcon(e));
+            }
         });
         JPanel flagpanel = new JPanel(new BorderLayout());
         GridBagManager gbm = new GridBagManager(flagpanel);
