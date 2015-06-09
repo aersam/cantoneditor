@@ -75,6 +75,8 @@ public class CantonEditPanel implements IView {
         flag.bindTo(e -> {
             if (e != null) {
                 icon.setIcon(new ImageIcon(e));
+            } else {
+                icon.setIcon(new ImageIcon());
             }
         });
         JPanel flagpanel = new JPanel(new BorderLayout());
