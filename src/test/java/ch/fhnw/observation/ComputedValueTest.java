@@ -24,6 +24,34 @@ public class ComputedValueTest {
     }
 
     @Test
+    public void testTwoWay() {
+        Canton c = new Canton();
+        c.setName("Republik Häfelfingen");
+        c.setShortCut("HF");
+        ComputedValue<String> cantonWithName = new ComputedValue<String>(() -> {
+            return c.getName() + " (" + c.getShortCut() + ")";
+        }, (vl) -> {
+            String name, shortcut;
+            if (vl.contains("(") && vl.contains(")")) {
+                name = vl.substring(0, vl.indexOf('(') - 1).trim();
+                shortcut = vl.substring(vl.indexOf('(') + 1, vl.indexOf(')')).trim();
+            } else {
+                name = vl;
+                shortcut = null;
+            }
+            if (name != null)
+                c.setName(name);
+            if (shortcut != null)
+                c.setShortCut(shortcut);
+        });
+        ObservableValue<String> hf = new ObservableValue<String>();
+        cantonWithName.bindTwoWay(hf);
+        assertEquals(cantonWithName.get(), hf.get());
+        hf.set("Baselland (BL)");
+        assertEquals(cantonWithName.get(), hf.get());
+    }
+
+    @Test
     public void testDependencies() throws JsonIOException, JsonSyntaxException, ClassNotFoundException, IOException,
             ParseException {
         Canton c;
